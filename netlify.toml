@@ -1,0 +1,26 @@
+# Netlify configuration
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Serve robots.txt from the dashboard-editable store (falls back to
+# the bundled default inside the function if nothing has been saved).
+[[redirects]]
+  from = "/robots.txt"
+  to = "/.netlify/functions/robots"
+  status = 200
+  force = true
+
+# Strip .html so /admin and /dashboard resolve as clean URLs
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200

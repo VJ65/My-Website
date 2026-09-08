@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Sign in · wajeeh.dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: oklch(98.5% 0.008 60);
+      --bg2: oklch(96% 0.012 60);
+      --surface: #fff;
+      --fg: oklch(18% 0.02 240);
+      --fg2: oklch(42% 0.02 240);
+      --fg3: oklch(62% 0.015 240);
+      --teal: oklch(52% 0.14 195);
+      --teal-deep: oklch(46% 0.14 195);
+      --teal-dim: oklch(52% 0.14 195 / 0.12);
+      --red: oklch(58% 0.18 25);
+      --red-dim: oklch(58% 0.18 25 / 0.12);
+      --border: oklch(88% 0.01 60);
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Plus Jakarta Sans', sans-serif;
+      --radius: 14px;
+      --shadow-lg: 0 12px 48px oklch(18% 0.02 240 / 0.16);
+    }
+    body.dark {
+      --bg: oklch(15% 0.015 240);
+      --bg2: oklch(18% 0.015 240);
+      --surface: oklch(20% 0.015 240);
+      --fg: oklch(96% 0.01 240);
+      --fg2: oklch(72% 0.015 240);
+      --fg3: oklch(58% 0.015 240);
+      --border: oklch(30% 0.015 240);
+      --shadow-lg: 0 12px 48px oklch(0% 0 0 / 0.5);
+    }
+    body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .mono { font-family: var(--mono); }
+    .login-wrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+      background:
+        radial-gradient(ellipse at 80% 10%, var(--teal-dim) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, oklch(52% 0.14 195 / 0.06) 0%, transparent 50%),
+        var(--bg);
+    }
+    .login-card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 38px 34px; }
+    .login-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); background: var(--teal-dim); padding: 6px 12px; border-radius: 999px; margin-bottom: 22px; }
+    .login-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+    .login-card h1 { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; }
+    .login-card .sub { color: var(--fg2); font-size: 14px; margin-top: 6px; margin-bottom: 26px; }
+    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+    .field label { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg2); }
+    .field input { width: 100%; font-family: var(--sans); font-size: 14.5px; color: var(--fg); background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 13px; transition: border-color .15s, box-shadow .15s; outline: none; }
+    .field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
+    .btn { font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: 0.03em; border: none; border-radius: 10px; padding: 12px 18px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform .12s, background .15s; width: 100%; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-primary:hover { background: var(--teal-deep); }
+    .login-error { display: none; margin-top: 4px; margin-bottom: 14px; font-size: 13px; color: var(--red); font-weight: 500; background: var(--red-dim); border-radius: 8px; padding: 9px 12px; }
+    .login-note { margin-top: 20px; font-size: 11.5px; line-height: 1.6; color: var(--fg3); }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <form class="login-card" id="login-form" autocomplete="off">
+      <span class="login-badge"><span class="login-dot"></span> Restricted</span>
+      <h1>Dashboard sign-in</h1>
+      <p class="sub">Manage blog posts &amp; portfolio projects for wajeeh.dev</p>
+      <div class="field">
+        <label for="u">Username</label>
+        <input type="text" id="u" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="field">
+        <label for="p">Password</label>
+        <input type="password" id="p" autocomplete="off" />
+      </div>
+      <div class="login-error" id="login-error">Incorrect username or password.</div>
+      <button type="submit" class="btn btn-primary">Sign in →</button>
+      <p class="login-note">Hidden from site navigation — reachable only at <span class="mono">/admin</span>. After sign-in you'll be taken to <span class="mono">/dashboard</span>. Access is gated client-side: fine for keeping the panel private, but not bank-grade security. Don't store anything sensitive here.</p>
+    </form>
+  </div>
+
+  <script>
+  const AUTH_HASH = 2411275664774193; // cyrb53(user \0 pass, seed 7) — credentials are not stored in plaintext
+  const SESSION_KEY = 'wjh_admin_session';
+  const DASHBOARD_URL = 'dashboard.html';
+  function cyrb53(str, seed = 0) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+  }
+  // Already signed in? Skip the form.
+  if (sessionStorage.getItem(SESSION_KEY) === '1') { location.replace(DASHBOARD_URL); }
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const u = document.getElementById('u').value.trim();
+    const p = document.getElementById('p').value;
+    if (cyrb53(u + '\u0000' + p, 7) === AUTH_HASH) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      sessionStorage.setItem('wjh_admin_token', String(AUTH_HASH));
+      location.href = DASHBOARD_URL;
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('p').value = '';
+    }
+  });
+
+  // Match the dashboard's dark-mode preference for a consistent look.
+  if (localStorage.getItem('wjh_dark') === '1') document.body.classList.add('dark');
+  </script>
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A/B Test Playground — Syed Wajeeh Ul Hassan</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/></noscript>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: oklch(98.5% 0.008 60); --bg2: oklch(96% 0.012 60);
+  --fg: oklch(18% 0.02 240); --fg2: oklch(42% 0.02 240); --fg3: oklch(62% 0.015 240);
+  --teal: oklch(52% 0.14 195); --teal-light: oklch(94% 0.04 195); --teal-dim: oklch(52% 0.14 195 / 0.12);
+  --amber: oklch(68% 0.14 65); --amber-light: oklch(95% 0.04 65);
+  --purple: oklch(50% 0.16 280); --purple-light: oklch(94% 0.05 280); --purple-deep: oklch(40% 0.18 280);
+  --border: oklch(88% 0.01 60); --mono: 'JetBrains Mono', monospace; --sans: 'Plus Jakarta Sans', sans-serif;
+  --radius: 12px; --shadow: 0 2px 16px oklch(18% 0.02 240 / 0.08); --shadow-lg: 0 8px 40px oklch(18% 0.02 240 / 0.12);
+}
+body.dark { --bg: oklch(14% 0.015 240); --bg2: oklch(18% 0.015 240); --fg: oklch(92% 0.008 60); --fg2: oklch(70% 0.008 60); --fg3: oklch(50% 0.008 60); --border: oklch(28% 0.015 240); --teal-light: oklch(30% 0.06 195); --teal-dim: oklch(52% 0.14 195 / 0.2); --amber-light: oklch(28% 0.06 65); --purple-light: oklch(28% 0.08 280); }
+body.dark nav { background: oklch(14% 0.015 240 / 0.92); }
+body.dark .lab-stage, body.dark .ctrl-panel, body.dark .lesson-card, body.dark .fact-card { background: oklch(20% 0.015 240); }
+body.dark .ab-option { background: oklch(22% 0.015 240); }
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.6; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+::selection { background: var(--purple-light); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.7; } }
+@keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: oklch(98.5% 0.008 60 / 0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 5%; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { display: flex; align-items: center; text-decoration: none; }
+.nav-links { display: flex; gap: 4px; list-style: none; align-items: center; }
+.nav-links > li { position: relative; }
+.nav-links a { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--fg2); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+.nav-links a:hover, .nav-links a.active { color: var(--purple); background: var(--purple-light); }
+.has-dropdown > a::after { content: ' ▾'; opacity: 0.6; font-size: 10px; }
+.nav-dropdown { position: absolute; top: calc(100% + 4px); left: -8px; background: white; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 12px 40px oklch(18% 0.02 240 / 0.16); padding: 10px; min-width: 340px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity 0.2s, visibility 0.2s, transform 0.2s; z-index: 200; }
+body.dark .nav-dropdown { background: oklch(20% 0.015 240); }
+.has-dropdown:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-dropdown a { display: flex !important; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 12px !important; border-radius: 8px !important; font-family: var(--sans) !important; font-size: 13px !important; font-weight: 600 !important; color: var(--fg) !important; }
+.nav-dropdown a:hover { background: var(--purple-light) !important; color: var(--purple) !important; }
+.nav-dropdown a small { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--fg3); }
+.nav-cta { background: var(--teal) !important; color: white !important; padding: 9px 20px !important; border-radius: 10px !important; font-weight: 600 !important; }
+.nav-cta:hover { background: oklch(46% 0.14 195) !important; transform: translateY(-2px); }
+.dark-toggle { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; flex-shrink: 0; margin-left: 10px; }
+.dark-toggle:hover { background: var(--purple-light); border-color: var(--purple); transform: rotate(15deg); }
+
+/* HEADER */
+.lab-header { padding: 120px 5% 50px; background: linear-gradient(135deg, oklch(96% 0.04 280) 0%, oklch(94% 0.05 320) 50%, oklch(96% 0.04 280) 100%); background-size: 400% 400%; animation: gradientShift 12s ease infinite; position: relative; overflow: hidden; }
+body.dark .lab-header { background: linear-gradient(135deg, oklch(18% 0.06 280) 0%, oklch(16% 0.08 320) 50%, oklch(18% 0.06 280) 100%); background-size: 400% 400%; animation: gradientShift 12s ease infinite; }
+.lab-header-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 48px 48px; opacity: 0.35; pointer-events: none; }
+.lab-header-inner { max-width: 1100px; margin: 0 auto; animation: fadeUp 0.7s ease forwards; position: relative; }
+.bread { display: flex; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--fg3); margin-bottom: 16px; }
+.bread a { color: var(--purple); text-decoration: none; }
+.bread span { opacity: 0.5; }
+.lab-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.14em; background: oklch(100% 0 0 / 0.5); backdrop-filter: blur(8px); padding: 8px 14px; border-radius: 999px; border: 1px solid oklch(60% 0.16 280 / 0.2); margin-bottom: 18px; }
+body.dark .lab-eyebrow { background: oklch(22% 0.06 280 / 0.5); }
+.lab-eyebrow .dot { width: 7px; height: 7px; background: var(--purple); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+.lab-header h1 { font-family: var(--mono); font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 18px; max-width: 800px; }
+.lab-header h1 span { background: linear-gradient(135deg, var(--purple) 0%, oklch(60% 0.18 320) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.lab-header .lead { font-size: 17px; color: var(--fg2); max-width: 660px; line-height: 1.75; }
+
+/* MAIN LAYOUT */
+.lab-layout { max-width: 1200px; margin: 0 auto; padding: 48px 5% 24px; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
+.lab-stage {
+  background: white;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: sticky;
+  top: 96px;
+  box-shadow: var(--shadow);
+}
+.stage-tab-bar { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 16px; gap: 4px; }
+body.dark .stage-tab-bar { background: oklch(18% 0.015 240); }
+.stage-tab { padding: 12px 14px; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--fg3); letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 2px solid transparent; cursor: default; }
+.stage-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+.stage-tab .changes-badge { background: var(--purple); color: white; padding: 1px 6px; border-radius: 999px; margin-left: 6px; font-size: 9px; }
+.stage-tab .changes-badge.zero { opacity: 0.3; }
+.stage-viewport { padding: 56px 48px; min-height: 420px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+.stage-eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px; }
+.stage-eyebrow::before { content: ''; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; }
+.stage-h1 { font-family: var(--mono); font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; margin-bottom: 20px; color: var(--fg); transition: opacity 0.3s; }
+.stage-h1 .accent { color: var(--teal); }
+.stage-h1 .amber { color: var(--amber); }
+.stage-sub { font-size: 16px; color: var(--fg2); line-height: 1.65; max-width: 480px; margin-bottom: 28px; }
+.stage-cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.stage-cta { background: var(--teal); color: white; font-family: var(--mono); font-size: 14px; font-weight: 600; padding: 14px 26px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 24px oklch(52% 0.14 195 / 0.3); display: inline-flex; align-items: center; gap: 8px; }
+.stage-cta:hover { transform: translateY(-2px); }
+.stage-secondary { background: transparent; color: var(--fg); font-family: var(--mono); font-size: 14px; font-weight: 600; padding: 14px 26px; border-radius: 10px; border: 1.5px solid var(--border); }
+
+/* MOCK CONVERSION GAUGE INSIDE STAGE */
+.stage-watermark {
+  position: absolute;
+  bottom: 12px;
+  right: 18px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--fg3);
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+/* Testimonial proof strip */
+.stage-proof {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 28px; padding: 14px 18px;
+  background: var(--bg2); border-radius: 12px;
+  border-left: 3px solid var(--amber);
+  transition: opacity 0.35s, max-height 0.45s, padding 0.3s, margin 0.3s;
+  overflow: hidden; max-height: 100px;
+}
+body.dark .stage-proof { background: oklch(22% 0.015 240); }
+.stage-proof.hidden { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; margin-top: 0; border-left-width: 0; }
+.stage-proof-avatars { display: flex; flex-shrink: 0; }
+.stage-proof-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid white; margin-left: -10px;
+  background: linear-gradient(135deg, var(--teal), var(--amber));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 700; color: white;
+}
+body.dark .stage-proof-avatar { border-color: oklch(20% 0.015 240); }
+.stage-proof-avatar:first-child { margin-left: 0; }
+.stage-proof-text { font-size: 12px; color: var(--fg2); line-height: 1.45; flex: 1; }
+.stage-proof-text strong { color: var(--fg); }
+.stage-proof-stars { color: var(--amber); font-size: 12px; letter-spacing: 1px; margin-bottom: 2px; }
+
+/* Hero media block */
+.stage-media {
+  margin-top: 24px; aspect-ratio: 16/9; max-height: 240px;
+  border-radius: 12px; overflow: hidden;
+  position: relative;
+  transition: opacity 0.4s, max-height 0.5s, margin 0.3s;
+}
+.stage-media.hidden { max-height: 0; margin-top: 0; opacity: 0; }
+.stage-media-img {
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse at 30% 30%, oklch(70% 0.18 195 / 0.4), transparent 60%),
+    radial-gradient(ellipse at 70% 70%, oklch(75% 0.16 65 / 0.4), transparent 60%),
+    linear-gradient(135deg, oklch(50% 0.16 195), oklch(40% 0.15 280));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; color: oklch(100% 0 0 / 0.85);
+  letter-spacing: 0.18em;
+}
+.stage-media-video {
+  width: 100%; height: 100%;
+  background: oklch(15% 0.02 240);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage-media-video::before {
+  content: ''; position: absolute; inset: -20%;
+  background: conic-gradient(from 0deg, oklch(50% 0.16 280), oklch(60% 0.18 320), oklch(50% 0.16 195), oklch(70% 0.16 65), oklch(50% 0.16 280));
+  animation: videoSpin 8s linear infinite;
+  filter: blur(40px); opacity: 0.7;
+}
+@keyframes videoSpin { to { transform: rotate(360deg); } }
+.stage-media-vbadge {
+  position: relative; z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: oklch(0% 0 0 / 0.5); backdrop-filter: blur(8px);
+  padding: 8px 14px; border-radius: 999px;
+  color: white; font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.stage-media-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: oklch(75% 0.18 25); box-shadow: 0 0 8px oklch(75% 0.18 25);
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+@keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* Form mockup */
+.stage-form {
+  margin-top: 24px; background: var(--bg2);
+  border-radius: 12px; padding: 18px 20px;
+  border: 1px solid var(--border);
+  transition: opacity 0.3s;
+}
+body.dark .stage-form { background: oklch(22% 0.015 240); }
+.stage-form-title { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg3); margin-bottom: 12px; display: flex; justify-content: space-between; }
+.stage-form-title span { color: var(--teal); }
+.stage-form-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.stage-form-field label { font-size: 10px; font-weight: 600; color: var(--fg3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.stage-form-input { height: 30px; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; font-size: 12px; }
+body.dark .stage-form-input { background: oklch(18% 0.015 240); }
+.stage-form-input.tall { height: 56px; }
+.stage-form-btn { margin-top: 4px; width: 100%; background: var(--teal); color: white; font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 10px; border: none; border-radius: 8px; letter-spacing: 0.04em; cursor: default; }
+
+/* HEATMAP overlay */
+.heatmap-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0; transition: opacity 0.5s; z-index: 10;
+  mix-blend-mode: multiply;
+}
+.heatmap-overlay.active { opacity: 1; }
+body.dark .heatmap-overlay { mix-blend-mode: screen; }
+.heatmap-blob {
+  position: absolute; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(28px);
+}
+.heatmap-legend {
+  position: absolute; bottom: 14px; left: 18px;
+  background: oklch(18% 0.02 240 / 0.92); color: white;
+  padding: 6px 12px; border-radius: 999px;
+  font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+  display: flex; align-items: center; gap: 10px;
+  z-index: 11; opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.stage-viewport.heatmap-on .heatmap-legend { opacity: 1; }
+.heatmap-legend .lhot, .heatmap-legend .lwarm, .heatmap-legend .lcool {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.heatmap-legend .lhot::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: oklch(70% 0.22 25); }
+.heatmap-legend .lwarm::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: oklch(80% 0.18 65); }
+.heatmap-legend .lcool::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: oklch(70% 0.14 220); }
+
+.heatmap-btn {
+  background: oklch(95% 0.04 25); color: oklch(50% 0.18 25);
+  border: 1.5px solid oklch(75% 0.15 25 / 0.4);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+  letter-spacing: 0.06em; transition: all 0.2s;
+  margin-left: auto;
+}
+body.dark .heatmap-btn { background: oklch(28% 0.06 25); color: oklch(80% 0.18 25); }
+.heatmap-btn:hover { background: oklch(58% 0.20 25); color: white; border-color: oklch(58% 0.20 25); }
+.heatmap-btn.active { background: oklch(58% 0.20 25); color: white; border-color: oklch(58% 0.20 25); box-shadow: 0 0 0 3px oklch(58% 0.20 25 / 0.2); }
+
+/* CONTROL PANEL */
+.ctrl-panel { background: white; border-radius: 18px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
+.ctrl-panel-header { background: linear-gradient(135deg, var(--purple), oklch(60% 0.18 320)); color: white; padding: 18px 22px; }
+.ctrl-panel-header h3 { font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; display: flex; align-items: center; gap: 8px; }
+.ctrl-panel-header h3::before { content: '🧪'; font-size: 16px; }
+.ctrl-panel-header p { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+.ctrl-body { padding: 18px 22px 8px; }
+.ab-section { margin-bottom: 22px; }
+.ab-section-label { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.ab-section-label::before { content: ''; width: 16px; height: 16px; background: var(--purple); border-radius: 4px; box-shadow: 0 0 0 3px var(--purple-dim, oklch(50% 0.16 280 / 0.12)); }
+.ab-options { display: flex; flex-direction: column; gap: 8px; }
+.ab-option { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 13px; color: var(--fg2); font-weight: 500; }
+.ab-option:hover { border-color: oklch(60% 0.16 280); background: oklch(96% 0.03 280); color: var(--fg); }
+body.dark .ab-option:hover { background: oklch(24% 0.06 280); }
+.ab-option.active { border-color: var(--purple); background: var(--purple-light); color: var(--purple-deep); font-weight: 600; }
+body.dark .ab-option.active { color: oklch(82% 0.14 280); }
+.ab-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; position: relative; transition: border-color 0.2s; }
+.ab-option.active .ab-radio { border-color: var(--purple); }
+.ab-option.active .ab-radio::after { content: ''; position: absolute; inset: 2px; background: var(--purple); border-radius: 50%; }
+.ab-option-text { flex: 1; line-height: 1.4; }
+.ab-option-text small { display: block; font-size: 11px; color: var(--fg3); font-weight: 500; margin-top: 2px; }
+.ab-option.active .ab-option-text small { color: var(--purple); }
+
+.ab-colors { display: flex; gap: 10px; flex-wrap: wrap; }
+.ab-color { width: 44px; height: 44px; border-radius: 12px; border: 3px solid var(--bg2); cursor: pointer; box-shadow: 0 0 0 1.5px var(--border); transition: all 0.2s; position: relative; }
+body.dark .ab-color { border-color: oklch(22% 0.02 240); }
+.ab-color:hover { transform: translateY(-3px); }
+.ab-color.active { box-shadow: 0 0 0 2.5px var(--purple); border-color: white; transform: translateY(-3px) scale(1.05); }
+.ab-color.active::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; text-shadow: 0 1px 3px oklch(0% 0 0 / 0.3); }
+
+.ctrl-impact { background: linear-gradient(135deg, var(--purple-light), oklch(94% 0.04 320)); border-top: 1px solid var(--border); padding: 16px 22px; }
+body.dark .ctrl-impact { background: oklch(22% 0.06 280); }
+.imp-label { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--purple-deep); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+body.dark .imp-label { color: oklch(80% 0.14 280); }
+.imp-label::before { content: '📈'; }
+.imp-meter { display: flex; align-items: baseline; gap: 10px; margin: 6px 0 8px; }
+.imp-num { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--purple-deep); line-height: 1; transition: color 0.4s; }
+body.dark .imp-num { color: oklch(82% 0.18 280); }
+.imp-suffix { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--fg3); }
+.imp-text { font-size: 12px; color: var(--fg2); line-height: 1.55; }
+.imp-text strong { color: var(--purple-deep); font-weight: 700; }
+body.dark .imp-text strong { color: oklch(82% 0.18 280); }
+
+.ab-reset { width: calc(100% - 44px); margin: 0 22px 16px; background: transparent; border: 1.5px solid var(--border); color: var(--fg2); font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em; }
+.ab-reset:hover { border-color: var(--purple); color: var(--purple); }
+
+/* TOAST */
+.ab-toast { position: fixed; bottom: 24px; right: 24px; z-index: 97; width: 340px; max-width: calc(100vw - 48px); background: oklch(18% 0.02 240); color: white; border-radius: 14px; padding: 16px 20px; box-shadow: 0 16px 40px oklch(18% 0.02 240 / 0.35); transform: translateY(20px); opacity: 0; pointer-events: none; transition: transform 0.3s, opacity 0.3s; border-left: 4px solid oklch(60% 0.18 320); }
+.ab-toast.show { transform: translateY(0); opacity: 1; }
+.ab-toast-title { font-family: var(--mono); font-size: 10px; font-weight: 700; color: oklch(75% 0.18 320); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
+.ab-toast-text { font-size: 13px; line-height: 1.55; color: oklch(92% 0.01 60); }
+
+/* EDUCATIONAL SECTION */
+.lessons { max-width: 1100px; margin: 0 auto; padding: 24px 5% 80px; }
+.lessons-header { text-align: center; margin-bottom: 36px; }
+.lessons-eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--purple); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
+.lessons-header h2 { font-family: var(--mono); font-size: clamp(24px, 3vw, 34px); font-weight: 700; letter-spacing: -0.025em; }
+.lessons-header p { font-size: 15px; color: var(--fg2); max-width: 580px; margin: 12px auto 0; line-height: 1.7; }
+.lessons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.lesson-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: all 0.2s; }
+.lesson-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: oklch(60% 0.16 280 / 0.3); }
+.lesson-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--purple); letter-spacing: 0.08em; margin-bottom: 8px; }
+.lesson-card h4 { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--fg); margin-bottom: 8px; letter-spacing: -0.01em; }
+.lesson-card p { font-size: 13px; color: var(--fg2); line-height: 1.7; }
+.lesson-card p strong { color: var(--purple-deep); }
+body.dark .lesson-card p strong { color: oklch(82% 0.14 280); }
+
+/* CTA BAND */
+.cta-band { background: var(--fg); color: white; border-radius: 18px; padding: 36px 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; margin: 48px auto 80px; flex-wrap: wrap; max-width: 1100px; }
+.cta-band h3 { font-family: var(--mono); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.cta-band p { color: oklch(75% 0.01 60); font-size: 14px; margin-top: 6px; max-width: 480px; }
+.cta-band .btn { background: var(--purple); color: white; font-family: var(--mono); font-size: 13px; font-weight: 600; padding: 14px 28px; border-radius: 10px; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+.cta-band .btn:hover { background: var(--purple-deep); transform: translateY(-2px); }
+
+footer { background: var(--fg); color: oklch(85% 0.01 60); padding: 32px 5%; text-align: center; }
+.footer-back { display: inline-flex; align-items: center; gap: 6px; color: var(--purple); font-family: var(--mono); font-size: 13px; text-decoration: none; margin-bottom: 12px; }
+.footer-back:hover { opacity: 0.75; }
+.footer-copy { font-size: 13px; color: oklch(50% 0.01 60); }
+
+@media (max-width: 900px) {
+  .lab-layout { grid-template-columns: 1fr; }
+  .lab-stage { position: static; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex !important; }
+  .nav-links.open { display: flex !important; flex-direction: column; align-items: stretch; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-lg); padding: 10px 5% 16px; gap: 2px; max-height: calc(100vh - 64px); overflow-y: auto; z-index: 99; }
+  .nav-links.open > li { width: 100%; }
+  .nav-links.open > li > a { display: block; padding: 13px 14px; border-radius: 10px; font-size: 15px; }
+  .nav-links.open .nav-dropdown { display: none !important; }
+  .nav-links.open .nav-cta { width: 100% !important; text-align: center; justify-content: center; margin-top: 6px; }
+}
+</style>
+<style id="mobile-nav-fix">
+    .nav-hamburger { display: none; cursor: pointer; flex-direction: column; justify-content: center; gap: 5px; margin-left: 10px; background: none; border: none; padding: 9px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--fg); border-radius: 2px; transition: 0.3s; }
+  </style>
+
+<style id="nav-pill-v2">
+/* ═══ Floating glass pill navigation (site-wide, matches index.html) ═══ */
+body > nav {
+  top: 12px !important; left: max(14px, 2.2%) !important; right: max(14px, 2.2%) !important;
+  background: oklch(98.5% 0.008 60 / 0.72) !important;
+  backdrop-filter: blur(20px) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.6) !important;
+  border: 1px solid oklch(100% 0 0 / 0.65) !important;
+  box-shadow: 0 10px 40px oklch(18% 0.02 240 / 0.08), inset 0 1px 0 oklch(100% 0 0 / 0.7) !important;
+  border-radius: 999px !important;
+  height: 60px !important;
+  padding: 0 12px 0 24px !important;
+  transition: box-shadow 0.4s, background 0.4s, height 0.3s, top 0.3s !important;
+}
+body > nav.scrolled {
+  top: 8px !important; height: 54px !important;
+  background: oklch(98.5% 0.008 60 / 0.88) !important;
+  box-shadow: 0 14px 44px oklch(18% 0.02 240 / 0.14), inset 0 1px 0 oklch(100% 0 0 / 0.7) !important;
+}
+body.dark > nav {
+  background: oklch(16% 0.015 240 / 0.78) !important;
+  border-color: oklch(32% 0.02 240 / 0.7) !important;
+  box-shadow: 0 10px 40px oklch(0% 0 0 / 0.35) !important;
+}
+body.dark > nav.scrolled { background: oklch(16% 0.015 240 / 0.9) !important; }
+/* active page dot */
+.nav-links > li > a.active:not(.nav-cta) { position: relative; }
+.nav-links > li > a.active:not(.nav-cta)::before {
+  content: ''; position: absolute; left: 50%; bottom: -1px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--teal);
+  transform: translateX(-50%);
+}
+/* hamburger → animated ✕ */
+.nav-hamburger {
+  width: 42px !important; height: 42px !important;
+  align-items: center !important; justify-content: center !important;
+  border-radius: 50% !important; gap: 5px !important;
+  margin-left: 6px; transition: background 0.2s;
+  background: none; border: none; padding: 0 !important;
+}
+.nav-hamburger:hover { background: var(--teal-light) !important; }
+.nav-hamburger span {
+  width: 20px !important; height: 2px !important;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.2s !important;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+/* mobile drawer → floating frosted card */
+.nav-links.open {
+  position: fixed !important;
+  top: 82px !important; left: max(14px, 2.2%) !important; right: max(14px, 2.2%) !important;
+  background: oklch(98.5% 0.008 60 / 0.92) !important;
+  backdrop-filter: blur(22px) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.6) !important;
+  border: 1px solid oklch(100% 0 0 / 0.65) !important;
+  border-bottom: 1px solid oklch(100% 0 0 / 0.65) !important;
+  border-radius: 22px !important;
+  padding: 14px 14px 18px !important;
+  box-shadow: 0 24px 60px oklch(18% 0.02 240 / 0.18) !important;
+  max-height: calc(100dvh - 96px) !important;
+  overflow-y: auto !important;
+  animation: navDrawerInV2 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes navDrawerInV2 { from { opacity: 0; transform: translateY(-10px) scale(0.98); } to { opacity: 1; transform: none; } }
+body > nav.scrolled .nav-links.open { top: 70px !important; max-height: calc(100dvh - 84px) !important; }
+body.dark .nav-links.open { background: oklch(16% 0.015 240 / 0.94) !important; border-color: oklch(30% 0.02 240 / 0.7) !important; }
+/* Harmonized collapse breakpoint (matches index.html) — prevents pill overflow at 900–1140px */
+@media (max-width: 1140px) {
+  .nav-links:not(.open) { display: none !important; }
+  .nav-hamburger { display: flex !important; }
+  .nav-links.open { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 4px !important; }
+  .nav-links.open > li { width: 100% !important; position: relative; }
+  .nav-links.open > li > a { display: block !important; padding: 12px 14px !important; border-radius: 10px !important; }
+  .nav-links.open .has-dropdown { display: grid !important; grid-template-columns: 1fr auto !important; align-items: center !important; column-gap: 4px; }
+  .nav-links.open .has-dropdown > a { grid-column: 1; }
+  .nav-links.open .has-dropdown > a::after { display: none !important; }
+  .nav-links.open .has-dropdown > .dropdown-caret { display: inline-flex !important; grid-column: 2; }
+  .nav-links.open .has-dropdown > .nav-dropdown { grid-column: 1 / -1; }
+  .nav-links.open .has-dropdown.submenu-open .dropdown-caret { transform: rotate(180deg); color: var(--teal); }
+  .nav-links.open .nav-dropdown {
+    position: static !important; min-width: 0 !important;
+    opacity: 0; visibility: hidden; max-height: 0; overflow: hidden;
+    transform: none !important; box-shadow: none !important; border: none !important;
+    background: transparent !important; padding: 0 !important;
+    transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.2s ease;
+  }
+  .nav-links.open .has-dropdown.submenu-open .nav-dropdown {
+    opacity: 1 !important; visibility: visible !important; max-height: 800px !important; padding: 4px 0 8px 12px !important;
+  }
+  .nav-links.open .nav-cta { width: 100% !important; justify-content: center !important; text-align: center !important; margin-top: 4px; }
+}
+</style>
+<script>
+/* Sync the hamburger's ✕ state with the drawer (works with each page's own toggle handler) */
+document.addEventListener('click', function (e) {
+  var h = e.target.closest('.nav-hamburger');
+  if (!h) return;
+  setTimeout(function () {
+    var n = document.querySelector('.nav-links');
+    var open = !!(n && n.classList.contains('open'));
+    h.classList.toggle('open', open);
+    h.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }, 0);
+});
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo" style="gap:0;">
+    <svg width="150" height="44" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
+      <text x="2" y="32" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="700" fill="var(--teal)" letter-spacing="-1.5">Wajeeh</text>
+      <path d="M 4 38 Q 50 44 100 38 T 138 36" stroke="var(--amber)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="142" cy="35" r="3.5" fill="var(--amber)"/>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About Me</a></li>
+    <li class="has-dropdown">
+      <a href="services.html">Services</a>
+      <div class="nav-dropdown">
+        <a href="services.html?s=scratch"><span>🚀 Scratch to Sales</span><small>Full funnel — plan to scale</small></a>
+        <a href="services.html?s=growth"><span>🌱 Growth Marketing</span><small>New businesses — zero to traction</small></a>
+        <a href="services.html?s=seo"><span>🔍 SEO</span><small>Search Engine Optimization</small></a>
+        <a href="services.html?s=llmseo"><span>✨ LLM SEO</span><small>AI Search · ChatGPT &amp; AI Overviews</small></a>
+        <a href="services.html?s=aeo"><span>🗣️ Ask Engine Optimization</span><small>Answer boxes, PAA &amp; voice</small></a>
+        <a href="services.html?s=sem"><span>🎯 SEM / PPC</span><small>Google Ads &amp; Paid Search</small></a>
+        <a href="services.html?s=paid"><span>📣 Paid Social</span><small>Meta, TikTok &amp; DTC Ads</small></a>
+        <a href="services.html?s=performance"><span>📊 Performance Marketing</span><small>Cross-channel paid growth</small></a>
+        <a href="services.html?s=social"><span>💬 Social Media</span><small>Organic Social &amp; Community</small></a>
+        <a href="services.html?s=content"><span>✍️ Content</span><small>SEO Content &amp; Copywriting</small></a>
+        <a href="services.html?s=email"><span>📧 Email</span><small>Klaviyo &amp; Lifecycle Email</small></a>
+        <a href="services.html?s=webdev"><span>🌐 Web Dev</span><small>Next.js, Shopify &amp; Headless</small></a>
+        <a href="services.html?s=wordpress"><span>🔷 WordPress</span><small>Custom Themes &amp; Speed</small></a>
+        <a href="services.html?s=automation"><span>🤖 Automation &amp; AI</span><small>AI Agents, GHL &amp; Zapier</small></a>
+      </div>
+    </li>
+    <li><a href="projections.html">Estimators</a></li>
+    <li><a href="projects.html">Case Studies</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="contact.html" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+  <button class="nav-hamburger" aria-label="Open menu" onclick="document.querySelector('nav .nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HEADER -->
+<div class="lab-header">
+  <div class="lab-header-bg"></div>
+  <div class="lab-header-inner">
+    <div class="bread"><a href="index.html">Home</a><span>/</span>A/B Test Playground</div>
+    <div class="lab-eyebrow"><span class="dot"></span>Live · Interactive · 100% You</div>
+    <h1>Be the marketer. <span>Test my own site.</span></h1>
+    <p class="lead">Most portfolios tell you they understand conversion. This page lets you prove it on me. Change my headline, swap my CTA color, rewrite my button copy — and watch the projected impact update live with citations for every claim.</p>
+  </div>
+</div>
+
+<!-- PLAYGROUND -->
+<div class="lab-layout">
+
+  <!-- STAGE -->
+  <div class="lab-stage">
+    <div class="stage-tab-bar">
+      <div class="stage-tab active">▸ LIVE PREVIEW</div>
+      <div class="stage-tab" style="color:var(--fg3);">CHANGES <span class="changes-badge zero" id="changesBadge">0</span></div>
+      <button class="heatmap-btn" id="heatmapBtn" onclick="toggleHeatmap()">🔥 View Heatmap</button>
+    </div>
+    <div class="stage-viewport">
+      <div class="stage-eyebrow">Available for Projects</div>
+      <h1 class="stage-h1" id="stageH1">
+        Growth Dev &amp;<br/>
+        <span class="accent">Performance</span><br/>
+        <span class="amber">Marketer</span>
+      </h1>
+      <p class="stage-sub" id="stageSub">Full Stack Developer &amp; SEO Consultant delivering measurable results. $10M+ ad spend managed, 300+ clients served, and proven 3× lead growth.</p>
+      <div class="stage-cta-row">
+        <button class="stage-cta" id="stageCta">Let's Work Together →</button>
+        <button class="stage-secondary">View My Work</button>
+      </div>
+
+      <!-- Social proof strip -->
+      <div class="stage-proof" id="stageProof">
+        <div class="stage-proof-avatars">
+          <div class="stage-proof-avatar">SJ</div>
+          <div class="stage-proof-avatar">MK</div>
+          <div class="stage-proof-avatar">DT</div>
+        </div>
+        <div class="stage-proof-text">
+          <div class="stage-proof-stars">★★★★★</div>
+          <div><strong>300+ clients</strong> · “He ships and the numbers move.” — Sarah J.</div>
+        </div>
+      </div>
+
+      <!-- Hero media (image / video / none) -->
+      <div class="stage-media" id="stageMedia">
+        <div class="stage-media-img" id="stageMediaInner">[ Hero Image Placeholder · 16:9 ]</div>
+      </div>
+
+      <!-- Contact form mockup -->
+      <div class="stage-form" id="stageForm">
+        <div class="stage-form-title">
+          <span id="stageFormLabel">Contact Form · Micro</span>
+          <span id="stageFormCount">2 fields</span>
+        </div>
+        <div id="stageFormFields">
+          <div class="stage-form-field"><label>Name</label><div class="stage-form-input"></div></div>
+          <div class="stage-form-field"><label>Email</label><div class="stage-form-input"></div></div>
+        </div>
+        <button class="stage-form-btn">Send Message →</button>
+      </div>
+
+      <!-- Simulated heatmap overlay -->
+      <div class="heatmap-overlay" id="heatmapOverlay">
+        <!-- HOT: headline + CTA -->
+        <div class="heatmap-blob" style="top:24%; left:50%; width:340px; height:200px; background: radial-gradient(circle, oklch(70% 0.22 25 / 0.65) 0%, oklch(75% 0.20 50 / 0.35) 40%, transparent 70%);"></div>
+        <div class="heatmap-blob" style="top:50%; left:30%; width:260px; height:160px; background: radial-gradient(circle, oklch(70% 0.22 25 / 0.6) 0%, oklch(78% 0.20 50 / 0.3) 50%, transparent 75%);"></div>
+        <!-- WARM: subtitle + proof -->
+        <div class="heatmap-blob" style="top:40%; left:50%; width:480px; height:180px; background: radial-gradient(circle, oklch(80% 0.18 65 / 0.35) 0%, transparent 70%);"></div>
+        <div class="heatmap-blob" style="top:62%; left:45%; width:380px; height:140px; background: radial-gradient(circle, oklch(82% 0.18 80 / 0.32) 0%, transparent 70%);"></div>
+        <!-- COOL: form -->
+        <div class="heatmap-blob" style="top:88%; left:50%; width:420px; height:200px; background: radial-gradient(circle, oklch(70% 0.14 220 / 0.30) 0%, transparent 70%);"></div>
+        <div class="heatmap-blob" style="top:80%; left:80%; width:240px; height:200px; background: radial-gradient(circle, oklch(75% 0.12 240 / 0.22) 0%, transparent 70%);"></div>
+      </div>
+      <div class="heatmap-legend">
+        <span class="lhot">HOT</span>
+        <span class="lwarm">WARM</span>
+        <span class="lcool">COOL</span>
+        <span>· SIMULATED CLICK DENSITY</span>
+      </div>
+      <div class="stage-watermark">wajeeh.dev/lab</div>
+    </div>
+  </div>
+
+  <!-- CONTROL PANEL -->
+  <div class="ctrl-panel">
+    <div class="ctrl-panel-header">
+      <h3>A/B Test Controls</h3>
+      <p>Pick a variant. Watch the impact. Read why.</p>
+    </div>
+    <div class="ctrl-body">
+
+      <div class="ab-section">
+        <div class="ab-section-label">Hero Headline</div>
+        <div class="ab-options" data-ab="headline">
+          <div class="ab-option active" data-val="benefit"><div class="ab-radio"></div><div class="ab-option-text">Variant A: Benefit-Driven<small>Growth Dev &amp; Performance Marketer</small></div></div>
+          <div class="ab-option" data-val="tech"><div class="ab-radio"></div><div class="ab-option-text">Variant B: Tech-Driven<small>Building Scalable Architectures</small></div></div>
+          <div class="ab-option" data-val="outcome"><div class="ab-radio"></div><div class="ab-option-text">Variant C: Outcome-Focused<small>I grow brands that already have product</small></div></div>
+          <div class="ab-option" data-val="objection"><div class="ab-radio"></div><div class="ab-option-text">Variant D: Objection-Buster<small>Done with agencies that don't ship?</small></div></div>
+        </div>
+      </div>
+
+      <div class="ab-section">
+        <div class="ab-section-label">Hero Subtitle</div>
+        <div class="ab-options" data-ab="subtitle">
+          <div class="ab-option active" data-val="0"><div class="ab-radio"></div><div class="ab-option-text">Stats-led<small>$10M+ ad spend · 300+ clients · 3× growth</small></div></div>
+          <div class="ab-option" data-val="1"><div class="ab-radio"></div><div class="ab-option-text">Story-led<small>I help founders ship before they overthink.</small></div></div>
+          <div class="ab-option" data-val="2"><div class="ab-radio"></div><div class="ab-option-text">Specificity-led<small>SEO + Paid Ads + Code, in one operator.</small></div></div>
+        </div>
+      </div>
+
+      <div class="ab-section">
+        <div class="ab-section-label">CTA Button Color</div>
+        <div class="ab-colors" data-ab="cta-color">
+          <button class="ab-color active" data-val="teal"  style="background: oklch(52% 0.14 195);" aria-label="Teal"></button>
+          <button class="ab-color"        data-val="red"   style="background: oklch(58% 0.20 25);"  aria-label="Red"></button>
+          <button class="ab-color"        data-val="green" style="background: oklch(58% 0.16 145);" aria-label="Green"></button>
+          <button class="ab-color"        data-val="amber" style="background: oklch(72% 0.16 65);"  aria-label="Amber"></button>
+          <button class="ab-color"        data-val="blue"  style="background: oklch(52% 0.18 260);" aria-label="Blue"></button>
+          <button class="ab-color"        data-val="black" style="background: oklch(22% 0.02 240);" aria-label="Black"></button>
+          <button class="ab-color"        data-val="purple" style="background: oklch(50% 0.16 280);" aria-label="Purple"></button>
+        </div>
+      </div>
+
+      <div class="ab-section">
+        <div class="ab-section-label">CTA Button Copy</div>
+        <div class="ab-options" data-ab="cta-text">
+          <div class="ab-option active" data-val="0"><div class="ab-radio"></div><div class="ab-option-text">"Let's Work Together →"<small>Collaborative · neutral</small></div></div>
+          <div class="ab-option" data-val="1"><div class="ab-radio"></div><div class="ab-option-text">"Hire Me →"<small>Direct · high-intent</small></div></div>
+          <div class="ab-option" data-val="2"><div class="ab-radio"></div><div class="ab-option-text">"Book a Free Call →"<small>Low-friction · concrete</small></div></div>
+          <div class="ab-option" data-val="3"><div class="ab-radio"></div><div class="ab-option-text">"Get Your Free Audit →"<small>Value-first · audit hook</small></div></div>
+        </div>
+      </div>
+
+      <div class="ab-section">
+        <div class="ab-section-label">Social Proof</div>
+        <div class="ab-options" data-ab="proof">
+          <div class="ab-option active" data-val="show"><div class="ab-radio"></div><div class="ab-option-text">Show Testimonials<small>5-star strip · client count</small></div></div>
+          <div class="ab-option" data-val="hide"><div class="ab-radio"></div><div class="ab-option-text">Hide Testimonials<small>Minimalist · hero only</small></div></div>
+        </div>
+      </div>
+
+      <div class="ab-section">
+        <div class="ab-section-label">Hero Visual</div>
+        <div class="ab-options" data-ab="visual">
+          <div class="ab-option active" data-val="image"><div class="ab-radio"></div><div class="ab-option-text">Static Image<small>Fast load · low bandwidth</small></div></div>
+          <div class="ab-option" data-val="video"><div class="ab-radio"></div><div class="ab-option-text">Autoplay Video<small>+88% time on page · −load speed</small></div></div>
+          <div class="ab-option" data-val="none"><div class="ab-radio"></div><div class="ab-option-text">No Visual<small>Pure copy-driven hero</small></div></div>
+        </div>
+      </div>
+
+      <div class="ab-section">
+        <div class="ab-section-label">Form Friction</div>
+        <div class="ab-options" data-ab="form">
+          <div class="ab-option active" data-val="micro"><div class="ab-radio"></div><div class="ab-option-text">Micro-Form (2 fields)<small>Name + Email · max volume</small></div></div>
+          <div class="ab-option" data-val="high"><div class="ab-radio"></div><div class="ab-option-text">High-Intent (5 fields)<small>+ Budget, Timeline, Details</small></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="ab-reset" onclick="abReset()">↺ Reset all variants</button>
+
+    <div class="ctrl-impact">
+      <div class="imp-label">Projected Impact <span id="changeCount" style="margin-left:auto;font-size:9px;opacity:0.6;">0 changes</span></div>
+      <div class="imp-meter">
+        <div class="imp-num" id="impNum">+0%</div>
+        <div class="imp-suffix">estimated CTR lift</div>
+      </div>
+      <div class="imp-text" id="impText">Change any variant above to see how it could shift your conversion rate. <strong>Pro tip:</strong> the multipliers compound — not add — in a real test.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EDUCATIONAL LESSONS -->
+<div class="lessons">
+  <div class="lessons-header">
+    <div class="lessons-eyebrow">A/B Testing 101 · By Wajeeh</div>
+    <h2>What this playground simplifies</h2>
+    <p>Real A/B testing is messier than this UI suggests — but the principles you just felt are how I actually run tests for clients.</p>
+  </div>
+  <div class="lessons-grid">
+    <div class="lesson-card"><div class="lesson-num">01 · CONFIDENCE</div><h4>Statistical Significance</h4><p>You need at least <strong>100 conversions per variant</strong> and 95% confidence before declaring a winner. Anything less is gut-feeling dressed up in math.</p></div>
+    <div class="lesson-card"><div class="lesson-num">02 · ISOLATION</div><h4>One Variable at a Time</h4><p>Change the headline <strong>and</strong> the CTA color together, and you'll never know which one moved the needle. Real tests change one thing.</p></div>
+    <div class="lesson-card"><div class="lesson-num">03 · BIAS</div><h4>Selection Bias is Real</h4><p>If your "winner" only beat the control during a flash sale, you tested the offer — not the copy. Always check sample composition.</p></div>
+    <div class="lesson-card"><div class="lesson-num">04 · TIME</div><h4>Run Tests Through Full Cycles</h4><p>Buyer behavior on Monday differs from Saturday. Tests should run at least <strong>one full week</strong> — ideally two — to catch cyclical patterns.</p></div>
+    <div class="lesson-card"><div class="lesson-num">05 · IMPACT</div><h4>Effect Sizes Matter</h4><p>A 2% lift on a page that gets 100 visitors/month is noise. Prioritize tests on pages with <strong>traffic and revenue weight</strong>.</p></div>
+    <div class="lesson-card"><div class="lesson-num">06 · GLOBAL</div><h4>Local Wins ≠ Global Wins</h4><p>The variant that wins on the homepage may lose on a landing page with different intent. Test in context, deploy in context.</p></div>
+  </div>
+</div>
+
+<div class="cta-band">
+  <div>
+    <h3>Want this on your site?</h3>
+    <p>I build conversion-instrumented growth systems — A/B testing infrastructure, CRO experiments, and the analytics layer to back it all up.</p>
+  </div>
+  <a class="btn" href="contact.html">Start a Conversation →</a>
+</div>
+
+<footer>
+  <div><a href="index.html" class="footer-back">← Back to Portfolio</a></div>
+  <p class="footer-copy">© 2026 Syed Wajeeh Ul Hassan · Lahore, Pakistan</p>
+</footer>
+
+<div class="ab-toast" id="abToast">
+  <div class="ab-toast-title">FUN FACT</div>
+  <div class="ab-toast-text" id="abToastText"></div>
+</div>
+
+<script>
+const HEADLINES = {
+  benefit:   { html: 'Growth Dev &amp;<br/><span class="accent">Performance</span><br/><span class="amber">Marketer</span>', lift: 0,   text: 'Your current headline. Benefit-led headlines outperform generic ones by <strong>+27% on average</strong> (Nielsen Norman, 2024).' },
+  tech:      { html: 'Building scalable<br/><span class="accent">architectures</span><br/><span class="amber">&amp; clean code</span>', lift: -8, text: 'Tech-focused headlines win with engineering audiences but typically <strong>convert 8% lower</strong> on business-buyer pages.' },
+  outcome:   { html: 'I grow brands<br/><span class="accent">that already</span><br/><span class="amber">have product</span>', lift: 14, text: 'Outcome-led headlines hit emotional value first. Tests show <strong>+14% engagement lift</strong> on consultant landing pages.' },
+  objection: { html: 'Done with agencies<br/><span class="accent">that don\'t</span><br/><span class="amber">ship?</span>', lift: 19, text: 'Objection-busting headlines speak to your buyer\'s frustration directly — <strong>+19% click-through</strong> on cold traffic (CXL, 2023).' }
+};
+const SUBS = [
+  { txt: 'Full Stack Developer &amp; SEO Consultant delivering measurable results. $10M+ ad spend managed, 300+ clients served, and proven 3× lead growth.', lift: 0,  text: 'Stats-led subtitles build trust fast but can feel impersonal. Baseline performance.' },
+  { txt: 'I help founders ship before they overthink. Six years building growth systems for SaaS, DTC, and service businesses — without the agency bloat.',     lift: 6,  text: 'Story-led copy outperforms by <strong>+6%</strong> with founder audiences who value voice and authenticity.' },
+  { txt: 'SEO + Paid Ads + Code, in one operator. The rare engineer who can audit your funnel, ship the fix, and prove the impact in the same sprint.',       lift: 11, text: 'Hyper-specific positioning lifts CTR <strong>+11%</strong> by qualifying out wrong-fit visitors before they bounce.' }
+];
+const COLORS = {
+  teal:   { color: 'oklch(52% 0.14 195)', shadow: 'oklch(52% 0.14 195 / 0.3)',  lift: 0,  text: 'Teal feels trustworthy and modern. <strong>Industry-standard</strong> for SaaS and B2B services.' },
+  red:    { color: 'oklch(58% 0.20 25)',  shadow: 'oklch(58% 0.20 25 / 0.35)',  lift: 21, text: 'Red triggers urgency. HubSpot\'s famous study found <strong>+21% CTR</strong> over green on identical landing pages.' },
+  green:  { color: 'oklch(58% 0.16 145)', shadow: 'oklch(58% 0.16 145 / 0.3)',  lift: 9,  text: 'Green signals "go" and "money." Strong for finance and growth SaaS — <strong>+9% CTR</strong> on average.' },
+  amber:  { color: 'oklch(72% 0.16 65)',  shadow: 'oklch(72% 0.16 65 / 0.35)',  lift: 12, text: 'Amber is high-contrast against white. UI study: <strong>+12% CTR</strong> vs. neutral colors on hero CTAs.' },
+  blue:   { color: 'oklch(52% 0.18 260)', shadow: 'oklch(52% 0.18 260 / 0.3)',  lift: -4, text: 'Blue is the most-used CTA color, which means it suffers from <strong>banner blindness</strong> — typically -4% vs. teal.' },
+  black:  { color: 'oklch(22% 0.02 240)', shadow: 'oklch(22% 0.02 240 / 0.35)', lift: 6,  text: 'Black CTAs feel premium and intentional. <strong>+6% CTR</strong> on luxury and high-ticket service brands.' },
+  purple: { color: 'oklch(50% 0.16 280)', shadow: 'oklch(50% 0.16 280 / 0.35)', lift: 4,  text: 'Purple is rare on the web — which is exactly why it stands out. <strong>+4% CTR</strong> due to pure novelty effect.' }
+};
+const CTAS = [
+  { txt: "Let's Work Together →", lift: 0,  text: 'Friendly and collaborative — but vague. Strong baseline for warm audiences.' },
+  { txt: 'Hire Me →',              lift: 8,  text: 'Direct asks <strong>convert 8% better</strong> on portfolio sites — they qualify intent at the click.' },
+  { txt: 'Book a Free Call →',     lift: 17, text: '"Free" + concrete offer = <strong>+17% CTR</strong>. The friction of "free" is lower than "hire."' },
+  { txt: 'Get Your Free Audit →',  lift: 23, text: 'Value-first CTAs that promise a specific deliverable win. Unbounce data: <strong>+23% CTR</strong>.' }
+];
+const PROOF = {
+  show: { lift: 0,   text: 'Social proof is your current baseline. 5-star strips with avatars are the highest-performing format — trust by association.' },
+  hide: { lift: -22, text: 'Hiding testimonials cuts conversion by <strong>up to 22%</strong>. Spiegel Research: products with reviews convert <strong>270% better</strong> than those without.' }
+};
+const VISUAL = {
+  image: { lift: 0,   text: 'Static images load fast and read clearly. Solid baseline — most landing pages still convert best with a sharp hero image.' },
+  video: { lift: 12,  text: 'Hero videos increase <strong>time on page by 88%</strong> (Wistia) but can hurt page-load speed. Net engagement lift: <strong>+12%</strong> on modern broadband.' },
+  none:  { lift: -7,  text: 'Pure-copy heros work for power-user audiences (SaaS, dev tools) but typically <strong>−7% engagement</strong> on cold traffic.' }
+};
+const FORM = {
+  micro: { lift: 0,    text: '2-field forms maximize lead VOLUME. Baseline conversion rate — expect ~70% of leads to be unqualified though.' },
+  high:  { lift: -34,  text: '5-field forms drop submission by ~34% but <strong>triple lead quality</strong>. Net pipeline impact is usually positive on high-ticket services.' }
+};
+
+const state = { headline: 'benefit', subtitle: '0', 'cta-color': 'teal', 'cta-text': '0', proof: 'show', visual: 'image', form: 'micro' };
+const defaults = { ...state };
+let changeCount = 0;
+let toastTimer;
+
+function applyState() {
+  document.getElementById('stageH1').innerHTML = HEADLINES[state.headline].html;
+  document.getElementById('stageSub').innerHTML = SUBS[+state.subtitle].txt;
+  const cta = document.getElementById('stageCta');
+  cta.style.background = COLORS[state['cta-color']].color;
+  cta.style.boxShadow = '0 8px 24px ' + COLORS[state['cta-color']].shadow;
+  cta.textContent = CTAS[+state['cta-text']].txt;
+
+  // Social proof
+  document.getElementById('stageProof').classList.toggle('hidden', state.proof === 'hide');
+
+  // Hero media
+  const media = document.getElementById('stageMedia');
+  const inner = document.getElementById('stageMediaInner');
+  if (state.visual === 'none') {
+    media.classList.add('hidden');
+  } else {
+    media.classList.remove('hidden');
+    if (state.visual === 'video') {
+      inner.className = 'stage-media-video';
+      inner.innerHTML = '<span class="stage-media-vbadge"><span class="stage-media-dot"></span>AUTOPLAY VIDEO · LIVE</span>';
+    } else {
+      inner.className = 'stage-media-img';
+      inner.innerHTML = '[ Hero Image Placeholder · 16:9 ]';
+    }
+  }
+
+  // Form
+  const fields = document.getElementById('stageFormFields');
+  const flabel = document.getElementById('stageFormLabel');
+  const fcount = document.getElementById('stageFormCount');
+  if (state.form === 'high') {
+    flabel.textContent = 'Contact Form · High-Intent';
+    fcount.textContent = '5 fields';
+    fields.innerHTML = `
+      <div class="stage-form-field"><label>Name</label><div class="stage-form-input"></div></div>
+      <div class="stage-form-field"><label>Email</label><div class="stage-form-input"></div></div>
+      <div class="stage-form-field"><label>Budget</label><div class="stage-form-input"></div></div>
+      <div class="stage-form-field"><label>Timeline</label><div class="stage-form-input"></div></div>
+      <div class="stage-form-field"><label>Project Details</label><div class="stage-form-input tall"></div></div>
+    `;
+  } else {
+    flabel.textContent = 'Contact Form · Micro';
+    fcount.textContent = '2 fields';
+    fields.innerHTML = `
+      <div class="stage-form-field"><label>Name</label><div class="stage-form-input"></div></div>
+      <div class="stage-form-field"><label>Email</label><div class="stage-form-input"></div></div>
+    `;
+  }
+}
+
+function compoundLift() {
+  const h = HEADLINES[state.headline].lift;
+  const s = SUBS[+state.subtitle].lift;
+  const c = COLORS[state['cta-color']].lift;
+  const t = CTAS[+state['cta-text']].lift;
+  const p = PROOF[state.proof].lift;
+  const v = VISUAL[state.visual].lift;
+  const f = FORM[state.form].lift;
+  const compound = ((1 + h/100) * (1 + s/100) * (1 + c/100) * (1 + t/100) * (1 + p/100) * (1 + v/100) * (1 + f/100) - 1) * 100;
+  return Math.round(compound);
+}
+
+function updateImpact() {
+  const lift = compoundLift();
+  const num = document.getElementById('impNum');
+  num.textContent = (lift >= 0 ? '+' : '') + lift + '%';
+  num.style.color = lift >= 0 ? 'var(--purple-deep)' : 'oklch(55% 0.18 25)';
+  document.getElementById('changeCount').textContent = changeCount + ' change' + (changeCount === 1 ? '' : 's');
+  const badge = document.getElementById('changesBadge');
+  badge.textContent = changeCount;
+  badge.classList.toggle('zero', changeCount === 0);
+}
+
+function showToast(text) {
+  document.getElementById('abToastText').innerHTML = text;
+  const t = document.getElementById('abToast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 4500);
+}
+
+document.querySelectorAll('[data-ab] .ab-option, [data-ab] .ab-color').forEach(el => {
+  el.addEventListener('click', () => {
+    const group = el.closest('[data-ab]').dataset.ab;
+    const val = el.dataset.val;
+    if (state[group] === val) return;
+    state[group] = val;
+    changeCount++;
+    el.parentElement.querySelectorAll('.ab-option, .ab-color').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    let factText = '';
+    if (group === 'headline')  factText = HEADLINES[val].text;
+    if (group === 'subtitle')  factText = SUBS[+val].text;
+    if (group === 'cta-color') factText = COLORS[val].text;
+    if (group === 'cta-text')  factText = CTAS[+val].text;
+    if (group === 'proof')     factText = PROOF[val].text;
+    if (group === 'visual')    factText = VISUAL[val].text;
+    if (group === 'form')      factText = FORM[val].text;
+    applyState();
+    updateImpact();
+    showToast(factText);
+  });
+});
+
+function abReset() {
+  Object.assign(state, defaults);
+  changeCount = 0;
+  applyState();
+  updateImpact();
+  document.querySelectorAll('[data-ab="headline"] .ab-option').forEach(o => o.classList.toggle('active', o.dataset.val === 'benefit'));
+  document.querySelectorAll('[data-ab="subtitle"] .ab-option').forEach(o => o.classList.toggle('active', o.dataset.val === '0'));
+  document.querySelectorAll('[data-ab="cta-color"] .ab-color').forEach(o => o.classList.toggle('active', o.dataset.val === 'teal'));
+  document.querySelectorAll('[data-ab="cta-text"] .ab-option').forEach(o => o.classList.toggle('active', o.dataset.val === '0'));
+  document.querySelectorAll('[data-ab="proof"] .ab-option').forEach(o => o.classList.toggle('active', o.dataset.val === 'show'));
+  document.querySelectorAll('[data-ab="visual"] .ab-option').forEach(o => o.classList.toggle('active', o.dataset.val === 'image'));
+  document.querySelectorAll('[data-ab="form"] .ab-option').forEach(o => o.classList.toggle('active', o.dataset.val === 'micro'));
+  showToast('All variants reverted. Real A/B tests need <strong>statistical significance</strong> — at least 100 conversions per variant — before declaring a winner.');
+}
+
+function toggleHeatmap() {
+  const overlay = document.getElementById('heatmapOverlay');
+  const btn = document.getElementById('heatmapBtn');
+  const viewport = overlay.closest('.stage-viewport');
+  const on = overlay.classList.toggle('active');
+  btn.classList.toggle('active', on);
+  viewport.classList.toggle('heatmap-on', on);
+  btn.textContent = on ? '× Hide Heatmap' : '🔥 View Heatmap';
+  if (on) {
+    showToast('Simulated click density — hot zones get the most attention. Real tools like <strong>Hotjar</strong> and <strong>Crazy Egg</strong> generate these from actual session recordings.');
+  }
+}
+
+function toggleDark() {
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('dark-toggle').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('wjh_dark', isDark ? '1' : '0');
+}
+if (localStorage.getItem('wjh_dark') === '1') { document.body.classList.add('dark'); document.getElementById('dark-toggle').textContent = '☀️'; }
+
+applyState();
+updateImpact();
+</script>
+
+</body>
+</html>

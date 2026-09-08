@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="design_doc_mode" content="canvas"/>
+<title>Banner Concepts v3 — wajeeh.dev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: oklch(55% 0.11 195);
+    --teal-bright: oklch(72% 0.13 195);
+    --teal-deep: oklch(42% 0.09 200);
+    --amber: oklch(72% 0.13 65);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Plus Jakarta Sans', sans-serif;
+    --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  body { font-family: var(--sans); }
+  .frame-label { position: absolute; width: 1440px; font-family: var(--mono); font-size: 15px; font-weight: 700; color: #eee; letter-spacing: 0.04em; }
+  .frame-label small { color: #999; font-weight: 500; margin-left: 12px; }
+  .frame { position: absolute; width: 1440px; height: 860px; overflow: hidden; border-radius: 6px; box-shadow: 0 30px 80px rgb(0 0 0 / 0.5); }
+
+  /* shared entrance helpers */
+  .up { opacity: 0; transform: translateY(30px); animation: kUp 0.95s var(--spring) forwards; }
+  @keyframes kUp { to { opacity: 1; transform: none; } }
+  .mask { display: block; overflow: hidden; }
+  .mask i { display: inline-block; font-style: normal; transform: translateY(112%) rotate(2deg); animation: kMask 1.1s var(--spring) forwards; }
+  @keyframes kMask { to { transform: none; } }
+  @keyframes kShimmer { 50% { background-position: 100% 0; } }
+  @keyframes kShine { 0% { left: -70px; } 34%, 100% { left: 115%; } }
+  @keyframes kPing { 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  @keyframes kFloat { 50% { transform: translateY(-11px); } }
+  @keyframes kFade { to { opacity: 1; } }
+  @keyframes kDraw { to { stroke-dashoffset: 0; } }
+  @keyframes kRing { 0% { opacity: 0.8; transform: scale(0.4); } 70%, 100% { opacity: 0; transform: scale(2.7); } }
+
+  /* ══════════════ OPTION A · “SILK & GLASS” — light, liquid gradient, layered depth ══════════════ */
+  #optA { background: oklch(97.8% 0.008 80); color: oklch(22% 0.02 240); }
+  /* liquid silk ribbons */
+  #optA .silk { position: absolute; inset: -20%; filter: blur(70px) saturate(1.15); opacity: 0.75;
+    background:
+      radial-gradient(38% 30% at 78% 18%, oklch(86% 0.07 195 / 0.9), transparent 70%),
+      radial-gradient(30% 26% at 90% 62%, oklch(89% 0.06 65 / 0.8), transparent 70%),
+      radial-gradient(34% 30% at 12% 82%, oklch(88% 0.05 300 / 0.55), transparent 70%),
+      radial-gradient(26% 22% at 6% 10%, oklch(87% 0.06 195 / 0.7), transparent 70%);
+    animation: silkDrift 18s ease-in-out infinite alternate;
+  }
+  @keyframes silkDrift { to { transform: rotate(4deg) scale(1.08) translate(30px, -20px); } }
+  #optA .grain { position: absolute; inset: 0; opacity: 0.45; background-image: radial-gradient(oklch(30% 0.02 240 / 0.06) 1px, transparent 1px); background-size: 20px 20px; }
+  #optA .hairline { position: absolute; top: 0; bottom: 0; width: 1px; background: oklch(88% 0.01 60 / 0.8); }
+
+  #optA .a-inner { position: absolute; inset: 0; display: grid; grid-template-columns: 1.04fr 0.96fr; align-items: center; padding: 0 76px; gap: 44px; }
+  #optA .a-badge {
+    display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 12.5px; font-weight: 700;
+    color: var(--teal-deep); background: oklch(100% 0 0 / 0.75); border: 1px solid oklch(87% 0.04 195);
+    backdrop-filter: blur(10px); border-radius: 999px; padding: 10px 19px; margin-bottom: 30px; animation-delay: 0.08s;
+    box-shadow: 0 6px 18px oklch(55% 0.11 195 / 0.12);
+  }
+  #optA .a-badge i { width: 8px; height: 8px; border-radius: 50%; background: oklch(62% 0.17 150); box-shadow: 0 0 0 0 oklch(62% 0.17 150 / 0.5); animation: kPing 2.2s infinite; }
+
+  #optA h1 { font-size: 74px; line-height: 1.02; letter-spacing: -0.04em; font-weight: 800; margin-bottom: 10px; }
+  #optA h1 .mask:nth-child(1) i { animation-delay: 0.16s; }
+  #optA h1 .mask:nth-child(2) i { animation-delay: 0.28s; }
+  #optA h1 .mask:nth-child(3) i { animation-delay: 0.40s; }
+  #optA h1 .accent {
+    background: linear-gradient(100deg, var(--teal-deep), var(--teal-bright) 45%, var(--teal-deep) 90%);
+    background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: kMask 1.1s 0.28s var(--spring) forwards, kShimmer 5.5s 1.8s ease-in-out infinite;
+  }
+  #optA h1 .amber {
+    background: linear-gradient(100deg, oklch(62% 0.13 65), oklch(80% 0.13 65) 50%, oklch(62% 0.13 65));
+    background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: kMask 1.1s 0.40s var(--spring) forwards, kShimmer 5.5s 2.2s ease-in-out infinite;
+  }
+  /* signature — draws itself */
+  #optA .sig { margin: 6px 0 18px; }
+  #optA .sig text { opacity: 0; animation: kFade 0.9s 0.9s forwards; }
+  #optA .sig .underline { stroke-dasharray: 260; stroke-dashoffset: 260; animation: kDraw 1.2s 1.15s var(--spring) forwards; }
+  #optA .sig .dot { opacity: 0; animation: kFade 0.3s 2.2s forwards; }
+
+  #optA .a-sub { font-size: 16.5px; line-height: 1.72; color: oklch(44% 0.015 240); max-width: 520px; margin-bottom: 32px; animation-delay: 0.55s; }
+  #optA .a-sub b { color: oklch(27% 0.02 240); }
+
+  #optA .a-stats { display: flex; gap: 14px; margin-bottom: 34px; animation-delay: 0.68s; }
+  #optA .a-stat {
+    background: oklch(100% 0 0 / 0.72); border: 1px solid oklch(90% 0.012 60); backdrop-filter: blur(10px);
+    border-radius: 16px; padding: 14px 20px; box-shadow: 0 8px 22px oklch(30% 0.04 220 / 0.07);
+    transition: transform 0.25s var(--spring), box-shadow 0.25s;
+  }
+  #optA .a-stat:hover { transform: translateY(-4px); box-shadow: 0 16px 34px oklch(30% 0.04 220 / 0.13); }
+  #optA .a-stat .n { font-family: var(--mono); font-size: 27px; font-weight: 800; letter-spacing: -0.02em; color: oklch(25% 0.02 240); }
+  #optA .a-stat:nth-child(1) .n { color: var(--teal); }
+  #optA .a-stat:nth-child(3) .n { color: oklch(62% 0.13 65); }
+  #optA .a-stat .l { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: oklch(56% 0.01 240); margin-top: 3px; }
+
+  #optA .a-ctas { display: flex; gap: 13px; align-items: center; animation-delay: 0.8s; }
+  #optA .btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-weight: 700; font-size: 13.5px; border-radius: 13px; padding: 16px 26px; transition: transform 0.25s var(--spring), box-shadow 0.25s; }
+  #optA .btn:hover { transform: translateY(-3px); }
+  #optA .btn.pri { background: linear-gradient(135deg, var(--teal), var(--teal-deep)); color: #fff; box-shadow: 0 12px 30px oklch(55% 0.11 195 / 0.35); }
+  #optA .btn.pri::after { content: ''; position: absolute; top: 0; bottom: 0; width: 46px; left: -70px; background: linear-gradient(100deg, transparent, oklch(100% 0 0 / 0.5), transparent); transform: skewX(-18deg); animation: kShine 3.6s 2s ease-in-out infinite; }
+  #optA .btn.sec { background: oklch(100% 0 0 / 0.8); border: 1.5px solid oklch(88% 0.015 60); color: oklch(28% 0.02 240); backdrop-filter: blur(8px); }
+
+  /* right: layered card stack with parallax */
+  #optA .stack-wrap { perspective: 1500px; animation-delay: 0.45s; position: relative; }
+  #optA .stack { position: relative; transform-style: preserve-3d; transition: transform 0.16s ease-out; will-change: transform; }
+  #optA .layer {
+    position: absolute; border-radius: 22px; background: oklch(100% 0 0 / 0.6); border: 1px solid oklch(100% 0 0 / 0.9);
+    backdrop-filter: blur(16px); box-shadow: 0 30px 60px oklch(30% 0.05 220 / 0.14);
+  }
+  #optA .layer.back { width: 82%; height: 90%; left: 9%; top: 9%; transform: translateZ(-90px) rotate(-4deg); opacity: 0.7; }
+  #optA .layer.mid { width: 90%; height: 94%; left: 5%; top: 4%; transform: translateZ(-45px) rotate(2.5deg); opacity: 0.85; }
+  #optA .card-main {
+    position: relative; border-radius: 22px; background: oklch(100% 0 0 / 0.78); border: 1px solid oklch(100% 0 0 / 0.95);
+    backdrop-filter: blur(20px); box-shadow: 0 36px 74px oklch(30% 0.05 220 / 0.18), inset 0 1px 0 #fff;
+    padding: 26px; transform: translateZ(0);
+  }
+  #optA .cm-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  #optA .cm-head .t { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(50% 0.02 240); }
+  #optA .cm-head .live { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: oklch(50% 0.14 150); background: oklch(94% 0.04 150); padding: 5px 11px; border-radius: 999px; }
+  #optA .cm-head .live i { width: 6px; height: 6px; border-radius: 50%; background: oklch(62% 0.17 150); animation: kPing 2.2s infinite; }
+  #optA .cm-chart svg { display: block; width: 100%; }
+  #optA .cm-chart .gl { stroke: oklch(91% 0.008 60); stroke-width: 1; }
+  #optA .cm-chart .area { fill: url(#silkFill); opacity: 0; animation: kFade 0.9s 2.2s forwards; }
+  #optA .cm-chart .line { fill: none; stroke: var(--teal); stroke-width: 3.2; stroke-linecap: round; stroke-dasharray: 640; stroke-dashoffset: 640; animation: kDraw 2.4s 1.2s var(--spring) forwards; }
+  #optA .cm-chart .bars rect { fill: oklch(88% 0.045 195); transform: scaleY(0); transform-origin: bottom; transform-box: fill-box; animation: barGrow 0.9s var(--spring) forwards; }
+  @keyframes barGrow { to { transform: scaleY(1); } }
+  #optA .cm-chart .dot { fill: var(--teal); opacity: 0; animation: kFade 0.4s 2.8s forwards; }
+  #optA .cm-chart .dot-ring { fill: none; stroke: var(--teal); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; animation: kRing 2.4s 3s ease-out infinite; }
+  #optA .cm-foot { display: flex; gap: 10px; margin-top: 16px; }
+  #optA .pillkpi { flex: 1; background: oklch(97.5% 0.01 60); border: 1px solid oklch(92% 0.01 60); border-radius: 13px; padding: 11px 14px; }
+  #optA .pillkpi .v { font-family: var(--mono); font-size: 18px; font-weight: 800; color: oklch(28% 0.02 240); }
+  #optA .pillkpi .v.teal { color: var(--teal); } #optA .pillkpi .v.amb { color: oklch(62% 0.13 65); }
+  #optA .pillkpi .k { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: oklch(56% 0.01 240); margin-top: 2px; }
+  /* the two chips — kept verbatim */
+  #optA .chip { position: absolute; z-index: 5; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: oklch(26% 0.02 240); background: #fff; border: 1px solid oklch(90% 0.01 60); border-radius: 999px; padding: 11px 17px; box-shadow: 0 16px 36px oklch(30% 0.05 220 / 0.16); animation: kFloat 5.5s ease-in-out infinite; }
+  #optA .chip.c1 { top: -20px; right: -10px; animation-delay: 0.5s; }
+  #optA .chip.c2 { bottom: -18px; left: -22px; animation-delay: 1.7s; }
+
+  /* ══════════════ OPTION B · “OBSIDIAN AURORA” — dark, aurora curtains, constellation ══════════════ */
+  #optB { background: oklch(11.5% 0.015 250); color: oklch(93% 0.008 60); }
+  #optB .aurora { position: absolute; inset: -30% -10%; filter: blur(60px) saturate(1.2); opacity: 0.55;
+    background:
+      conic-gradient(from 200deg at 74% 30%, transparent 0 40%, oklch(50% 0.12 195 / 0.55) 47%, oklch(60% 0.13 165 / 0.4) 55%, transparent 62%),
+      conic-gradient(from 30deg at 86% 70%, transparent 0 42%, oklch(55% 0.12 65 / 0.3) 50%, transparent 60%),
+      radial-gradient(30% 40% at 15% 20%, oklch(45% 0.1 210 / 0.5), transparent 70%);
+    animation: auroraSway 14s ease-in-out infinite alternate;
+  }
+  @keyframes auroraSway { to { transform: rotate(-5deg) scale(1.1) translateY(-24px); } }
+  #optB .stars { position: absolute; inset: 0; }
+  #optB .stars span { position: absolute; border-radius: 50%; background: oklch(90% 0.02 195); animation: twinkle ease-in-out infinite; }
+  @keyframes twinkle { 0%, 100% { opacity: 0.12; } 50% { opacity: 0.85; } }
+  #optB .spot { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(560px circle at var(--mx, 30%) var(--my, 40%), oklch(55% 0.11 195 / 0.13), transparent 68%);
+  }
+  #optB .beam { position: absolute; top: -20%; bottom: -20%; width: 190px; transform: rotate(16deg);
+    background: linear-gradient(90deg, transparent, oklch(70% 0.12 195 / 0.07), transparent);
+    animation: beamSweep 9s ease-in-out infinite; left: -300px;
+  }
+  @keyframes beamSweep { 0%, 100% { transform: rotate(16deg) translateX(0); } 50% { transform: rotate(16deg) translateX(1750px); } }
+
+  #optB .b-inner { position: absolute; inset: 0; display: grid; grid-template-columns: 1.06fr 0.94fr; align-items: center; padding: 0 88px; gap: 40px; }
+  #optB .b-badge { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 13px; font-weight: 700; color: oklch(78% 0.11 195); background: oklch(55% 0.11 195 / 0.1); border: 1px solid oklch(55% 0.11 195 / 0.35); border-radius: 999px; padding: 10px 19px; margin-bottom: 30px; animation-delay: 0.08s; box-shadow: 0 0 34px oklch(55% 0.11 195 / 0.15); }
+  #optB .b-badge i { width: 8px; height: 8px; border-radius: 50%; background: oklch(65% 0.17 150); box-shadow: 0 0 0 0 oklch(65% 0.17 150 / 0.5); animation: kPing 2.2s infinite; }
+  #optB h1 { font-size: 78px; line-height: 1.01; letter-spacing: -0.042em; font-weight: 800; margin-bottom: 10px; text-shadow: 0 0 60px oklch(55% 0.11 195 / 0.25); }
+  #optB h1 .mask:nth-child(1) i { animation-delay: 0.16s; }
+  #optB h1 .mask:nth-child(2) i { animation-delay: 0.28s; }
+  #optB h1 .mask:nth-child(3) i { animation-delay: 0.40s; }
+  #optB h1 .accent { background: linear-gradient(95deg, oklch(75% 0.13 195), oklch(85% 0.1 165) 55%, oklch(75% 0.13 195)); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: kMask 1.1s 0.28s var(--spring) forwards, kShimmer 5.5s 2s ease-in-out infinite; }
+  #optB h1 .amber { background: linear-gradient(95deg, oklch(76% 0.13 65), oklch(88% 0.11 80) 55%, oklch(76% 0.13 65)); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: kMask 1.1s 0.40s var(--spring) forwards, kShimmer 5.5s 2.4s ease-in-out infinite; }
+  #optB .sig { margin: 6px 0 18px; }
+  #optB .sig text { fill: oklch(78% 0.11 195); opacity: 0; animation: kFade 0.9s 0.95s forwards; }
+  #optB .sig .underline { stroke: oklch(76% 0.13 65); stroke-dasharray: 260; stroke-dashoffset: 260; animation: kDraw 1.2s 1.2s var(--spring) forwards; }
+  #optB .sig .dot { fill: oklch(76% 0.13 65); opacity: 0; animation: kFade 0.3s 2.25s forwards; }
+  #optB .b-sub { font-size: 16.5px; line-height: 1.74; color: oklch(66% 0.015 240); max-width: 540px; margin-bottom: 32px; animation-delay: 0.55s; }
+  #optB .b-sub b { color: oklch(90% 0.01 60); }
+  #optB .b-stats { display: flex; gap: 34px; margin-bottom: 36px; animation-delay: 0.68s; }
+  #optB .b-stat { position: relative; padding-left: 16px; }
+  #optB .b-stat::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; border-radius: 2px; background: linear-gradient(var(--teal-bright), transparent); }
+  #optB .b-stat:nth-child(3)::before { background: linear-gradient(oklch(76% 0.13 65), transparent); }
+  #optB .b-stat .n { font-family: var(--mono); font-size: 30px; font-weight: 800; letter-spacing: -0.02em; color: oklch(93% 0.01 60); }
+  #optB .b-stat .l { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: oklch(55% 0.02 240); margin-top: 4px; }
+  #optB .b-ctas { display: flex; gap: 13px; align-items: center; animation-delay: 0.8s; }
+  #optB .btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-weight: 700; font-size: 13.5px; border-radius: 13px; padding: 17px 27px; transition: transform 0.25s var(--spring); }
+  #optB .btn:hover { transform: translateY(-3px); }
+  #optB .btn.pri { background: var(--teal-bright); color: oklch(13% 0.015 245); box-shadow: 0 0 0 1px oklch(72% 0.13 195 / 0.4), 0 0 52px oklch(72% 0.13 195 / 0.35); }
+  #optB .btn.pri::after { content: ''; position: absolute; top: 0; bottom: 0; width: 46px; left: -70px; background: linear-gradient(100deg, transparent, oklch(100% 0 0 / 0.55), transparent); transform: skewX(-18deg); animation: kShine 3.8s 2.4s ease-in-out infinite; }
+  #optB .btn.sec { border: 1.5px solid oklch(32% 0.03 220); color: oklch(88% 0.01 60); background: oklch(16% 0.02 240 / 0.6); backdrop-filter: blur(8px); }
+
+  /* right: constellation growth ring */
+  #optB .cons-wrap { position: relative; display: flex; align-items: center; justify-content: center; animation-delay: 0.5s; }
+  #optB .halo-ring { position: absolute; width: 480px; height: 480px; border-radius: 50%; border: 1px solid oklch(35% 0.05 210 / 0.6); animation: slowSpin 60s linear infinite; }
+  #optB .halo-ring::before { content: ''; position: absolute; top: -5px; left: 50%; width: 9px; height: 9px; border-radius: 50%; background: var(--teal-bright); box-shadow: 0 0 18px var(--teal-bright); }
+  #optB .halo-ring.r2 { width: 560px; height: 560px; border-style: dashed; border-color: oklch(28% 0.03 220 / 0.7); animation-duration: 90s; animation-direction: reverse; }
+  #optB .halo-ring.r2::before { background: oklch(76% 0.13 65); box-shadow: 0 0 16px oklch(76% 0.13 65); width: 7px; height: 7px; }
+  @keyframes slowSpin { to { transform: rotate(360deg); } }
+  #optB .cons { position: relative; width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, oklch(18% 0.03 220), oklch(13% 0.015 245) 70%);
+    border: 1px solid oklch(32% 0.04 210 / 0.7); box-shadow: 0 0 90px oklch(55% 0.11 195 / 0.22), inset 0 0 60px oklch(55% 0.11 195 / 0.08);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #optB .cons svg { width: 330px; }
+  #optB .c-line { fill: none; stroke: url(#consStroke); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 560; stroke-dashoffset: 560; animation: kDraw 2.6s 1.3s var(--spring) forwards; }
+  #optB .c-node { fill: oklch(80% 0.1 195); opacity: 0; animation: kFade 0.4s forwards; }
+  #optB .c-node.n1 { animation-delay: 1.5s; } #optB .c-node.n2 { animation-delay: 1.9s; }
+  #optB .c-node.n3 { animation-delay: 2.3s; } #optB .c-node.n4 { animation-delay: 2.7s; }
+  #optB .c-node.n5 { animation-delay: 3.1s; }
+  #optB .c-halo { fill: none; stroke: var(--teal-bright); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; animation: kRing 2.4s 3.3s ease-out infinite; }
+  #optB .c-glyph { font-family: var(--mono); font-size: 11px; font-weight: 700; fill: oklch(60% 0.06 195); opacity: 0; animation: kFade 0.6s 3.4s forwards; }
+  /* the two chips — kept verbatim */
+  #optB .chip { position: absolute; z-index: 5; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: oklch(90% 0.01 60); background: oklch(18% 0.02 240 / 0.85); border: 1px solid oklch(40% 0.06 195 / 0.5); backdrop-filter: blur(10px); border-radius: 999px; padding: 11px 17px; box-shadow: 0 16px 40px rgb(0 0 0 / 0.5), 0 0 26px oklch(55% 0.11 195 / 0.15); animation: kFloat 5.5s ease-in-out infinite; }
+  #optB .chip.c1 { top: 66px; right: 40px; animation-delay: 0.5s; }
+  #optB .chip.c2 { bottom: 74px; right: 320px; animation-delay: 1.7s; }
+</style>
+</head>
+<body>
+
+<!-- ═══ OPTION A ═══ -->
+<div class="frame-label" style="left: 60px; top: 24px;">OPTION A — “Silk &amp; Glass” <small>light · liquid-silk background · self-drawing signature · 3D layered card stack · every word kept</small></div>
+<div class="frame" id="optA" style="left: 60px; top: 64px;">
+  <div class="silk"></div>
+  <div class="grain"></div>
+  <div class="hairline" style="left: 76px;"></div>
+  <div class="hairline" style="right: 76px;"></div>
+  <div class="a-inner">
+    <div>
+      <div class="a-badge up"><i></i> Available for Projects</div>
+      <h1>
+        <span class="mask"><i>Growth Dev &amp;</i></span>
+        <span class="mask"><i class="accent">Performance</i></span>
+        <span class="mask"><i class="amber">Marketer</i></span>
+      </h1>
+      <svg class="sig" width="220" height="64" viewBox="0 0 220 64" fill="none" style="overflow:visible;">
+        <text x="2" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-style="italic" font-weight="700" fill="var(--teal)" letter-spacing="-1.5">Wajeeh</text>
+        <path class="underline" d="M 4 52 Q 60 60 130 52 T 195 50" stroke="var(--amber)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle class="dot" cx="200" cy="48" r="5" fill="var(--amber)"/>
+      </svg>
+      <p class="a-sub up">Syed Wajeeh Ul Hassan — Full Stack Developer &amp; SEO Consultant delivering measurable results. <b>$10M+ ad spend managed</b>, <b>300+ clients served</b>, and proven <b>3× lead growth</b>.</p>
+      <div class="a-stats up">
+        <div class="a-stat"><div class="n" data-count="10" data-prefix="$" data-suffix="M+">$0M+</div><div class="l">Ad Spend Managed</div></div>
+        <div class="a-stat"><div class="n" data-count="300" data-suffix="+">0+</div><div class="l">Clients Served</div></div>
+        <div class="a-stat"><div class="n" data-count="3" data-suffix="×">0×</div><div class="l">Lead Growth</div></div>
+      </div>
+      <div class="a-ctas up">
+        <div class="btn pri">Let's Work Together →</div>
+        <div class="btn sec">View My Work</div>
+        <div class="btn sec"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download CV</div>
+      </div>
+    </div>
+    <div class="stack-wrap up">
+      <div class="stack" id="stackA">
+        <div class="layer back"></div>
+        <div class="layer mid"></div>
+        <div class="card-main">
+          <div class="cm-head">
+            <span class="t">Growth Analytics</span>
+            <span class="live"><i></i> LIVE</span>
+          </div>
+          <div class="cm-chart">
+            <svg viewBox="0 0 560 210" height="210">
+              <defs>
+                <linearGradient id="silkFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="oklch(55% 0.11 195)" stop-opacity="0.2"/>
+                  <stop offset="100%" stop-color="oklch(55% 0.11 195)" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line class="gl" x1="0" y1="52" x2="560" y2="52"/>
+              <line class="gl" x1="0" y1="104" x2="560" y2="104"/>
+              <line class="gl" x1="0" y1="156" x2="560" y2="156"/>
+              <g class="bars">
+                <rect x="30"  y="150" width="34" height="52"  rx="5" style="animation-delay:0.9s"/>
+                <rect x="105" y="132" width="34" height="70"  rx="5" style="animation-delay:1.05s"/>
+                <rect x="180" y="118" width="34" height="84"  rx="5" style="animation-delay:1.2s"/>
+                <rect x="255" y="96"  width="34" height="106" rx="5" style="animation-delay:1.35s"/>
+                <rect x="330" y="76"  width="34" height="126" rx="5" style="animation-delay:1.5s"/>
+                <rect x="405" y="54"  width="34" height="148" rx="5" style="animation-delay:1.65s"/>
+                <rect x="480" y="30"  width="34" height="172" rx="5" style="animation-delay:1.8s"/>
+              </g>
+              <path class="area" d="M8 182 C90 168 150 150 220 128 S360 76 420 56 S510 24 552 14 L552 208 L8 208 Z"/>
+              <path class="line" d="M8 182 C90 168 150 150 220 128 S360 76 420 56 S510 24 552 14"/>
+              <circle class="dot" cx="552" cy="14" r="5.5"/>
+              <circle class="dot-ring" cx="552" cy="14" r="6"/>
+            </svg>
+          </div>
+          <div class="cm-foot">
+            <div class="pillkpi"><div class="v teal" data-count="83">0</div><div class="k">Leads / mo</div></div>
+            <div class="pillkpi"><div class="v" data-count="31" data-prefix="$">$0</div><div class="k">Cost / booking</div></div>
+            <div class="pillkpi"><div class="v amb" data-count="6.8" data-decimals="1" data-suffix="×">0×</div><div class="k">Peak ROAS</div></div>
+          </div>
+        </div>
+        <div class="chip c1">📈 <span>3× Avg. Growth</span></div>
+        <div class="chip c2">⚡ <span>$10M+ Ad Spend Managed</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION B ═══ -->
+<div class="frame-label" style="left: 60px; top: 990px;">OPTION B — “Obsidian Aurora” <small>dark · aurora curtains + twinkling stars + light beam · constellation chart in orbit rings · every word kept</small></div>
+<div class="frame" id="optB" style="left: 60px; top: 1030px;">
+  <div class="aurora"></div>
+  <div class="stars" id="starsB"></div>
+  <div class="beam"></div>
+  <div class="spot"></div>
+  <div class="b-inner">
+    <div>
+      <div class="b-badge up"><i></i> Available for Projects</div>
+      <h1>
+        <span class="mask"><i>Growth Dev &amp;</i></span>
+        <span class="mask"><i class="accent">Performance</i></span>
+        <span class="mask"><i class="amber">Marketer</i></span>
+      </h1>
+      <svg class="sig" width="220" height="64" viewBox="0 0 220 64" fill="none" style="overflow:visible;">
+        <text x="2" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-style="italic" font-weight="700" letter-spacing="-1.5">Wajeeh</text>
+        <path class="underline" d="M 4 52 Q 60 60 130 52 T 195 50" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle class="dot" cx="200" cy="48" r="5"/>
+      </svg>
+      <p class="b-sub up">Syed Wajeeh Ul Hassan — Full Stack Developer &amp; SEO Consultant delivering measurable results. <b>$10M+ ad spend managed</b>, <b>300+ clients served</b>, and proven <b>3× lead growth</b>.</p>
+      <div class="b-stats up">
+        <div class="b-stat"><div class="n" data-count="10" data-prefix="$" data-suffix="M+">$0M+</div><div class="l">Ad Spend Managed</div></div>
+        <div class="b-stat"><div class="n" data-count="300" data-suffix="+">0+</div><div class="l">Clients Served</div></div>
+        <div class="b-stat"><div class="n" data-count="3" data-suffix="×">0×</div><div class="l">Lead Growth</div></div>
+      </div>
+      <div class="b-ctas up">
+        <div class="btn pri">Let's Work Together →</div>
+        <div class="btn sec">View My Work</div>
+        <div class="btn sec"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download CV</div>
+      </div>
+    </div>
+    <div class="cons-wrap up">
+      <div class="halo-ring"></div>
+      <div class="halo-ring r2"></div>
+      <div class="cons">
+        <svg viewBox="0 0 330 260">
+          <defs>
+            <linearGradient id="consStroke" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="oklch(45% 0.08 200)"/>
+              <stop offset="100%" stop-color="oklch(78% 0.13 195)"/>
+            </linearGradient>
+          </defs>
+          <path class="c-line" d="M20 225 L85 195 L150 160 L215 100 L295 40"/>
+          <circle class="c-node n1" cx="20"  cy="225" r="6"/>
+          <circle class="c-node n2" cx="85"  cy="195" r="6"/>
+          <circle class="c-node n3" cx="150" cy="160" r="6"/>
+          <circle class="c-node n4" cx="215" cy="100" r="6"/>
+          <circle class="c-node n5" cx="295" cy="40"  r="7"/>
+          <circle class="c-halo" cx="295" cy="40" r="8"/>
+          <text class="c-glyph" x="14"  y="248">SEO</text>
+          <text class="c-glyph" x="70"  y="182">ADS</text>
+          <text class="c-glyph" x="136" y="147">EMAIL</text>
+          <text class="c-glyph" x="200" y="87">FUNNEL</text>
+          <text class="c-glyph" x="262" y="27">REVENUE</text>
+        </svg>
+      </div>
+      <div class="chip c1">📈 <span>3× Avg. Growth</span></div>
+      <div class="chip c2">⚡ <span>$10M+ Ad Spend Managed</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// count-ups
+function countUp(el) {
+  const target = parseFloat(el.dataset.count);
+  const dec = +(el.dataset.decimals || 0);
+  const pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+  const dur = 1700, t0 = performance.now() + 950;
+  function tick(now) {
+    const p = Math.min(1, Math.max(0, (now - t0) / dur));
+    const eased = 1 - Math.pow(1 - p, 4);
+    el.textContent = pre + (target * eased).toFixed(dec) + suf;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+document.querySelectorAll('[data-count]').forEach(countUp);
+
+// Option A — 3D parallax on the card stack
+const fA = document.getElementById('optA'), stack = document.getElementById('stackA');
+if (fA && stack) {
+  fA.addEventListener('mousemove', e => {
+    const r = fA.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height - 0.5;
+    stack.style.transform = `rotateY(${nx * 12}deg) rotateX(${ny * -9}deg)`;
+  });
+  fA.addEventListener('mouseleave', () => { stack.style.transform = 'rotateY(0) rotateX(0)'; });
+}
+
+// Option B — spotlight + twinkling stars
+const fB = document.getElementById('optB');
+if (fB) {
+  fB.addEventListener('mousemove', e => {
+    const r = fB.getBoundingClientRect();
+    fB.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+    fB.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+  });
+  const stars = document.getElementById('starsB');
+  for (let i = 0; i < 46; i++) {
+    const s = document.createElement('span');
+    const sz = 1 + Math.random() * 2.2;
+    s.style.cssText = `left:${(Math.random() * 100).toFixed(1)}%;top:${(Math.random() * 100).toFixed(1)}%;width:${sz}px;height:${sz}px;animation-duration:${(2.5 + Math.random() * 4).toFixed(1)}s;animation-delay:${(Math.random() * 4).toFixed(1)}s;`;
+    stars.appendChild(s);
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+# robots.txt — Syed Wajeeh Ul Hassan · Portfolio
+
+# --- All search engines: allow the public site -----------------
+User-agent: *
+Allow: /
+
+# Block admin, uploads, and source-only files
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin.html
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /dashboard.html
+Disallow: /uploads/
+Disallow: /scraps/
+Disallow: /screenshots/
+Disallow: /*.jsx$
+Disallow: /*.json$
+
+# Block low-value internal query parameters (filter views)
+Allow: /services.html?s=
+Disallow: /*?utm_
+Disallow: /*?fbclid=
+Disallow: /*?gclid=
+
+# --- Google ------------------------------------------------------
+User-agent: Googlebot
+Allow: /Syed_Wajeeh_Ul_Hassan_CV.pdf
+Allow: /
+Disallow: /uploads/
+Disallow: /scraps/
+Disallow: /screenshots/
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /dashboard
+Disallow: /dashboard.html
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# --- Sitemap ------------------------------------------------------
+Sitemap: https://syedwajeehulhassan.com/sitemap.xml

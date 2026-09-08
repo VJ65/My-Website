@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Syed Wajeeh Ul Hassan</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/></noscript>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: oklch(98.5% 0.008 60);
+      --bg2: oklch(96% 0.012 60);
+      --fg: oklch(18% 0.02 240);
+      --fg2: oklch(42% 0.02 240);
+      --fg3: oklch(62% 0.015 240);
+      --teal: oklch(52% 0.14 195);
+      --teal-light: oklch(94% 0.04 195);
+      --teal-dim: oklch(52% 0.14 195 / 0.12);
+      --amber: oklch(68% 0.14 65);
+      --amber-light: oklch(95% 0.04 65);
+      --border: oklch(88% 0.01 60);
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Plus Jakarta Sans', sans-serif;
+      --radius: 12px;
+      --shadow: 0 2px 16px oklch(18% 0.02 240 / 0.08);
+      --shadow-lg: 0 8px 40px oklch(18% 0.02 240 / 0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+    ::selection { background: var(--teal-dim); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes navSlideDown {
+      from { opacity: 0; transform: translateY(-100%); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: oklch(98.5% 0.008 60 / 0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: navSlideDown 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+      transition: box-shadow 0.3s, height 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 4px 32px oklch(18% 0.02 240 / 0.10); height: 64px; }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--teal);
+      text-decoration: none;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-logo span { color: var(--fg); }
+    .nav-logo-dot {
+      width: 7px; height: 7px;
+      background: var(--amber);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg2);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-light); }
+
+    /* Blog search (sidebar widget) */
+    .nav-search {
+      display: flex; align-items: center; gap: 9px;
+      background: var(--bg2); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 0 14px; height: 44px;
+      width: 100%; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .nav-search:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-light); }
+    .nav-search svg { width: 17px; height: 17px; color: var(--fg3); flex-shrink: 0; }
+    .nav-search:focus-within svg { color: var(--teal); }
+    .nav-search input {
+      border: none; background: none; outline: none; width: 100%;
+      font-family: var(--sans); font-size: 14px; color: var(--fg);
+    }
+    .nav-search input::placeholder { color: var(--fg3); }
+    .nav-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    body.dark .nav-search { background: oklch(24% 0.015 240); }
+    .nav-links > li { position: relative; }
+    .has-dropdown > a::after { content: ' ▾'; opacity: 0.6; font-size: 10px; }
+    .nav-dropdown {
+      position: absolute; top: calc(100% + 4px); left: -8px;
+      background: white; border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: 0 12px 40px oklch(18% 0.02 240 / 0.16); padding: 10px;
+      min-width: 340px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: opacity 0.2s, visibility 0.2s, transform 0.2s; z-index: 200;
+    }
+    body.dark .nav-dropdown { background: oklch(20% 0.015 240); }
+    .has-dropdown:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+    .nav-dropdown a {
+      display: flex !important; flex-direction: column; align-items: flex-start; gap: 2px;
+      padding: 10px 12px !important; border-radius: 8px !important;
+      font-family: var(--sans) !important; font-size: 13px !important; font-weight: 600 !important;
+      color: var(--fg) !important;
+    }
+    .nav-dropdown a:hover { background: var(--teal-light) !important; color: var(--teal) !important; }
+    .nav-dropdown a small { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--fg3); }
+    .nav-cta {
+      background: var(--teal) !important;
+      color: white !important;
+      padding: 9px 20px !important;
+      border-radius: 10px !important;
+      font-weight: 600 !important;
+      box-shadow: 0 2px 12px oklch(52% 0.14 195 / 0.25);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
+    }
+    .nav-cta:hover { background: oklch(46% 0.14 195) !important; transform: translateY(-2px) !important; }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 120px 5% 60px;
+      background: linear-gradient(135deg, var(--bg) 0%, oklch(97% 0.018 195) 50%, var(--bg) 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .page-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .page-header-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .page-header h1 {
+      font-family: var(--mono);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      margin-bottom: 14px;
+      line-height: 1.15;
+    }
+    .page-header h1 span { color: var(--teal); }
+    .page-header p {
+      font-size: 16px;
+      color: var(--fg2);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+    .page-header-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* MAIN LAYOUT */
+    .blog-layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 5% 80px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* FILTERS */
+    .blog-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .filter-btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--fg2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: white;
+    }
+
+    /* BLOG GRID */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    /* BLOG CARD — list layout */
+    .blog-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      animation: fadeUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .blog-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--teal-dim); }
+    .blog-card-thumb {
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 160px;
+    }
+    .blog-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .blog-card-thumb-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+    }
+    .blog-card-thumb-pattern {
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(45deg, oklch(52% 0.14 195 / 0.06) 0, oklch(52% 0.14 195 / 0.06) 1px, transparent 0, transparent 50%);
+      background-size: 14px 14px;
+    }
+    .blog-card-thumb-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--fg3);
+      text-align: center;
+      position: relative;
+    }
+    .blog-card-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 8px; }
+    .blog-card-cat {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .blog-card-body h2 {
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--fg);
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+    .blog-card-body p {
+      font-size: 14px;
+      color: var(--fg2);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .blog-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--fg3);
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .blog-card-meta-dot { color: var(--border); }
+    .blog-card-read {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--fg3);
+      grid-column: 1 / -1;
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-family: var(--mono); font-size: 16px; color: var(--fg2); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 24px; position: sticky; top: 96px; }
+
+    /* ADMIN PANEL */
+    .admin-panel {
+      background: white;
+      border: 1.5px solid var(--teal-dim);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .admin-panel-header {
+      background: var(--teal);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-panel-header h3 {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.02em;
+    }
+    .admin-lock {
+      font-size: 14px;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .admin-lock:hover { opacity: 1; }
+    .admin-panel-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .admin-locked-msg {
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+      color: var(--fg3);
+      font-family: var(--mono);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-pw-row {
+      display: flex;
+      gap: 8px;
+    }
+    .admin-pw-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--fg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .admin-pw-row input:focus { border-color: var(--teal); }
+    .admin-form-group { display: flex; flex-direction: column; gap: 6px; }
+    .admin-form-group label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg);
+      letter-spacing: 0.04em;
+    }
+    .admin-form-group input,
+    .admin-form-group textarea,
+    .admin-form-group select {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--fg);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    .admin-form-group input:focus,
+    .admin-form-group textarea:focus,
+    .admin-form-group select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
+    .admin-form-group textarea { min-height: 80px; resize: vertical; }
+    .img-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--fg3);
+      position: relative;
+    }
+    .img-upload-area:hover { border-color: var(--teal); background: var(--teal-light); }
+    .img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .img-preview { width: 100%; border-radius: 6px; margin-top: 8px; display: none; }
+    .btn-publish {
+      width: 100%;
+      background: var(--teal);
+      color: white;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .btn-publish:hover { background: oklch(46% 0.14 195); transform: translateY(-1px); }
+    .btn-publish:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ABOUT WIDGET */
+    .sidebar-widget {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .widget-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--teal-light);
+    }
+    .widget-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .widget-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--teal-light);
+    }
+    .widget-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .widget-name { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--fg); }
+    .widget-role { font-size: 12px; color: var(--fg3); }
+    .widget-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .widget-tag {
+      background: var(--teal-light);
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    /* POST CATEGORIES WIDGET */
+    .cat-list { display: flex; flex-direction: column; gap: 6px; }
+    .cat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 13px;
+      color: var(--fg2);
+    }
+    .cat-item:hover { background: var(--teal-light); color: var(--teal); }
+    .cat-count {
+      background: var(--bg2);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: var(--fg3);
+    }
+
+    /* POST DETAIL MODAL */
+    .post-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 80px 20px 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .post-modal.open { opacity: 1; pointer-events: all; }
+    .post-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: oklch(18% 0.02 240 / 0.5);
+      backdrop-filter: blur(4px);
+      z-index: -1;
+    }
+    .post-modal-card {
+      background: white;
+      border-radius: 16px;
+      max-width: 760px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(30px);
+      transition: transform 0.3s;
+      overflow: hidden;
+    }
+    .post-modal.open .post-modal-card { transform: translateY(0); }
+    .post-modal-img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+    .post-modal-img-placeholder {
+      height: 180px;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .post-modal-body { padding: 36px 40px 40px; }
+    .post-modal-cat {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    .post-modal-body h1 {
+      font-family: var(--mono);
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .post-modal-meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--fg3);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .post-modal-content {
+      font-size: 15px;
+      color: var(--fg2);
+      line-height: 1.85;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .post-modal-content .rich-link { color: var(--teal); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .post-modal-content .rich-link:hover { opacity: 0.8; }
+    .post-modal-content .rich-btn {
+      display: inline-block; background: var(--teal); color: #fff;
+      font-weight: 600; font-size: 14px; letter-spacing: 0.01em;
+      padding: 11px 24px; border-radius: 10px; text-decoration: none;
+      margin: 6px 0; transition: filter 0.15s, transform 0.15s;
+    }
+    .post-modal-content .rich-btn:hover { filter: brightness(0.92); transform: translateY(-1px); }
+    .post-modal-content .rich-h { font-weight: 700; font-size: 1.18em; color: var(--fg); letter-spacing: -0.01em; }
+    .post-modal-close {
+      position: absolute;
+      top: 88px;
+      right: calc((100% - 760px)/2 - 20px);
+      width: 40px; height: 40px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 10;
+    }
+    .post-modal-close:hover { transform: scale(1.1); box-shadow: var(--shadow-lg); }
+    .post-modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-delete {
+      background: transparent;
+      color: oklch(55% 0.18 25);
+      border: 1.5px solid oklch(55% 0.18 25 / 0.3);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-delete:hover { background: oklch(55% 0.18 25); color: white; }
+
+    /* POST FEEDBACK */
+    .post-feedback {
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .fb-head {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 4px;
+    }
+    .fb-sub { font-size: 13px; color: var(--fg3); margin-bottom: 18px; line-height: 1.6; }
+    .fb-row { display: flex; flex-wrap: wrap; gap: 22px; margin-bottom: 18px; }
+    .fb-block-lbl {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--fg3);
+      margin-bottom: 8px;
+    }
+    .fb-helpful { display: flex; gap: 8px; }
+    .fb-vote {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+      padding: 8px 14px; border-radius: 999px;
+      border: 1.5px solid var(--border); background: white; color: var(--fg2);
+      cursor: pointer; transition: all 0.18s;
+    }
+    .fb-vote:hover { border-color: var(--teal); color: var(--teal); }
+    .fb-vote.sel { background: var(--teal); border-color: var(--teal); color: white; }
+    .fb-vote.sel.no { background: oklch(55% 0.18 25); border-color: oklch(55% 0.18 25); }
+    .fb-stars { display: flex; gap: 3px; }
+    .fb-star {
+      font-size: 26px; line-height: 1; cursor: pointer; color: var(--border);
+      transition: color 0.12s, transform 0.12s; background: none; border: none; padding: 0;
+    }
+    .fb-star:hover { transform: scale(1.12); }
+    .fb-star.on { color: var(--amber); }
+    .fb-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .fb-input, .fb-textarea {
+      width: 100%; font-family: var(--sans); font-size: 14px;
+      padding: 11px 13px; border: 1.5px solid var(--border); border-radius: 10px;
+      background: white; color: var(--fg); transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .fb-textarea { min-height: 92px; resize: vertical; line-height: 1.6; }
+    .fb-input:focus, .fb-textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
+    .fb-submit {
+      font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.01em;
+      background: var(--teal); color: white; border: none; border-radius: 10px;
+      padding: 12px 24px; cursor: pointer; transition: background 0.18s;
+    }
+    .fb-submit:hover { background: oklch(46% 0.14 195); }
+    .fb-submit:disabled { opacity: 0.55; cursor: default; }
+    .fb-err { color: oklch(55% 0.18 25); font-size: 12.5px; min-height: 16px; margin-top: 8px; }
+    .fb-thanks {
+      text-align: center; padding: 28px 20px;
+      background: var(--teal-light); border-radius: 12px; animation: fadeUp 0.4s ease;
+    }
+    .fb-thanks-ico { font-size: 34px; margin-bottom: 8px; }
+    .fb-thanks-title { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--teal); margin-bottom: 4px; }
+    .fb-thanks-sub { font-size: 13px; color: var(--fg2); }
+    body.dark .fb-vote, body.dark .fb-input, body.dark .fb-textarea { background: oklch(20% 0.015 240); }
+    @media (max-width: 560px) { .fb-fields { grid-template-columns: 1fr; } }
+
+    /* FOOTER */
+    footer {
+      background: var(--fg);
+      color: oklch(85% 0.01 60);
+      padding: 32px 5%;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .footer-logo { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--teal); margin-bottom: 10px; }
+    .footer-copy { font-size: 13px; color: oklch(50% 0.01 60); }
+    .footer-back { display: inline-flex; align-items: center; gap: 6px; color: var(--teal); font-family: var(--mono); font-size: 13px; text-decoration: none; margin-bottom: 12px; transition: opacity 0.2s; }
+    .footer-back:hover { opacity: 0.75; }
+
+    /* DARK MODE TOGGLE */
+    .dark-toggle {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+    .dark-toggle:hover { background: var(--teal-light); border-color: var(--teal); transform: rotate(15deg); }
+
+    /* DARK MODE */
+    body.dark {
+      --bg: oklch(14% 0.015 240);
+      --bg2: oklch(18% 0.015 240);
+      --fg: oklch(92% 0.008 60);
+      --fg2: oklch(70% 0.008 60);
+      --fg3: oklch(50% 0.008 60);
+      --border: oklch(28% 0.015 240);
+      --teal-light: oklch(30% 0.06 195);
+      --teal-dim: oklch(52% 0.14 195 / 0.2);
+      --amber-light: oklch(28% 0.06 65);
+      --shadow: 0 2px 16px oklch(0% 0 0 / 0.3);
+      --shadow-lg: 0 8px 40px oklch(0% 0 0 / 0.4);
+    }
+    body.dark nav { background: oklch(14% 0.015 240 / 0.92); }
+    body.dark .blog-card,
+    body.dark .sidebar-widget,
+    body.dark .admin-panel,
+    body.dark .post-modal-card { background: oklch(20% 0.015 240); }
+    body.dark .filter-btn { background: oklch(20% 0.015 240); border-color: oklch(28% 0.015 240); color: var(--fg2); }
+    body.dark .page-header { background: linear-gradient(135deg, oklch(14% 0.015 240) 0%, oklch(16% 0.03 195) 50%, oklch(14% 0.015 240) 100%); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .blog-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .blog-card { grid-template-columns: 1fr; }
+      .blog-card-thumb { min-height: 140px; }
+      .post-modal { padding: 64px 12px 32px; }
+      .post-modal-close { right: 12px; top: 72px; }
+      .post-modal-body { padding: 24px 20px; }
+      .nav-links { display: none; }
+  .nav-hamburger { display: flex !important; }
+  .nav-links.open { display: flex !important; flex-direction: column; align-items: stretch; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-lg); padding: 10px 5% 16px; gap: 2px; max-height: calc(100vh - 64px); overflow-y: auto; z-index: 99; }
+  .nav-links.open > li { width: 100%; }
+  .nav-links.open > li > a { display: block; padding: 13px 14px; border-radius: 10px; font-size: 15px; }
+  .nav-links.open .nav-dropdown { display: none !important; }
+  .nav-links.open .nav-cta { width: 100% !important; text-align: center; justify-content: center; margin-top: 6px; }
+    }
+  </style>
+<style id="mobile-nav-fix">
+    .nav-hamburger { display: none; cursor: pointer; flex-direction: column; justify-content: center; gap: 5px; margin-left: 10px; background: none; border: none; padding: 9px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--fg); border-radius: 2px; transition: 0.3s; }
+  </style>
+
+<style id="nav-pill-v2">
+/* ═══ Floating glass pill navigation (site-wide, matches index.html) ═══ */
+body > nav {
+  top: 12px !important; left: max(14px, 2.2%) !important; right: max(14px, 2.2%) !important;
+  background: oklch(98.5% 0.008 60 / 0.72) !important;
+  backdrop-filter: blur(20px) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.6) !important;
+  border: 1px solid oklch(100% 0 0 / 0.65) !important;
+  box-shadow: 0 10px 40px oklch(18% 0.02 240 / 0.08), inset 0 1px 0 oklch(100% 0 0 / 0.7) !important;
+  border-radius: 999px !important;
+  height: 60px !important;
+  padding: 0 12px 0 24px !important;
+  transition: box-shadow 0.4s, background 0.4s, height 0.3s, top 0.3s !important;
+}
+body > nav.scrolled {
+  top: 8px !important; height: 54px !important;
+  background: oklch(98.5% 0.008 60 / 0.88) !important;
+  box-shadow: 0 14px 44px oklch(18% 0.02 240 / 0.14), inset 0 1px 0 oklch(100% 0 0 / 0.7) !important;
+}
+body.dark > nav {
+  background: oklch(16% 0.015 240 / 0.78) !important;
+  border-color: oklch(32% 0.02 240 / 0.7) !important;
+  box-shadow: 0 10px 40px oklch(0% 0 0 / 0.35) !important;
+}
+body.dark > nav.scrolled { background: oklch(16% 0.015 240 / 0.9) !important; }
+/* active page dot */
+.nav-links > li > a.active:not(.nav-cta) { position: relative; }
+.nav-links > li > a.active:not(.nav-cta)::before {
+  content: ''; position: absolute; left: 50%; bottom: -1px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--teal);
+  transform: translateX(-50%);
+}
+/* hamburger → animated ✕ */
+.nav-hamburger {
+  width: 42px !important; height: 42px !important;
+  align-items: center !important; justify-content: center !important;
+  border-radius: 50% !important; gap: 5px !important;
+  margin-left: 6px; transition: background 0.2s;
+  background: none; border: none; padding: 0 !important;
+}
+.nav-hamburger:hover { background: var(--teal-light) !important; }
+.nav-hamburger span {
+  width: 20px !important; height: 2px !important;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.2s !important;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+/* mobile drawer → floating frosted card */
+.nav-links.open {
+  position: fixed !important;
+  top: 82px !important; left: max(14px, 2.2%) !important; right: max(14px, 2.2%) !important;
+  background: oklch(98.5% 0.008 60 / 0.92) !important;
+  backdrop-filter: blur(22px) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.6) !important;
+  border: 1px solid oklch(100% 0 0 / 0.65) !important;
+  border-bottom: 1px solid oklch(100% 0 0 / 0.65) !important;
+  border-radius: 22px !important;
+  padding: 14px 14px 18px !important;
+  box-shadow: 0 24px 60px oklch(18% 0.02 240 / 0.18) !important;
+  max-height: calc(100dvh - 96px) !important;
+  overflow-y: auto !important;
+  animation: navDrawerInV2 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes navDrawerInV2 { from { opacity: 0; transform: translateY(-10px) scale(0.98); } to { opacity: 1; transform: none; } }
+body > nav.scrolled .nav-links.open { top: 70px !important; max-height: calc(100dvh - 84px) !important; }
+body.dark .nav-links.open { background: oklch(16% 0.015 240 / 0.94) !important; border-color: oklch(30% 0.02 240 / 0.7) !important; }
+/* Harmonized collapse breakpoint (matches index.html) — prevents pill overflow at 900–1140px */
+@media (max-width: 1140px) {
+  .nav-links:not(.open) { display: none !important; }
+  .nav-hamburger { display: flex !important; }
+  .nav-links.open { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 4px !important; }
+  .nav-links.open > li { width: 100% !important; position: relative; }
+  .nav-links.open > li > a { display: block !important; padding: 12px 14px !important; border-radius: 10px !important; }
+  .nav-links.open .has-dropdown { display: grid !important; grid-template-columns: 1fr auto !important; align-items: center !important; column-gap: 4px; }
+  .nav-links.open .has-dropdown > a { grid-column: 1; }
+  .nav-links.open .has-dropdown > a::after { display: none !important; }
+  .nav-links.open .has-dropdown > .dropdown-caret { display: inline-flex !important; grid-column: 2; }
+  .nav-links.open .has-dropdown > .nav-dropdown { grid-column: 1 / -1; }
+  .nav-links.open .has-dropdown.submenu-open .dropdown-caret { transform: rotate(180deg); color: var(--teal); }
+  .nav-links.open .nav-dropdown {
+    position: static !important; min-width: 0 !important;
+    opacity: 0; visibility: hidden; max-height: 0; overflow: hidden;
+    transform: none !important; box-shadow: none !important; border: none !important;
+    background: transparent !important; padding: 0 !important;
+    transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.2s ease;
+  }
+  .nav-links.open .has-dropdown.submenu-open .nav-dropdown {
+    opacity: 1 !important; visibility: visible !important; max-height: 800px !important; padding: 4px 0 8px 12px !important;
+  }
+  .nav-links.open .nav-cta { width: 100% !important; justify-content: center !important; text-align: center !important; margin-top: 4px; }
+}
+</style>
+<script>
+/* Sync the hamburger's ✕ state with the drawer (works with each page's own toggle handler) */
+document.addEventListener('click', function (e) {
+  var h = e.target.closest('.nav-hamburger');
+  if (!h) return;
+  setTimeout(function () {
+    var n = document.querySelector('.nav-links');
+    var open = !!(n && n.classList.contains('open'));
+    h.classList.toggle('open', open);
+    h.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }, 0);
+});
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo" style="gap:0;font-family:Georgia,serif;">
+    <svg width="150" height="44" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
+      <text x="2" y="32" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="700" fill="var(--teal)" letter-spacing="-1.5">Wajeeh</text>
+      <path d="M 4 38 Q 50 44 100 38 T 138 36" stroke="var(--amber)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="142" cy="35" r="3.5" fill="var(--amber)"/>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About Me</a></li>
+    <li class="has-dropdown">
+      <a href="index.html#services">Services</a>
+      <div class="nav-dropdown">
+        <a href="services.html?s=scratch"><span>🚀 Scratch to Sales</span><small>Full funnel — plan to scale</small></a>
+        <a href="services.html?s=growth"><span>🌱 Growth Marketing</span><small>New businesses — zero to traction</small></a>
+        <a href="services.html?s=seo"><span>🔍 SEO</span><small>Search Engine Optimization</small></a>
+        <a href="services.html?s=llmseo"><span>✨ LLM SEO</span><small>AI Search · ChatGPT & AI Overviews</small></a>
+        <a href="services.html?s=aeo"><span>🗣️ Ask Engine Optimization</span><small>Answer boxes, PAA &amp; voice</small></a>
+        <a href="services.html?s=sem"><span>🎯 SEM / PPC</span><small>Google Ads & Paid Search</small></a>
+        <a href="services.html?s=paid"><span>📣 Paid Social</span><small>Meta, TikTok & DTC Ads</small></a>
+        <a href="services.html?s=performance"><span>📊 Performance Marketing</span><small>Cross-channel paid growth</small></a>
+        <a href="services.html?s=social"><span>💬 Social Media</span><small>Organic Social & Community</small></a>
+        <a href="services.html?s=content"><span>✍️ Content</span><small>SEO Content & Copywriting</small></a>
+        <a href="services.html?s=email"><span>📧 Email</span><small>Klaviyo & Lifecycle Email</small></a>
+        <a href="services.html?s=webdev"><span>🌐 Web Dev</span><small>Next.js, Shopify & Headless</small></a>
+        <a href="services.html?s=wordpress"><span>🔷 WordPress</span><small>Custom Themes & Speed</small></a>
+        <a href="services.html?s=automation"><span>🤖 Automation & AI</span><small>AI Agents, GHL & Zapier</small></a>
+      </div>
+    </li>
+    <li class="has-dropdown">
+      <a href="industries.html">Industries</a>
+      <div class="nav-dropdown">
+        <a href="industries.html?i=realestate">Real Estate<small>Lead-gen funnels</small></a>
+        <a href="industries.html?i=ecommerce">E-commerce<small>DTC growth</small></a>
+        <a href="industries.html?i=healthcare">NDIS &amp; Healthcare<small>Trust-first</small></a>
+        <a href="industries.html?i=restaurants">Restaurants<small>Local visibility</small></a>
+        <a href="industries.html?i=legal">Legal<small>High-intent leads</small></a>
+        <a href="industries.html?i=outdoor">Outdoor Media<small>OOH × digital</small></a>
+        <a href="industries.html?i=localservices">Local Services<small>Booked jobs</small></a>
+        <a href="industries.html?i=saas">SaaS &amp; Startups<small>Full funnel</small></a>
+      </div>
+    </li>
+    <li><a href="projections.html">Estimators</a></li>
+    <li><a href="index.html#experience">Experience</a></li>
+    <li><a href="projects.html">Case Studies</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="contact.html" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+  <button class="nav-hamburger" aria-label="Open menu" onclick="document.querySelector('nav .nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-bg"></div>
+  <div class="page-header-inner">
+    <div class="page-header-label">Insights &amp; Ideas</div>
+    <h1>Read About <span>Latest Trends</span></h1>
+    <p>Thoughts on SEO, performance marketing, AI search, and building digital growth systems that last.</p>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="blog-layout">
+  <!-- POSTS -->
+  <main>
+    <div class="blog-filters" id="filters">
+      <button class="filter-btn active" data-cat="all" onclick="filterPosts('all')">All Posts</button>
+      <button class="filter-btn" data-cat="SEO" onclick="filterPosts('SEO')">SEO</button>
+      <button class="filter-btn" data-cat="Local SEO" onclick="filterPosts('Local SEO')">Local SEO</button>
+      <button class="filter-btn" data-cat="Digital Marketing" onclick="filterPosts('Digital Marketing')">Digital Marketing</button>
+      <button class="filter-btn" data-cat="Performance Marketing" onclick="filterPosts('Performance Marketing')">Performance Marketing</button>
+      <button class="filter-btn" data-cat="AI & SEO" onclick="filterPosts('AI & SEO')">AI &amp; SEO</button>
+      <button class="filter-btn" data-cat="Web Development" onclick="filterPosts('Web Development')">Web Dev</button>
+    </div>
+    <div class="posts-grid" id="posts-grid"></div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+
+
+    <!-- SEARCH WIDGET -->
+    <div class="sidebar-widget">
+      <div class="widget-title">Search Articles</div>
+      <div class="nav-search" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <input id="blog-search" type="search" placeholder="Search articles…" aria-label="Search blog articles" autocomplete="off" oninput="searchPosts(this.value)" />
+      </div>
+    </div>
+
+    <!-- ABOUT WIDGET -->
+    <div class="sidebar-widget">
+      <div class="widget-title">About the Author</div>
+      <div class="widget-author">
+        <div class="widget-avatar" id="widget-avatar">
+          <img src="uploads/pasted-1777921748014-0.png" alt="Syed Wajeeh Ul Hassan" onerror="this.style.display='none'" />
+        </div>
+        <div>
+          <div class="widget-name">Syed Wajeeh</div>
+          <div class="widget-role">Growth Dev &amp; Marketer</div>
+        </div>
+      </div>
+      <div class="widget-tags">
+        <span class="widget-tag">SEO</span>
+        <span class="widget-tag">Full Stack</span>
+        <span class="widget-tag">Paid Ads</span>
+        <span class="widget-tag">AI Search</span>
+      </div>
+    </div>
+
+    <!-- CATEGORIES WIDGET -->
+    <div class="sidebar-widget">
+      <div class="widget-title">Categories</div>
+      <div class="cat-list" id="cat-list"></div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- POST MODAL -->
+<div class="post-modal" id="post-modal" onclick="handleModalClick(event)">
+  <div class="post-modal-backdrop"></div>
+  <div class="post-modal-close" onclick="closeModal()">×</div>
+  <div class="post-modal-card">
+    <div id="modal-img-wrap"></div>
+    <div class="post-modal-body">
+      <div class="post-modal-cat" id="modal-cat"></div>
+      <h1 id="modal-title"></h1>
+      <div class="post-modal-meta" id="modal-meta"></div>
+      <div class="post-modal-content" id="modal-content"></div>
+      <div class="post-modal-actions" id="modal-actions"></div>
+      <div class="post-feedback" id="post-feedback"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <a href="index.html" class="footer-back">← Back to Portfolio</a>
+  </div>
+  <div class="footer-logo">wajeeh.dev</div>
+  <p class="footer-copy">© 2026 Syed Wajeeh Ul Hassan · Lahore, Pakistan</p>
+</footer>
+
+<!-- Published content (live for all visitors) — generated by the dashboard -->
+<script src="content/published.js"></script>
+<script src="content/live.js?v=3"></script>
+<script src="content/page-seo.js"></script>
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'wjh_blog_posts';
+
+
+let posts = [];
+let isAdmin = true;
+let currentFilter = 'all';
+let searchQuery = '';
+
+const THUMB_SEO = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#0d3b36"/>
+  <rect width="400" height="220" fill="url(#g1)"/>
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a4f47"/>
+      <stop offset="100%" stop-color="#061f1c"/>
+    </linearGradient>
+  </defs>
+  <!-- Grid lines -->
+  <line x1="0" y1="55" x2="400" y2="55" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="0" y1="110" x2="400" y2="110" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="0" y1="165" x2="400" y2="165" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="100" y1="0" x2="100" y2="220" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="200" y1="0" x2="200" y2="220" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="300" y1="0" x2="300" y2="220" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+  <!-- Bar chart -->
+  <rect x="40" y="140" width="36" height="50" rx="4" fill="#1a9e8f" opacity="0.5"/>
+  <rect x="90" y="110" width="36" height="80" rx="4" fill="#1a9e8f" opacity="0.65"/>
+  <rect x="140" y="80" width="36" height="110" rx="4" fill="#1a9e8f" opacity="0.8"/>
+  <rect x="190" y="50" width="36" height="140" rx="4" fill="#1a9e8f"/>
+  <rect x="240" y="70" width="36" height="120" rx="4" fill="#1a9e8f" opacity="0.85"/>
+  <!-- Arrow up -->
+  <polyline points="50,160 120,100 200,60 290,40" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="290" cy="40" r="5" fill="#4ecdc4"/>
+  <!-- Label -->
+  <rect x="28" y="12" width="80" height="22" rx="4" fill="#1a9e8f" opacity="0.3"/>
+  <text x="40" y="27" font-family="monospace" font-size="10" fill="#4ecdc4" font-weight="bold">SEO GROWTH</text>
+  <!-- Google icon hint -->
+  <text x="310" y="195" font-family="monospace" font-size="28" fill="#ffffff" opacity="0.08" font-weight="bold">G</text>
+</svg>`)}`;
+
+const THUMB_DM = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#1a1a2e"/>
+  <defs>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a3e"/>
+      <stop offset="100%" stop-color="#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="220" fill="url(#g2)"/>
+  <!-- Organic side -->
+  <rect x="20" y="30" width="170" height="160" rx="10" fill="#1a9e8f" opacity="0.12"/>
+  <text x="105" y="60" font-family="monospace" font-size="10" fill="#1a9e8f" text-anchor="middle" font-weight="bold">ORGANIC</text>
+  <path d="M 40 170 Q 60 80 105 70 Q 150 60 165 170 Z" fill="#1a9e8f" opacity="0.25"/>
+  <path d="M 40 170 Q 60 80 105 70 Q 150 60 165 170 Z" fill="none" stroke="#1a9e8f" stroke-width="1.5"/>
+  <!-- Paid side -->
+  <rect x="210" y="30" width="170" height="160" rx="10" fill="#c97a2a" opacity="0.12"/>
+  <text x="295" y="60" font-family="monospace" font-size="10" fill="#c97a2a" text-anchor="middle" font-weight="bold">PAID</text>
+  <rect x="230" y="90" width="30" height="80" rx="3" fill="#c97a2a" opacity="0.7"/>
+  <rect x="268" y="70" width="30" height="100" rx="3" fill="#c97a2a" opacity="0.85"/>
+  <rect x="306" y="110" width="30" height="60" rx="3" fill="#c97a2a" opacity="0.6"/>
+  <!-- VS divider -->
+  <line x1="200" y1="20" x2="200" y2="200" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" stroke-dasharray="4,4"/>
+  <circle cx="200" cy="110" r="16" fill="#1a1a2e" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1"/>
+  <text x="200" y="115" font-family="monospace" font-size="10" fill="#ffffff" opacity="0.5" text-anchor="middle" font-weight="bold">VS</text>
+</svg>`)}`;
+
+const THUMB_AI = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#0d0d1a"/>
+  <defs>
+    <radialGradient id="g3" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#1a9e8f" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0d0d1a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="220" fill="url(#g3)"/>
+  <!-- Network nodes -->
+  <circle cx="200" cy="110" r="22" fill="#1a9e8f" opacity="0.9"/>
+  <text x="200" y="115" font-family="monospace" font-size="9" fill="white" text-anchor="middle" font-weight="bold">AI</text>
+  <!-- Satellite nodes -->
+  <circle cx="90" cy="60" r="12" fill="#1a9e8f" opacity="0.5"/>
+  <text x="90" y="64" font-family="monospace" font-size="7" fill="white" text-anchor="middle">GPT</text>
+  <circle cx="310" cy="60" r="12" fill="#1a9e8f" opacity="0.5"/>
+  <text x="310" y="64" font-family="monospace" font-size="7" fill="white" text-anchor="middle">GEM</text>
+  <circle cx="70" cy="160" r="12" fill="#c97a2a" opacity="0.6"/>
+  <text x="70" y="164" font-family="monospace" font-size="7" fill="white" text-anchor="middle">PPX</text>
+  <circle cx="330" cy="160" r="12" fill="#c97a2a" opacity="0.6"/>
+  <text x="330" y="164" font-family="monospace" font-size="7" fill="white" text-anchor="middle">BING</text>
+  <circle cx="200" cy="185" r="10" fill="#1a9e8f" opacity="0.4"/>
+  <text x="200" y="189" font-family="monospace" font-size="7" fill="white" text-anchor="middle">YOU</text>
+  <!-- Connection lines -->
+  <line x1="200" y1="110" x2="90" y2="60" stroke="#1a9e8f" stroke-width="1" stroke-opacity="0.4"/>
+  <line x1="200" y1="110" x2="310" y2="60" stroke="#1a9e8f" stroke-width="1" stroke-opacity="0.4"/>
+  <line x1="200" y1="110" x2="70" y2="160" stroke="#c97a2a" stroke-width="1" stroke-opacity="0.4"/>
+  <line x1="200" y1="110" x2="330" y2="160" stroke="#c97a2a" stroke-width="1" stroke-opacity="0.4"/>
+  <line x1="200" y1="110" x2="200" y2="185" stroke="#1a9e8f" stroke-width="1" stroke-opacity="0.4"/>
+  <!-- Label -->
+  <rect x="130" y="12" width="140" height="22" rx="4" fill="#1a9e8f" opacity="0.2"/>
+  <text x="200" y="27" font-family="monospace" font-size="9" fill="#4ecdc4" text-anchor="middle" font-weight="bold">SEARCH EVERYWHERE</text>
+</svg>`)}`;
+
+const THUMB_NEARME = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="nmBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e3eef0"/><stop offset="100%" stop-color="#cdd9dc"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#nmBg)"/>
+  <!-- Map roads -->
+  <g stroke="#b0c2c6" stroke-width="6" fill="none" stroke-linecap="round">
+    <path d="M 0 60 L 400 80"/>
+    <path d="M 0 160 L 400 140"/>
+    <path d="M 80 0 L 110 220"/>
+    <path d="M 280 0 L 310 220"/>
+  </g>
+  <g stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M 0 60 L 400 80"/>
+    <path d="M 0 160 L 400 140"/>
+    <path d="M 80 0 L 110 220"/>
+    <path d="M 280 0 L 310 220"/>
+  </g>
+  <!-- Park / district shapes -->
+  <rect x="130" y="92" width="120" height="58" rx="6" fill="#c5deb8" opacity="0.7"/>
+  <text x="190" y="124" font-family="Arial, sans-serif" font-size="8" fill="#6a8c5a" text-anchor="middle" font-weight="600">Central District</text>
+  <rect x="30" y="92" width="80" height="58" rx="4" fill="#d8e8ea" opacity="0.6"/>
+  <rect x="310" y="92" width="60" height="58" rx="4" fill="#d8e8ea" opacity="0.6"/>
+  <!-- Secondary pins -->
+  <g>
+    <circle cx="70" cy="56" r="6" fill="#1a73e8" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="340" cy="62" r="6" fill="#1a73e8" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="92" cy="178" r="6" fill="#1a73e8" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="312" cy="174" r="6" fill="#1a73e8" stroke="#fff" stroke-width="1.5"/>
+  </g>
+  <!-- Big "You are here" pin in center -->
+  <ellipse cx="200" cy="148" rx="22" ry="5" fill="#000" opacity="0.18"/>
+  <path d="M 200 60 C 218 60 230 75 230 92 C 230 112 200 145 200 145 C 200 145 170 112 170 92 C 170 75 182 60 200 60 Z" fill="#ea4335" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="200" cy="90" r="9" fill="#fff"/>
+  <circle cx="200" cy="90" r="4" fill="#ea4335"/>
+  <!-- Label -->
+  <rect x="142" y="14" width="116" height="22" rx="11" fill="#fff" stroke="#dadce0"/>
+  <text x="200" y="29" font-family="Arial, sans-serif" font-size="10" fill="#202124" text-anchor="middle" font-weight="700">★ "near me"</text>
+  <!-- Bottom search bar -->
+  <rect x="14" y="190" width="372" height="22" rx="11" fill="#fff" stroke="#dadce0"/>
+  <circle cx="28" cy="201" r="5" fill="none" stroke="#5f6368" stroke-width="1.3"/>
+  <line x1="32" y1="205" x2="36" y2="209" stroke="#5f6368" stroke-width="1.3"/>
+  <text x="44" y="205" font-family="Arial, sans-serif" font-size="9" fill="#5f6368">best coffee near me</text>
+</svg>`)}`;
+
+const THUMB_PERFKPI = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="pkBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0c1320"/><stop offset="100%" stop-color="#1a2235"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#pkBg)"/>
+  <rect x="14" y="14" width="110" height="20" rx="10" fill="#1a9e8f" opacity="0.18"/>
+  <text x="24" y="28" font-family="monospace" font-size="9" fill="#4fdfb5" font-weight="700" letter-spacing="1.5">PERFORMANCE KPI</text>
+  <!-- 4 metric cards -->
+  <g>
+    <rect x="14" y="44" width="88" height="46" rx="6" fill="#1a2235" stroke="#2c3a55"/>
+    <text x="22" y="58" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="0.5">CAC</text>
+    <text x="22" y="76" font-family="monospace" font-size="14" font-weight="700" fill="#fff">$38.20</text>
+    <text x="22" y="85" font-family="monospace" font-size="6" fill="#4fdfb5">▼ 24%</text>
+    <rect x="108" y="44" width="88" height="46" rx="6" fill="#1a2235" stroke="#2c3a55"/>
+    <text x="116" y="58" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="0.5">LTV : CAC</text>
+    <text x="116" y="76" font-family="monospace" font-size="14" font-weight="700" fill="#fff">4.8 : 1</text>
+    <text x="116" y="85" font-family="monospace" font-size="6" fill="#4fdfb5">▲ healthy</text>
+    <rect x="202" y="44" width="88" height="46" rx="6" fill="#1a2235" stroke="#2c3a55"/>
+    <text x="210" y="58" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="0.5">MER</text>
+    <text x="210" y="76" font-family="monospace" font-size="14" font-weight="700" fill="#4fdfb5">3.42×</text>
+    <text x="210" y="85" font-family="monospace" font-size="6" fill="#4fdfb5">▲ 0.42</text>
+    <rect x="296" y="44" width="90" height="46" rx="6" fill="#1a2235" stroke="#2c3a55"/>
+    <text x="304" y="58" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="0.5">PAYBACK · DAYS</text>
+    <text x="304" y="76" font-family="monospace" font-size="14" font-weight="700" fill="#fff">38d</text>
+    <text x="304" y="85" font-family="monospace" font-size="6" fill="#4fdfb5">▼ 12d</text>
+  </g>
+  <!-- Funnel -->
+  <g transform="translate(14,100)">
+    <rect x="0" y="0" width="372" height="108" rx="6" fill="#141b29" stroke="#2c3a55"/>
+    <text x="12" y="16" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="1">FUNNEL · 30D</text>
+    <!-- bars descending -->
+    <rect x="12" y="26" width="348" height="14" rx="2" fill="#4fdfb5" opacity="0.85"/>
+    <text x="20" y="36" font-family="monospace" font-size="7.5" font-weight="700" fill="#0a0a0f">IMPR · 2.4M</text>
+    <rect x="12" y="44" width="240" height="14" rx="2" fill="#4fdfb5" opacity="0.65"/>
+    <text x="20" y="54" font-family="monospace" font-size="7.5" font-weight="700" fill="#0a0a0f">CLICKS · 184K</text>
+    <rect x="12" y="62" width="150" height="14" rx="2" fill="#4fdfb5" opacity="0.5"/>
+    <text x="20" y="72" font-family="monospace" font-size="7.5" font-weight="700" fill="#0a0a0f">LEADS · 12.4K</text>
+    <rect x="12" y="80" width="68" height="14" rx="2" fill="#f5b942" opacity="0.85"/>
+    <text x="20" y="90" font-family="monospace" font-size="7.5" font-weight="700" fill="#1a1a2e">CUSTOMERS · 1,840</text>
+  </g>
+</svg>`)}`;
+
+const THUMB_GBP = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#f8f9fa"/>
+  <!-- Google logo small -->
+  <text x="18" y="28" font-family="Arial, sans-serif" font-size="13" font-weight="700">
+    <tspan fill="#4285f4">G</tspan><tspan fill="#ea4335">o</tspan><tspan fill="#fbbc04">o</tspan><tspan fill="#4285f4">g</tspan><tspan fill="#34a853">l</tspan><tspan fill="#ea4335">e</tspan>
+  </text>
+  <text x="60" y="28" font-family="Arial, sans-serif" font-size="9" fill="#5f6368">Business Profile</text>
+  <!-- Big card -->
+  <rect x="14" y="40" width="372" height="170" rx="8" fill="#fff" stroke="#dadce0"/>
+  <!-- Cover image area -->
+  <rect x="14" y="40" width="372" height="60" rx="8" fill="#1a9e8f" opacity="0.18"/>
+  <g fill="#1a9e8f" opacity="0.35">
+    <circle cx="60" cy="68" r="14"/>
+    <rect x="84" y="56" width="38" height="6" rx="3"/>
+    <rect x="84" y="68" width="28" height="4" rx="2"/>
+    <rect x="84" y="78" width="44" height="4" rx="2"/>
+  </g>
+  <text x="370" y="60" font-family="Arial, sans-serif" font-size="8" fill="#1a9e8f" text-anchor="end" font-weight="700">▲ VERIFIED</text>
+  <!-- Business name -->
+  <text x="26" y="124" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#202124">Smith &amp; Co. Roofing — Bay Area</text>
+  <!-- Rating row -->
+  <text x="26" y="142" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#fbbc04">★★★★★ 4.9</text>
+  <text x="84" y="142" font-family="Arial, sans-serif" font-size="9" fill="#5f6368">(312 reviews) · Roofing contractor</text>
+  <!-- Hours / Open -->
+  <text x="26" y="158" font-family="Arial, sans-serif" font-size="9" fill="#137333" font-weight="600">Open · Closes 6 PM</text>
+  <text x="115" y="158" font-family="Arial, sans-serif" font-size="9" fill="#5f6368">· (415) 555-0184 · smithroofing.com</text>
+  <!-- Action buttons -->
+  <g>
+    <rect x="26" y="172" width="66" height="26" rx="13" fill="#1a73e8"/>
+    <text x="59" y="188" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">Directions</text>
+    <rect x="100" y="172" width="58" height="26" rx="13" fill="#fff" stroke="#1a73e8"/>
+    <text x="129" y="188" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#1a73e8" text-anchor="middle">Call</text>
+    <rect x="166" y="172" width="74" height="26" rx="13" fill="#fff" stroke="#1a73e8"/>
+    <text x="203" y="188" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#1a73e8" text-anchor="middle">Website</text>
+    <rect x="248" y="172" width="86" height="26" rx="13" fill="#fff" stroke="#1a73e8"/>
+    <text x="291" y="188" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#1a73e8" text-anchor="middle">Save listing</text>
+  </g>
+  <!-- Audit checkmarks top right -->
+  <g transform="translate(290,116)">
+    <text x="0" y="0" font-family="monospace" font-size="7" fill="#5f6368" letter-spacing="0.5">9-POINT AUDIT</text>
+    <circle cx="4" cy="10" r="3" fill="#34a853"/>
+    <text x="12" y="12.5" font-family="monospace" font-size="7" fill="#202124">Categories</text>
+    <circle cx="4" cy="22" r="3" fill="#34a853"/>
+    <text x="12" y="24.5" font-family="monospace" font-size="7" fill="#202124">Service Areas</text>
+    <circle cx="4" cy="34" r="3" fill="#34a853"/>
+    <text x="12" y="36.5" font-family="monospace" font-size="7" fill="#202124">Posts &amp; Photos</text>
+  </g>
+</svg>`)}`;
+
+const THUMB_VBB = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="vbBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2235"/><stop offset="100%" stop-color="#0a1020"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#vbBg)"/>
+  <rect x="14" y="14" width="160" height="20" rx="10" fill="#f5b942" opacity="0.2"/>
+  <text x="24" y="28" font-family="monospace" font-size="9" fill="#f5b942" font-weight="700" letter-spacing="1.5">VALUE-BASED BIDDING</text>
+  <!-- Two columns: CPA vs Value -->
+  <text x="100" y="56" font-family="monospace" font-size="8" fill="#7c8aa0" text-anchor="middle" letter-spacing="0.5">CPA TARGET</text>
+  <text x="300" y="56" font-family="monospace" font-size="8" fill="#f5b942" text-anchor="middle" letter-spacing="0.5" font-weight="700">VALUE TARGET</text>
+  <!-- Left chart - flat -->
+  <g transform="translate(14,64)">
+    <rect width="172" height="120" rx="6" fill="#141b29" stroke="#2c3a55"/>
+    <line x1="0" y1="100" x2="172" y2="100" stroke="#2c3a55" stroke-width="0.5"/>
+    <polyline points="10,80 30,82 50,78 70,84 90,80 110,82 130,78 150,84 162,80" fill="none" stroke="#7c8aa0" stroke-width="2"/>
+    <text x="86" y="55" font-family="monospace" font-size="18" font-weight="700" fill="#7c8aa0" text-anchor="middle">2.4×</text>
+    <text x="86" y="68" font-family="monospace" font-size="7" fill="#7c8aa0" text-anchor="middle">FLAT ROAS</text>
+    <text x="86" y="114" font-family="monospace" font-size="6" fill="#7c8aa0" text-anchor="middle">all leads weighted equally</text>
+  </g>
+  <!-- Right chart - climbing -->
+  <g transform="translate(214,64)">
+    <rect width="172" height="120" rx="6" fill="#141b29" stroke="#2c3a55"/>
+    <line x1="0" y1="100" x2="172" y2="100" stroke="#2c3a55" stroke-width="0.5"/>
+    <path d="M 10 95 L 30 88 L 50 82 L 70 70 L 90 62 L 110 50 L 130 38 L 150 28 L 162 22 L 162 100 L 10 100 Z" fill="#f5b942" opacity="0.2"/>
+    <polyline points="10,95 30,88 50,82 70,70 90,62 110,50 130,38 150,28 162,22" fill="none" stroke="#f5b942" stroke-width="2.5"/>
+    <circle cx="162" cy="22" r="3.5" fill="#f5b942"/>
+    <text x="86" y="55" font-family="monospace" font-size="18" font-weight="700" fill="#f5b942" text-anchor="middle">6.1×</text>
+    <text x="86" y="68" font-family="monospace" font-size="7" fill="#f5b942" text-anchor="middle">CLIMBING ROAS</text>
+  </g>
+  <!-- Bottom dollar tags -->
+  <g transform="translate(14,194)" font-family="monospace" font-size="8" fill="#4fdfb5" font-weight="700">
+    <text x="0" y="0">$80 lead</text>
+    <text x="58" y="0">$240 lead</text>
+    <text x="124" y="0">$1.2K lead</text>
+    <text x="208" y="0">$4.8K lead</text>
+    <text x="290" y="0">$12K lead</text>
+  </g>
+</svg>`)}`;
+
+const THUMB_GA4 = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#f8f9fa"/>
+  <!-- Top bar -->
+  <rect x="0" y="0" width="400" height="24" fill="#fff" stroke="#dadce0" stroke-width="0.5"/>
+  <circle cx="16" cy="12" r="6" fill="#f9ab00"/>
+  <text x="16" y="15.5" font-family="Arial" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">A</text>
+  <text x="28" y="16" font-family="Arial, sans-serif" font-size="10" font-weight="500" fill="#202124">Google Analytics 4</text>
+  <text x="380" y="16" font-family="Arial, sans-serif" font-size="7" fill="#5f6368" text-anchor="end">Last 30 days ▾</text>
+  <!-- 3 metric tiles -->
+  <rect x="14" y="36" width="118" height="50" rx="6" fill="#fff" stroke="#dadce0"/>
+  <text x="22" y="50" font-family="Arial, sans-serif" font-size="7" fill="#5f6368" letter-spacing="0.5">USERS</text>
+  <text x="22" y="70" font-family="Arial, sans-serif" font-size="16" font-weight="500" fill="#202124">142,308</text>
+  <text x="22" y="82" font-family="Arial, sans-serif" font-size="7" fill="#137333">▲ 24.2% vs last period</text>
+  <rect x="138" y="36" width="118" height="50" rx="6" fill="#fff" stroke="#dadce0"/>
+  <text x="146" y="50" font-family="Arial, sans-serif" font-size="7" fill="#5f6368" letter-spacing="0.5">ENGAGED SESSIONS</text>
+  <text x="146" y="70" font-family="Arial, sans-serif" font-size="16" font-weight="500" fill="#202124">98,420</text>
+  <text x="146" y="82" font-family="Arial, sans-serif" font-size="7" fill="#137333">▲ 18.6%</text>
+  <rect x="262" y="36" width="124" height="50" rx="6" fill="#fff" stroke="#dadce0"/>
+  <text x="270" y="50" font-family="Arial, sans-serif" font-size="7" fill="#5f6368" letter-spacing="0.5">KEY EVENTS</text>
+  <text x="270" y="70" font-family="Arial, sans-serif" font-size="16" font-weight="500" fill="#137333">3,842</text>
+  <text x="270" y="82" font-family="Arial, sans-serif" font-size="7" fill="#137333">▲ 41.0%</text>
+  <!-- Chart area -->
+  <rect x="14" y="94" width="372" height="114" rx="6" fill="#fff" stroke="#dadce0"/>
+  <text x="22" y="110" font-family="Arial, sans-serif" font-size="9" font-weight="600" fill="#202124">Users by traffic source</text>
+  <!-- Gridlines -->
+  <g stroke="#e8eaed" stroke-width="0.5">
+    <line x1="22" y1="130" x2="378" y2="130"/>
+    <line x1="22" y1="150" x2="378" y2="150"/>
+    <line x1="22" y1="170" x2="378" y2="170"/>
+    <line x1="22" y1="190" x2="378" y2="190"/>
+  </g>
+  <!-- Lines -->
+  <polyline points="22,184 60,176 100,168 140,150 180,148 220,138 260,126 300,120 340,116 378,108" fill="none" stroke="#1a73e8" stroke-width="2"/>
+  <polyline points="22,190 60,188 100,184 140,180 180,176 220,170 260,168 300,162 340,158 378,154" fill="none" stroke="#34a853" stroke-width="2"/>
+  <polyline points="22,194 60,192 100,190 140,186 180,184 220,182 260,180 300,178 340,174 378,172" fill="none" stroke="#ea4335" stroke-width="2"/>
+  <!-- Legend -->
+  <g font-family="Arial, sans-serif" font-size="7" fill="#5f6368">
+    <circle cx="270" cy="110" r="3" fill="#1a73e8"/>
+    <text x="277" y="113">Organic Search</text>
+    <circle cx="328" cy="110" r="3" fill="#34a853"/>
+    <text x="335" y="113">Direct</text>
+    <circle cx="362" cy="110" r="3" fill="#ea4335"/>
+    <text x="369" y="113">Paid</text>
+  </g>
+</svg>`)}`;
+
+const THUMB_AIOVERVIEW = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#f8f9fa"/>
+  <defs><linearGradient id="aiSpark" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4285f4"/><stop offset="50%" stop-color="#9b72f2"/><stop offset="100%" stop-color="#d96570"/></linearGradient></defs>
+  <!-- search box -->
+  <rect x="14" y="14" width="372" height="24" rx="12" fill="#fff" stroke="#dadce0"/>
+  <circle cx="30" cy="26" r="5" fill="none" stroke="#5f6368" stroke-width="1.3"/>
+  <line x1="34" y1="30" x2="38" y2="34" stroke="#5f6368" stroke-width="1.3"/>
+  <text x="46" y="29.5" font-family="Arial, sans-serif" font-size="9" fill="#202124">best crm for early-stage startups</text>
+  <!-- AI Overview card -->
+  <rect x="14" y="48" width="372" height="158" rx="10" fill="#fff" stroke="#e3e8ee"/>
+  <rect x="14" y="48" width="372" height="3" rx="1.5" fill="url(#aiSpark)"/>
+  <path d="M 30 70 l 2.4 5.6 l 5.6 2.4 l -5.6 2.4 l -2.4 5.6 l -2.4 -5.6 l -5.6 -2.4 l 5.6 -2.4 Z" fill="url(#aiSpark)"/>
+  <text x="46" y="78" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#1f1f1f">AI Overview</text>
+  <text x="378" y="78" font-family="Arial, sans-serif" font-size="7.5" fill="#5f6368" text-anchor="end">Generated for you</text>
+  <g fill="#3c4043">
+    <rect x="30" y="92" width="342" height="6" rx="3" opacity="0.5"/>
+    <rect x="30" y="104" width="356" height="6" rx="3" opacity="0.5"/>
+    <rect x="30" y="116" width="300" height="6" rx="3" opacity="0.5"/>
+  </g>
+  <!-- highlighted brand mention -->
+  <rect x="30" y="128" width="120" height="6" rx="3" fill="#1a9e8f" opacity="0.85"/>
+  <rect x="156" y="128" width="200" height="6" rx="3" fill="#3c4043" opacity="0.5"/>
+  <!-- citation chips -->
+  <text x="30" y="158" font-family="Arial, sans-serif" font-size="7.5" font-weight="700" fill="#5f6368" letter-spacing="0.5">SOURCES</text>
+  <g font-family="Arial, sans-serif" font-size="8" font-weight="600">
+    <rect x="30" y="166" width="74" height="22" rx="6" fill="#e8f0fe"/>
+    <circle cx="42" cy="177" r="5" fill="#1a9e8f"/>
+    <text x="52" y="180" fill="#1a73e8">yoursite ↗</text>
+    <rect x="112" y="166" width="64" height="22" rx="6" fill="#f1f3f4"/>
+    <circle cx="124" cy="177" r="5" fill="#c97a2a"/>
+    <text x="134" y="180" fill="#3c4043">g2.com</text>
+    <rect x="184" y="166" width="74" height="22" rx="6" fill="#f1f3f4"/>
+    <circle cx="196" cy="177" r="5" fill="#ea4335"/>
+    <text x="206" y="180" fill="#3c4043">reddit</text>
+  </g>
+  <rect x="276" y="58" width="100" height="20" rx="10" fill="#1a9e8f" opacity="0.14"/>
+  <text x="326" y="71.5" font-family="Arial, sans-serif" font-size="8.5" font-weight="700" fill="#137a6e" text-anchor="middle">GEO · AI SEARCH</text>
+</svg>`)}`;
+
+const THUMB_ADVPLUS = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="apBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c2533"/><stop offset="100%" stop-color="#0c1320"/></linearGradient>
+  <linearGradient id="apMeta" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0064e0"/><stop offset="100%" stop-color="#9b72f2"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#apBg)"/>
+  <rect x="14" y="14" width="372" height="30" rx="8" fill="#141b29" stroke="#2c3a55"/>
+  <path d="M 28 29 C 28 26 31 24 33 26 C 35 28 36 30 38 30 C 40 30 41 28 43 26 C 45 24 48 26 48 29 C 48 32 45 34 43 32 C 41 30 40 28 38 28 C 36 28 35 30 33 32 C 31 34 28 32 28 29 Z" fill="url(#apMeta)"/>
+  <text x="56" y="33" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#fff">Advantage+ Shopping</text>
+  <rect x="320" y="22" width="56" height="15" rx="7.5" fill="#1a9e8f" opacity="0.18"/>
+  <text x="348" y="32.5" font-family="monospace" font-size="7.5" font-weight="700" fill="#4fdfb5" text-anchor="middle">AUTO</text>
+  <!-- automation toggles -->
+  <g font-family="Helvetica, sans-serif" font-size="8.5" fill="#c4cde0">
+    <text x="22" y="64">Audience</text><text x="22" y="84">Placements</text><text x="22" y="104">Budget split</text><text x="22" y="124">Creative mix</text>
+  </g>
+  <g>
+    <rect x="120" y="56" width="30" height="12" rx="6" fill="#1a9e8f"/><circle cx="144" cy="62" r="5" fill="#fff"/>
+    <rect x="120" y="76" width="30" height="12" rx="6" fill="#1a9e8f"/><circle cx="144" cy="82" r="5" fill="#fff"/>
+    <rect x="120" y="96" width="30" height="12" rx="6" fill="#1a9e8f"/><circle cx="144" cy="102" r="5" fill="#fff"/>
+    <rect x="120" y="116" width="30" height="12" rx="6" fill="#1a9e8f"/><circle cx="144" cy="122" r="5" fill="#fff"/>
+  </g>
+  <g font-family="monospace" font-size="7" fill="#7c8aa0"><text x="160" y="65">Meta runs it</text><text x="160" y="85">Meta runs it</text><text x="160" y="105">Meta runs it</text><text x="160" y="125">You feed it</text></g>
+  <!-- result panel -->
+  <rect x="244" y="52" width="142" height="78" rx="8" fill="#141b29" stroke="#2c3a55"/>
+  <text x="256" y="68" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="0.5">BLENDED ROAS</text>
+  <text x="256" y="92" font-family="monospace" font-size="22" font-weight="700" fill="#4fdfb5">5.9×</text>
+  <text x="316" y="92" font-family="monospace" font-size="8.5" font-weight="700" fill="#4fdfb5">▲ 0.7</text>
+  <text x="256" y="112" font-family="monospace" font-size="7" fill="#7c8aa0">Creative = the only lever</text>
+  <!-- creative strip -->
+  <text x="22" y="150" font-family="monospace" font-size="7.5" fill="#7c8aa0" letter-spacing="0.5">CREATIVE PIPELINE · 48/WK</text>
+  <g>
+    <rect x="22" y="158" width="42" height="48" rx="5" fill="#243049"/><rect x="28" y="164" width="30" height="22" rx="3" fill="#9b72f2" opacity="0.55"/><rect x="28" y="190" width="22" height="4" rx="2" fill="#4a5878"/><rect x="28" y="198" width="16" height="4" rx="2" fill="#3a4664"/>
+    <rect x="72" y="158" width="42" height="48" rx="5" fill="#243049"/><rect x="78" y="164" width="30" height="22" rx="3" fill="#0064e0" opacity="0.55"/><rect x="78" y="190" width="22" height="4" rx="2" fill="#4a5878"/><rect x="78" y="198" width="16" height="4" rx="2" fill="#3a4664"/>
+    <rect x="122" y="158" width="42" height="48" rx="5" fill="#243049"/><rect x="128" y="164" width="30" height="22" rx="3" fill="#1a9e8f" opacity="0.55"/><rect x="128" y="190" width="22" height="4" rx="2" fill="#4a5878"/><rect x="128" y="198" width="16" height="4" rx="2" fill="#3a4664"/>
+    <rect x="172" y="158" width="42" height="48" rx="5" fill="#243049"/><rect x="178" y="164" width="30" height="22" rx="3" fill="#f5b942" opacity="0.55"/><rect x="178" y="190" width="22" height="4" rx="2" fill="#4a5878"/><rect x="178" y="198" width="16" height="4" rx="2" fill="#3a4664"/>
+    <rect x="222" y="158" width="42" height="48" rx="5" fill="#243049"/><rect x="228" y="164" width="30" height="22" rx="3" fill="#9b72f2" opacity="0.4"/><rect x="228" y="190" width="22" height="4" rx="2" fill="#4a5878"/><rect x="228" y="198" width="16" height="4" rx="2" fill="#3a4664"/>
+    <rect x="272" y="158" width="114" height="48" rx="5" fill="#1a9e8f" opacity="0.12"/>
+    <text x="329" y="180" font-family="monospace" font-size="9" font-weight="700" fill="#4fdfb5" text-anchor="middle">WINNER</text>
+    <text x="329" y="194" font-family="monospace" font-size="7" fill="#7c8aa0" text-anchor="middle">scaled 3×</text>
+  </g>
+</svg>`)}`;
+
+const THUMB_AIMAX = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#f8f9fa"/>
+  <rect x="0" y="0" width="400" height="28" fill="#fff" stroke="#dadce0" stroke-width="0.5"/>
+  <g transform="translate(14,8)">
+    <polygon points="0,12 7,0 14,12" fill="#fbbc04"/><polygon points="3,12 10,0 17,12 10,12" fill="#34a853"/><polygon points="6,12 13,0 20,12" fill="#4285f4"/>
+  </g>
+  <text x="42" y="18" font-family="Arial, sans-serif" font-size="10" font-weight="500" fill="#202124">Google Ads</text>
+  <rect x="116" y="6" width="58" height="15" rx="7.5" fill="#e8f0fe"/>
+  <path d="M 126 13.5 l 1.6 3.6 l 3.6 1.6 l -3.6 1.6 l -1.6 3.6 l -1.6 -3.6 l -3.6 -1.6 l 3.6 -1.6 Z" fill="#9b72f2"/>
+  <text x="150" y="17" font-family="Arial, sans-serif" font-size="7.5" font-weight="700" fill="#1a73e8" text-anchor="middle">AI Max</text>
+  <text x="386" y="18" font-family="Arial, sans-serif" font-size="7" fill="#5f6368" text-anchor="end">Search campaign ▾</text>
+  <text x="14" y="48" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#202124">AI Max for Search — ON</text>
+  <rect x="190" y="38" width="78" height="14" rx="7" fill="#e6f4ea"/><circle cx="200" cy="45" r="3" fill="#34a853"/>
+  <text x="208" y="48" font-family="Arial, sans-serif" font-size="7.5" font-weight="600" fill="#137333">Keywordless</text>
+  <!-- query expansion flow -->
+  <rect x="14" y="60" width="150" height="20" rx="6" fill="#fff" stroke="#dadce0"/>
+  <text x="22" y="73.5" font-family="Arial, sans-serif" font-size="8" fill="#3c4043">"crm software"</text>
+  <path d="M 168 70 L 188 70" stroke="#9b72f2" stroke-width="1.5" marker-end="url(#ar)"/>
+  <defs><marker id="ar" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9b72f2"/></marker></defs>
+  <g font-family="Arial, sans-serif" font-size="7.5">
+    <rect x="194" y="56" width="92" height="14" rx="7" fill="#f3e8fd"/><text x="202" y="66" fill="#7b3ff2">best crm for agencies</text>
+    <rect x="194" y="73" width="108" height="14" rx="7" fill="#f3e8fd"/><text x="202" y="83" fill="#7b3ff2">crm with email automation</text>
+  </g>
+  <!-- performance chart -->
+  <line x1="14" y1="170" x2="240" y2="170" stroke="#dadce0" stroke-width="0.5"/>
+  <path d="M 14 158 L 45 152 L 76 154 L 107 146 L 138 140 L 169 132 L 200 120 L 230 108 L 240 104 L 240 170 L 14 170 Z" fill="#9b72f2" opacity="0.14"/>
+  <polyline points="14,158 45,152 76,154 107,146 138,140 169,132 200,120 230,108 240,104" fill="none" stroke="#7b3ff2" stroke-width="1.6"/>
+  <circle cx="240" cy="104" r="3" fill="#7b3ff2" stroke="#fff" stroke-width="1.5"/>
+  <text x="14" y="98" font-family="Arial, sans-serif" font-size="6.5" fill="#5f6368" letter-spacing="0.5">CONVERSIONS · BROAD + SMART BIDDING</text>
+  <text x="14" y="118" font-family="Arial, sans-serif" font-size="18" font-weight="500" fill="#202124">+27%</text>
+  <text x="62" y="118" font-family="Arial, sans-serif" font-size="8" fill="#137333">▲ vs exact</text>
+  <!-- right metrics -->
+  <rect x="258" y="96" width="128" height="100" rx="8" fill="#fff" stroke="#e3e8ee"/>
+  <text x="270" y="114" font-family="Arial, sans-serif" font-size="7" fill="#5f6368">CPA</text><text x="270" y="130" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#202124">$22.40</text>
+  <text x="270" y="150" font-family="Arial, sans-serif" font-size="7" fill="#5f6368">Brand controls</text><text x="270" y="166" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#ea4335">REQUIRED</text>
+  <text x="270" y="186" font-family="Arial, sans-serif" font-size="7" fill="#5f6368">Search term report = your map</text>
+</svg>`)}`;
+
+const THUMB_COOKIELESS = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="ckBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0c1320"/><stop offset="100%" stop-color="#1a2235"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#ckBg)"/>
+  <rect x="14" y="14" width="150" height="20" rx="10" fill="#c97a2a" opacity="0.18"/>
+  <text x="24" y="28" font-family="monospace" font-size="9" fill="#f5b942" font-weight="700" letter-spacing="1.2">COOKIELESS · 2026</text>
+  <!-- crumbling cookie -->
+  <circle cx="70" cy="92" r="30" fill="#c97a2a" opacity="0.85"/>
+  <circle cx="62" cy="84" r="4" fill="#7a4a18"/><circle cx="80" cy="90" r="3.5" fill="#7a4a18"/><circle cx="68" cy="102" r="3" fill="#7a4a18"/><circle cx="82" cy="78" r="2.5" fill="#7a4a18"/>
+  <path d="M 92 80 l 8 -5 M 96 92 l 9 1 M 90 104 l 7 6" stroke="#1a2235" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="100,74 108,70 104,80" fill="#c97a2a" opacity="0.5"/><polygon points="106,92 116,93 107,98" fill="#c97a2a" opacity="0.4"/>
+  <text x="70" y="138" font-family="monospace" font-size="7.5" fill="#7c8aa0" text-anchor="middle">3rd-party signal ↓</text>
+  <!-- arrow to server -->
+  <path d="M 116 92 L 150 92" stroke="#4fdfb5" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- server-side stack -->
+  <g>
+    <rect x="158" y="60" width="92" height="20" rx="4" fill="#141b29" stroke="#2c3a55"/><circle cx="170" cy="70" r="3.5" fill="#4fdfb5"/><text x="180" y="73" font-family="monospace" font-size="7.5" fill="#c4cde0">Consent Mode v2</text>
+    <rect x="158" y="84" width="92" height="20" rx="4" fill="#141b29" stroke="#2c3a55"/><circle cx="170" cy="94" r="3.5" fill="#4fdfb5"/><text x="180" y="97" font-family="monospace" font-size="7.5" fill="#c4cde0">Server-side GTM</text>
+    <rect x="158" y="108" width="92" height="20" rx="4" fill="#141b29" stroke="#2c3a55"/><circle cx="170" cy="118" r="3.5" fill="#f5b942"/><text x="180" y="121" font-family="monospace" font-size="7.5" fill="#c4cde0">First-party CDP</text>
+  </g>
+  <path d="M 250 94 L 280 94" stroke="#4fdfb5" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <!-- modeled conversions panel -->
+  <rect x="286" y="56" width="100" height="78" rx="8" fill="#141b29" stroke="#2c3a55"/>
+  <text x="296" y="72" font-family="monospace" font-size="7" fill="#7c8aa0" letter-spacing="0.5">MODELED CONV.</text>
+  <text x="296" y="96" font-family="monospace" font-size="20" font-weight="700" fill="#4fdfb5">+34%</text>
+  <text x="296" y="114" font-family="monospace" font-size="6.5" fill="#7c8aa0">recovered signal</text>
+  <text x="296" y="126" font-family="monospace" font-size="6.5" fill="#7c8aa0">fed to bidding</text>
+  <!-- consent banner -->
+  <rect x="14" y="150" width="372" height="56" rx="8" fill="#141b29" stroke="#2c3a55"/>
+  <text x="26" y="170" font-family="monospace" font-size="8" fill="#c4cde0">We value your privacy — manage data consent</text>
+  <rect x="26" y="180" width="74" height="18" rx="4" fill="#4fdfb5"/><text x="63" y="192" font-family="monospace" font-size="7.5" font-weight="700" fill="#0a0a0f" text-anchor="middle">Accept all</text>
+  <rect x="108" y="180" width="74" height="18" rx="4" fill="none" stroke="#4a5878"/><text x="145" y="192" font-family="monospace" font-size="7.5" fill="#7c8aa0" text-anchor="middle">Reject</text>
+  <rect x="190" y="180" width="74" height="18" rx="4" fill="none" stroke="#4a5878"/><text x="227" y="192" font-family="monospace" font-size="7.5" fill="#7c8aa0" text-anchor="middle">Preferences</text>
+</svg>`)}`;
+
+const THUMB_UGC = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#f6f7f9"/>
+  <rect x="0" y="0" width="400" height="26" fill="#fff" stroke="#e3e8ee" stroke-width="0.5"/>
+  <circle cx="18" cy="13" r="8" fill="#ff4500"/>
+  <path d="M 18 9.5 a 1.4 1.4 0 1 1 1.3 1.9 M 14 13.5 q 4 3 8 0 M 14.5 12.5 a 1 1 0 1 0 0.01 0 M 21.5 12.5 a 1 1 0 1 0 0.01 0" stroke="#fff" stroke-width="0.9" fill="none"/>
+  <text x="32" y="17" font-family="Arial, sans-serif" font-size="9.5" font-weight="700" fill="#1a1a1b">r/marketing</text>
+  <text x="386" y="17" font-family="Arial, sans-serif" font-size="7.5" fill="#7a8699" text-anchor="end">ranks #1 + cited by AI</text>
+  <!-- thread card -->
+  <rect x="14" y="36" width="372" height="170" rx="10" fill="#fff" stroke="#e3e8ee"/>
+  <!-- vote column -->
+  <rect x="14" y="36" width="34" height="170" rx="10" fill="#f8f9fb"/>
+  <path d="M 31 52 l 7 8 l -14 0 Z" fill="#ff4500"/>
+  <text x="31" y="78" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#1a1a1b" text-anchor="middle">4.2k</text>
+  <path d="M 31 96 l 7 -8 l -14 0 Z" fill="#9aa3b2"/>
+  <!-- post -->
+  <text x="58" y="56" font-family="Arial, sans-serif" font-size="7.5" fill="#7a8699">Posted by u/growthlead · 8h · 214 comments</text>
+  <text x="58" y="74" font-family="Arial, sans-serif" font-size="11.5" font-weight="700" fill="#1a1a1b">What's the best CRM you've actually used in 2026?</text>
+  <!-- top comment -->
+  <rect x="58" y="86" width="316" height="50" rx="8" fill="#f8f9fb"/>
+  <circle cx="72" cy="100" r="6" fill="#1a9e8f"/>
+  <text x="84" y="103" font-family="Arial, sans-serif" font-size="7.5" font-weight="700" fill="#1a1a1b">u/ops_nerd · ▲ 1.1k</text>
+  <g fill="#3c4043"><rect x="84" y="110" width="276" height="5" rx="2.5" opacity="0.4"/><rect x="84" y="120" width="200" height="5" rx="2.5" opacity="0.4"/></g>
+  <rect x="84" y="110" width="90" height="5" rx="2.5" fill="#1a9e8f" opacity="0.85"/>
+  <!-- brand mention pill -->
+  <text x="58" y="156" font-family="Arial, sans-serif" font-size="7.5" font-weight="700" fill="#7a8699" letter-spacing="0.5">WHY IT MATTERS</text>
+  <g font-family="Arial, sans-serif" font-size="8" font-weight="600">
+    <rect x="58" y="164" width="138" height="22" rx="6" fill="#e8f0fe"/>
+    <text x="68" y="178" fill="#1a73e8">Surfaced in Google Discussions</text>
+    <rect x="204" y="164" width="120" height="22" rx="6" fill="#f3e8fd"/>
+    <text x="214" y="178" fill="#7b3ff2">Training data for LLMs</text>
+  </g>
+</svg>`)}`;
+
+const THUMB_SEM = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#141227"/>
+  <defs><linearGradient id="gsem" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#241f45"/><stop offset="100%" stop-color="#0d0b1c"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#gsem)"/>
+  <g stroke="#6f5fd4" stroke-opacity="0.45" stroke-width="1.5">
+    <line x1="200" y1="112" x2="80" y2="48"/><line x1="200" y1="112" x2="320" y2="48"/>
+    <line x1="200" y1="112" x2="60" y2="140"/><line x1="200" y1="112" x2="340" y2="140"/>
+    <line x1="200" y1="112" x2="130" y2="190"/><line x1="200" y1="112" x2="270" y2="190"/>
+  </g>
+  <circle cx="200" cy="112" r="26" fill="#7b6cf6"/>
+  <text x="200" y="117" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#ffffff">YOU</text>
+  <g font-family="monospace" font-size="9" font-weight="bold">
+    <rect x="46" y="36" width="68" height="24" rx="12" fill="#1f1a3d" stroke="#6f5fd4" stroke-opacity="0.6"/><text x="80" y="52" text-anchor="middle" fill="#c9c2f5">GOOGLE</text>
+    <rect x="284" y="36" width="72" height="24" rx="12" fill="#1f1a3d" stroke="#6f5fd4" stroke-opacity="0.6"/><text x="320" y="52" text-anchor="middle" fill="#c9c2f5">CHATGPT</text>
+    <rect x="24" y="128" width="72" height="24" rx="12" fill="#1f1a3d" stroke="#6f5fd4" stroke-opacity="0.6"/><text x="60" y="144" text-anchor="middle" fill="#c9c2f5">YOUTUBE</text>
+    <rect x="306" y="128" width="66" height="24" rx="12" fill="#1f1a3d" stroke="#6f5fd4" stroke-opacity="0.6"/><text x="339" y="144" text-anchor="middle" fill="#c9c2f5">REDDIT</text>
+    <rect x="98" y="178" width="64" height="24" rx="12" fill="#1f1a3d" stroke="#6f5fd4" stroke-opacity="0.6"/><text x="130" y="194" text-anchor="middle" fill="#c9c2f5">TIKTOK</text>
+    <rect x="238" y="178" width="64" height="24" rx="12" fill="#1f1a3d" stroke="#6f5fd4" stroke-opacity="0.6"/><text x="270" y="194" text-anchor="middle" fill="#c9c2f5">MAPS</text>
+  </g>
+  <rect x="12" y="10" width="152" height="20" rx="4" fill="#7b6cf6" opacity="0.25"/>
+  <text x="20" y="24" font-family="monospace" font-size="10" fill="#b3a7ff" font-weight="bold">SEARCH EVERYWHERE</text>
+</svg>`)}`;
+
+const THUMB_GADS = `data:image/svg+xml,${encodeURIComponent(`<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="220" fill="#0a1e3d"/>
+  <defs><linearGradient id="ggads" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#123063"/><stop offset="100%" stop-color="#06132a"/></linearGradient></defs>
+  <rect width="400" height="220" fill="url(#ggads)"/>
+  <line x1="0" y1="110" x2="400" y2="110" stroke="#ffffff" stroke-opacity="0.05"/>
+  <line x1="0" y1="165" x2="400" y2="165" stroke="#ffffff" stroke-opacity="0.05"/>
+  <line x1="200" y1="0" x2="200" y2="220" stroke="#ffffff" stroke-opacity="0.05"/>
+  <text x="40" y="42" font-family="monospace" font-size="10" fill="#9db8e8" font-weight="bold">MONTHLY BUDGET</text>
+  <rect x="40" y="52" width="200" height="6" rx="3" fill="#ffffff" opacity="0.15"/>
+  <rect x="40" y="52" width="128" height="6" rx="3" fill="#4d90fe"/>
+  <circle cx="168" cy="55" r="9" fill="#ffffff"/>
+  <text x="252" y="60" font-family="monospace" font-size="13" fill="#ffffff" font-weight="bold">$4,000</text>
+  <polyline points="40,182 100,170 150,152 190,130" fill="none" stroke="#34a853" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="190,130 250,106 310,90 364,80" fill="none" stroke="#34a853" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round"/>
+  <circle cx="190" cy="130" r="5" fill="#34a853"/>
+  <circle cx="364" cy="80" r="5" fill="#fbbc05"/>
+  <g font-family="monospace" font-size="10" font-weight="bold">
+    <rect x="248" y="120" width="122" height="24" rx="6" fill="#34a853" opacity="0.18"/><text x="258" y="136" fill="#7ee2a0">LEADS ≈ 96 /mo</text>
+    <rect x="248" y="150" width="122" height="24" rx="6" fill="#fbbc05" opacity="0.18"/><text x="258" y="166" fill="#ffd666">CPL ≈ $41</text>
+  </g>
+  <rect x="12" y="10" width="134" height="20" rx="4" fill="#4d90fe" opacity="0.25"/>
+  <text x="20" y="24" font-family="monospace" font-size="10" fill="#9ec2ff" font-weight="bold">ADS PROJECTION</text>
+</svg>`)}`;
+
+function postThumb(p) {
+  if (p.img) return p.img;
+  const m = { 'SEO': THUMB_SEO, 'Local SEO': THUMB_NEARME, 'SEM': THUMB_SEM, 'Performance Marketing': THUMB_PERFKPI, 'Paid Ads': THUMB_GADS, 'Digital Marketing': THUMB_DM, 'AI & Marketing': THUMB_AI, 'Social': THUMB_UGC, 'Analytics': THUMB_GA4 };
+  return m[p.category] || THUMB_SEO;
+}
+
+
+const SEED_POSTS = [
+  {
+    id: 14,
+    title: 'Search Everywhere Marketing: Why Your Next Customer Never Opens Google',
+    category: 'AI & SEO',
+    slug: 'search-everywhere-marketing',
+    metaTitle: 'Search Everywhere Marketing: The 2026 Playbook',
+    metaDescription: 'Customers discover brands on ChatGPT, TikTok, Reddit and Google Maps — not just Google Search. A practical Search Everywhere Marketing playbook for 2026.',
+    excerpt: "Buyers now discover brands on ChatGPT, TikTok, Reddit and Maps before they ever hit your site. Here's the playbook for showing up on every surface where search happens.",
+    content: `Your next customer might never type your keyword into Google. They ask ChatGPT for a shortlist, search TikTok for honest reviews, skim a Reddit thread, then check Google Maps ratings — and only then land on a website. If your visibility strategy starts and ends with Google rankings, you're invisible for most of that journey.\n\nSearch Everywhere Marketing is the fix: treating every surface where people search — engines, AI assistants, social platforms, communities, marketplaces, maps — as one coordinated visibility system.\n\n## From SEO to Search Everywhere\nClassic [SEO](services.html?s=seo) optimized for one algorithm. In 2026 discovery is fragmented: Google still owns the biggest slice, but AI assistants answer the question directly, TikTok and YouTube are the default search bar for younger buyers, and Reddit threads outrank most blogs for "best X" queries. Each surface is a search engine with its own ranking rules — and your customers move between them inside a single buying journey.\n\n## The Five Surfaces That Matter\n**1. Google + AI Overviews** — rankings still compound, but being cited inside the AI answer is the new position one. I broke down the GEO playbook in [this post](blog.html?post=ai-overviews-are-eating-your-clicks-the-geo-playbook-to-win-them-back).\n**2. LLM assistants** — ChatGPT, Gemini and Perplexity recommend brands based on entity clarity and community consensus, not meta tags. Consistent schema, author pages and third-party mentions decide whether you're in the answer.\n**3. Social search** — TikTok and YouTube queries like "best CRM for freelancers" are bottom-funnel searches. A consistent [organic social system](services.html?s=social) that answers real questions beats trend-chasing every time.\n**4. Communities** — Reddit, Quora and niche forums shape both Google's Discussions results and what the LLMs say about you.\n**5. Maps & marketplaces** — for local and e-commerce brands, Google Business Profile and Amazon are search engines with their own SEO.\n\n## One Engine, Many Surfaces\nYou don't need five teams — you need one insight pipeline. A single customer-problem deep-dive becomes a pillar page, a YouTube explainer, three shorts, a genuinely helpful Reddit answer, and FAQ schema. That's a [content engine](services.html?s=content), not five separate campaigns.\n\n## Measure Like a Performance Marketer\nMost of these touchpoints never show up in last-click attribution. Track branded search volume, direct traffic, assisted conversions and "how did you hear about us" survey data — [performance marketing](services.html?s=performance) discipline applied to discovery.\n\nCurious what coordinated organic visibility could do for your niche? Run your own numbers first:\n\n[button:Estimate your SEO & organic growth →](projections.html?t=seo)`,
+    date: 'July 2026',
+    readTime: '8 min read',
+    img: THUMB_SEM
+  },
+  {
+    id: 15,
+    title: 'Planning a Google Ads Budget? Project Your Leads & CPL Before You Spend',
+    category: 'Performance Marketing',
+    slug: 'google-ads-budget-projection',
+    metaTitle: 'Google Ads Budget: Project Leads & CPL — Free Tool',
+    metaDescription: "Don't launch Google Ads blind. Use this free projection tool to estimate clicks, leads and cost-per-lead from your monthly budget — before you spend it.",
+    excerpt: "Most Google Ads accounts fail at the budget line, not the keyword line. Run your numbers through my free projection tool before you commit a single dollar.",
+    content: `The most expensive mistake in Google Ads isn't a bad keyword — it's launching with a budget that was never mathematically able to work. If your market's clicks cost $6 and your landing page converts at 4%, a $500/month budget buys roughly 83 clicks and 3 leads. No optimization saves that account; the math was broken on day one.\n\n## The Back-of-Napkin Math Most Advertisers Skip\nBudget ÷ average CPC = clicks. Clicks × conversion rate = leads. Budget ÷ leads = your cost per lead (CPL). Then the only question that matters: is that CPL comfortably below what a customer is worth to you?\n\nExample: $4,000/month at a $3.10 CPC ≈ 1,290 clicks. At a 7.5% landing-page conversion rate that's ~96 leads at a ~$41 CPL. If your average customer is worth $900 and you close 1 in 5 leads, you're paying ~$207 to acquire a $900 customer — that account deserves budget. Change the CPC to $9 and the same spend produces 33 leads at a $120 CPL, and suddenly your close rate has to carry everything.\n\n## Run It On Your Numbers — Free Tool\nI built an interactive [Google Ads Leads & CPL estimator](projections.html?t=sem) for exactly this. Set your monthly budget and industry, and it projects clicks, leads and CPL from real benchmark data — the same first-pass model I run before taking on any [Google Ads engagement](services.html?s=sem).\n\n[button:Project your Google Ads results →](projections.html?t=sem)\n\n## What Moves the Curve\nProjections assume a competently run account. Four levers change the output most:\n**Account structure** — tight, intent-aligned ad groups raise Quality Score and cut CPC.\n**Negative keywords** — wasted spend on junk queries is the silent CPL killer; prune weekly.\n**Bidding on value, not volume** — feeding real revenue data back to Google beats a flat target CPA. I covered the full setup in [this value-based bidding guide](blog.html?post=stop-bidding-on-cpa-why-value-based-bidding-wins-for-lead-gen).\n**Landing pages** — doubling conversion rate halves CPL. It's the highest-leverage fix in most accounts.\n\n## When the Numbers Don't Work\nIf the projection says your CPL exceeds what a customer is worth, don't launch — fix the economics first: raise prices, improve close rate, build a higher-converting page, or start with a cheaper channel and retarget. Ads amplify a working funnel; they can't create one.\n\nWant a second pair of eyes on your projection? [Get in touch](contact.html) — or explore the full [Search Engine Marketing service](services.html?s=sem).`,
+    date: 'July 2026',
+    readTime: '6 min read',
+    img: THUMB_GADS
+  },
+  {
+    id: 1,
+    title: '4 Concrete Steps to Counter Any Google Core Update',
+    category: 'SEO',
+    excerpt: "Algorithm updates will always happen. Here's how to analyze damage, fortify your E-E-A-T, and reclaim your rankings fast.",
+    content: `Algorithm updates will always happen. How you respond defines your success.\n\n1. Analyze the Damage\nDive straight into Google Search Console. Identify exactly which pages and keywords took a hit. Look for patterns — did informational blogs drop while product pages stayed strong? Find the bleeding edge before making sudden changes.\n\n2. Improve your Content Quality\nGoogle aggressively targets thin, unhelpful content. Audit your declining pages. Add genuine value, answer user questions directly, and cut the fluff. Write for humans first, search engines second.\n\n3. Fortify Your Technical Health\nRun a fresh site audit immediately. Slow load times, mobile usability errors, and broken links kill your momentum. Clean up your technical foundation so Google's crawlers navigate your site flawlessly.\n\n4. Double Down on E-E-A-T\nExperience, Expertise, Authoritativeness, and Trustworthiness matter now more than ever. Showcase real author credentials, earn high-quality backlinks, and build a digital footprint that screams credibility.\n\nAlgorithm updates will always happen. How you respond defines your success.`,
+    date: 'April 2025',
+    readTime: '5 min read',
+    img: THUMB_SEO
+  },
+  {
+    id: 2,
+    title: 'Organic vs Paid Traffic: What Really Drives Long-Term Growth?',
+    category: 'Digital Marketing',
+    excerpt: "Not all traffic is created equal. A breakdown of organic vs paid and how to build a balanced, sustainable strategy.",
+    content: `Every marketer loves traffic, but not all traffic is created equal. When it comes to sustainable website growth, understanding the difference between organic and paid traffic is key.\n\nOrganic Traffic comes from unpaid sources like search engines, social shares, and content marketing. It builds trust and authority over time. Around 70–80% of users ignore paid ads and focus on organic results. The growth might be slower, but once established, it becomes a consistent and cost-effective source of leads.\n\nPaid Traffic comes from ads (Google, Meta, etc.). It provides instant visibility — perfect for short-term goals and promotions. However, once you stop spending, the traffic stops. Great for testing offers or boosting visibility quickly, but not ideal as the sole growth strategy.\n\nThe Smart Strategy: Combine both. Use paid campaigns for quick traction and SEO-driven organic growth for long-term sustainability. A balanced approach ensures your business stays visible today — and tomorrow.`,
+    date: 'December 2024',
+    readTime: '4 min read',
+    img: THUMB_DM
+  },
+  {
+    id: 3,
+    title: 'Search Everywhere Optimization — Your New SEO Strategy',
+    category: 'AI & SEO',
+    excerpt: "Your customers are on ChatGPT, Gemini, and Perplexity. Here's how to build authority beyond traditional search engines.",
+    content: `The way people find information is changing fast. While Google still holds a massive share, ignoring the rise of Large Language Models (LLMs) is like driving with one eye closed. We're moving beyond traditional Search Engine Optimization into "Search Everywhere Optimization."\n\nIt's not about keyword stuffing anymore. It's fundamentally about strong branding and being the definitive source.\n\nYour potential customers are increasingly turning to platforms like ChatGPT, Gemini, Perplexity, and others for answers. If you're not there, you're missing out.\n\nThe future of SEO is about being ubiquitous and authoritative — not just on search engines, but everywhere people seek information. It's a huge opportunity for those who adapt early.\n\nWhat are your thoughts on this shift? How are you preparing your content strategy for the LLM era?`,
+    date: 'November 2024',
+    readTime: '6 min read',
+    img: THUMB_AI
+  },
+  {
+    id: 4,
+    title: 'Near Me Searches: How to Win the Local SEO Goldmine in 2025',
+    category: 'Local SEO',
+    excerpt: "'Near me' searches have doubled in 3 years and convert 4× higher than generic queries. Here's the proximity playbook to capture them.",
+    content: `"Near me" queries are no longer a fringe behavior — they're how modern buyers shop. Searches like "best dentist near me" or "pizza near me" have more than doubled in three years, and they convert at roughly 4× the rate of generic queries because intent is built in: the user is ready, nearby, and looking for the closest available option.\n\nIf you're a local business and your visibility for these searches is weak, you're invisible to the customers most likely to spend money with you today.\n\n1. Win the Google Business Profile (GBP)\nYour GBP isn't a "set it and forget it" listing — it's your storefront on Google Maps and the local pack. Fill out every field, choose the most specific primary category, list every service you offer, and add high-quality photos monthly. Businesses that post weekly to GBP see ~35% more clicks than those that don't.\n\n2. Match Searcher Proximity Signals\nGoogle weighs three things in the local pack: relevance, distance, and prominence. You can't fake distance — but you can hammer relevance by mentioning specific neighborhoods, landmarks, and service areas in your title tags, H1s, and body copy. Build separate landing pages for each meaningful service area instead of one generic "locations" page.\n\n3. NAP Consistency Across the Web\nName, Address, Phone. Make sure these match exactly across your website, GBP, Yelp, Apple Maps, Bing, and 20–30 industry citations. Inconsistent NAP data is one of the most common reasons local rankings stall. Audit it once a quarter.\n\n4. Reviews — Volume, Velocity, and Variety\nReviews are the prominence signal Google can verify. Aim for steady review velocity (5+ per month for a typical service business), and explicitly ask for reviews that mention service type + neighborhood. Reply to every review — including the negative ones — within 48 hours.\n\n5. Local Backlinks Beat Generic Ones\nA backlink from the local chamber of commerce, a neighborhood blog, or a regional news outlet moves the needle far more than a generic guest post. Sponsor a local event, contribute expert quotes to local journalism (HARO works), and earn citations from the city or county sites.\n\nThe brands winning "near me" in 2025 aren't doing anything magical — they're doing the local-SEO fundamentals consistently while their competitors treat GBP as a one-time setup. Pick one of these five and execute on it this week.`,
+    date: 'May 2026',
+    readTime: '7 min read',
+    img: THUMB_NEARME
+  },
+  {
+    id: 5,
+    title: '7 Performance Marketing KPIs That Actually Predict Revenue',
+    category: 'Performance Marketing',
+    excerpt: "ROAS lies. CTR is a vanity. Here are the 7 metrics that predict whether your paid program will scale — and the dashboards to track them.",
+    content: `Most performance marketing dashboards are full of metrics that feel important but don't actually predict revenue. ROAS gets gamed by attribution. CTR rewards clickbait. Impressions don't pay rent. If you're operating a paid program at scale, focus your weekly review on metrics that survive contact with the P&L.\n\n1. Marketing Efficiency Ratio (MER)\nTotal revenue ÷ total ad spend, across every channel. This is the only number your CFO actually cares about. Channel-level ROAS can be flattering when retargeting double-counts brand demand. MER cuts through it.\n\n2. New-Customer CAC (nCAC)\nBlended CAC hides reality. If 70% of your "purchases" are repeat buyers riding email and SMS, you're not acquiring — you're retargeting. Calculate CAC against new customers only and watch it weekly.\n\n3. LTV:CAC Ratio\nYour 12-month LTV divided by nCAC. A ratio above 3:1 means the program is healthy. Below 2:1 means you're buying revenue, not building a business. This is the single best signal for whether to scale, hold, or cut.\n\n4. Payback Period\nHow many days until a new customer's contribution margin covers their CAC? Sub-60 days = scale aggressively. 60–120 = scale carefully. 120+ = fix the funnel before you spend another dollar.\n\n5. Contribution Margin per Order\nNot revenue per order, not gross margin — contribution margin (revenue − COGS − shipping − fulfillment − ad cost). This is the dollars actually available to fund the rest of the business.\n\n6. Incrementality\nWhat percentage of your reported conversions would have happened without the ad? Geo holdouts, conversion-lift tests, and post-purchase surveys ("How did you first hear about us?") give you the real answer. Most brands discover 20–40% of reported revenue isn't truly incremental.\n\n7. New-to-File Rate by Channel\nWhich channels actually bring net-new customers vs. harvesting brand demand? Track new-to-file rate per channel and re-allocate budget toward prospecting channels with healthy LTV:CAC, not just the channel with the prettiest reported ROAS.\n\nIf your weekly dashboard tracks ROAS, CPM, and CTR, you're flying blind. Replace it with the seven above and you'll make budget decisions your CFO actually respects.`,
+    date: 'May 2026',
+    readTime: '8 min read',
+    img: THUMB_PERFKPI
+  },
+  {
+    id: 6,
+    title: 'Google Business Profile: The 9-Point Audit Most Local Brands Skip',
+    category: 'Local SEO',
+    excerpt: "Your Google Business Profile is doing 80% of the work for local rankings. Here's the 9-point audit that finds the hidden gaps killing your visibility.",
+    content: `For local service businesses, your Google Business Profile (GBP) is the single highest-leverage asset in your marketing stack. It dictates whether you appear in the 3-pack, on Google Maps, and in voice-search results — all the surfaces where "near me" searches end up. And yet most businesses set it up once, then forget about it for two years.\n\nRun this 9-point audit on your GBP every quarter.\n\n1. Primary Category — The Most Important Field\nGoogle uses your primary category as the strongest relevance signal. "Restaurant" is too broad — "Mexican Restaurant" is better, and "Authentic Oaxacan Restaurant" might be better still if Google offers it. Test specific over general.\n\n2. Secondary Categories\nAdd every relevant secondary category, but don't over-stuff. If you're a roofer who also installs gutters, list both. If you do "roofing, gutters, siding, decks, and remodeling," consider whether you actually want to rank for all of those (Google may dilute your relevance for the primary one).\n\n3. Service Areas\nIf you serve customers at their location (HVAC, plumbing, lawn care), define service areas. If you serve customers at your storefront, hide your address from view. Mixing both confuses Google and customers alike.\n\n4. Services List\nGBP lets you list specific services with descriptions and prices. Most businesses leave this blank. Filling it in with keyword-rich descriptions adds dozens of internal "pages" to your profile that Google can match against searches.\n\n5. Products (for product-based businesses)\nList your top products with photos, prices, and descriptions. This creates visual results in your knowledge panel and gives you another surface to win.\n\n6. Photos — Quantity AND Recency\nGBP profiles with 100+ photos see ~520% more calls than profiles with under 10. But photo recency matters too — upload a new photo at least monthly. Photos from 2019 send a "business is dead" signal.\n\n7. Posts (Updates, Offers, Events)\nGBP Posts expire after 7 days. Posting weekly keeps your profile fresh and gives you free real estate in the knowledge panel. Brands that post weekly see ~35% more clicks than those that don't.\n\n8. Reviews + Replies\nReply to every single review within 48 hours — positive and negative. Mention the service and city in your reply (naturally) so Google indexes the keywords. Aim for a steady review velocity rather than 100 reviews in one month and zero for the next six.\n\n9. Q&A — Seed and Monitor\nThe Q&A section is public and editable by anyone. Seed it with the 8–10 questions you hear most often, answer them well, and monitor weekly for new customer questions you should answer yourself before someone else does.\n\nNo silver bullets here — just nine fundamentals that compound. Audit quarterly, execute on the gaps, and watch your local pack visibility climb.`,
+    date: 'April 2026',
+    readTime: '9 min read',
+    img: THUMB_GBP
+  },
+  {
+    id: 7,
+    title: "Stop Bidding on CPA: Why Value-Based Bidding Wins for Lead Gen",
+    category: 'Performance Marketing',
+    excerpt: "Target CPA treats every lead as equal. They're not. Value-based bidding turns Smart Bidding into a true revenue optimizer — here's how to set it up.",
+    content: `If you're running Google Ads or Meta Ads for lead generation and your campaigns are still bidding on a flat target CPA, you're leaving money on the table — possibly a lot of it. The single biggest leverage point in a modern paid program is teaching the bidding algorithm which leads actually become customers and which don't.\n\nThe Problem With Target CPA\nA $20 CPA looks great until you realize half those leads never qualified, 30% no-showed, and 15% closed at low-margin price points. Meanwhile, your competitor with a "worse" $45 CPA is closing 40% of leads at $4K average revenue and crushing you in LTV.\n\nTarget CPA optimizes for volume of leads, full stop. The algorithm doesn't know that the Tuesday-3-AM-form-fill lead is worth 1/20th of the Wednesday-noon lead. It can't, unless you tell it.\n\nThe Fix: Value-Based Bidding\nInstead of optimizing for the cheapest leads, you feed the algorithm the actual revenue value of every conversion. Google and Meta then learn which signals correlate with high-value outcomes and bid accordingly — paying $80 for a great lead while skipping the $10 junk lead.\n\nHow to Implement It in 4 Steps\n\n1. Build an Offline Conversion Import (OCI)\nConnect your CRM (HubSpot, Salesforce, GHL) to Google Ads via Zapier or the native integration. When a lead enters your pipeline, send the conversion back to Google with a placeholder value. When the deal closes, update the conversion with the actual revenue.\n\n2. Send Multi-Stage Conversion Values\nDon't just send "closed-won." Send Lead → Qualified Lead → Booked Call → Closed Deal as separate conversions with progressively higher values (say $20 → $80 → $200 → actual revenue). This gives the algorithm signal velocity — it can learn before deals fully close.\n\n3. Switch From Target CPA to Maximize Conversion Value\nOnce you have 30+ closed deals feeding back through OCI, switch the bid strategy. For more control, use Target ROAS once you have 60+ days of value data.\n\n4. Watch the First 14 Days\nValue-based bidding goes through a re-learning phase. CPL will rise (this is good — you're paying more for better leads). Watch LTV:CAC and revenue per lead, not CPL. Most accounts see 30–60% revenue lift within 90 days.\n\nWhen NOT to Use Value-Based Bidding\nIf you can't tie conversions to revenue (long sales cycles with no clean attribution, or fewer than 30 monthly conversions), stick with Target CPA and improve your tracking first. Value-based bidding needs signal density to work.\n\nFor every other lead-gen account, this is the highest-ROI change you can make to your Google or Meta Ads stack this quarter.`,
+    date: 'March 2026',
+    readTime: '8 min read',
+    img: THUMB_VBB
+  },
+  {
+    id: 8,
+    title: "GA4 Migration Mistakes That Are Hiding Your Real Growth",
+    category: 'Digital Marketing',
+    excerpt: "GA4's new model breaks half of what Universal Analytics did well. Here are the 5 migration mistakes that are quietly destroying your reporting.",
+    content: `Universal Analytics is dead. GA4 is what you have. And if you migrated in a rush (most teams did), your reporting is probably misleading you in ways that don't show up until quarterly review season.\n\nHere are the five biggest GA4 migration mistakes I see across audits — and how to fix them before they cost you a budget decision.\n\n1. You're Still Comparing GA4 Numbers to UA Numbers\nThis is the most common mistake. GA4 counts events differently, defines sessions differently, attributes traffic differently, and uses data-driven attribution by default. Comparing year-over-year between UA and GA4 is comparing apples to bowling balls. Stop. Pick a clean GA4 anchor date and build comparisons from there.\n\n2. You Didn't Configure Key Events\nIn UA, "goals" were limited to 20 per view. GA4 lets you mark any event as a "key event" (formerly "conversion"). Most teams imported their old goals and stopped — meaning the new event types GA4 captures automatically (form_start, file_download, scroll, video_complete) aren't being treated as key events anywhere. Audit your key events list quarterly.\n\n3. Cross-Domain Tracking Is Broken\nIf your checkout, booking, or form flow lives on a different subdomain or domain (Shopify, Calendly, an external landing page builder), GA4 will count those as separate sessions unless you explicitly configure cross-domain tracking in the Data Streams settings. This single fix can recover 10–25% of attributed conversions.\n\n4. You're Letting GA4 Do Auto-Tagging Wrong\nGA4's auto-tagging is great for the 80% case — but it mangles internal links, paid social URLs, and email click-throughs in ways UA didn't. The fix is consistent UTM parameters on every external campaign, and excluding internal traffic via IP filter or Google Signals. Most teams skip both.\n\n5. You Trusted the Default "Direct" Bucket\nGA4's data-driven attribution is more aggressive than UA's last-non-direct model — but the Direct traffic bucket has ballooned because cross-domain and consent-mode setups are imperfect. If "Direct" is more than 30% of your traffic, you have a tracking problem masquerading as a user-behavior insight. Fix the tracking; don't celebrate the "loyalty."\n\nThe Bigger Picture\nGA4 isn't worse than UA — it's a fundamentally different model built for a cookieless, multi-device world. But it punishes lazy migrations. Spend a focused week auditing the five items above and you'll get a reporting layer that's actually trustworthy, not a dashboard full of numbers everyone secretly distrusts.`,
+    date: 'February 2026',
+    readTime: '7 min read',
+    img: THUMB_GA4
+  },
+  {
+    id: 9,
+    title: 'AI Overviews Are Eating Your Clicks — The GEO Playbook to Win Them Back',
+    category: 'AI & SEO',
+    excerpt: "Google's AI Overviews now answer the query before anyone scrolls. Here's how Generative Engine Optimization keeps your brand inside the answer — and in the citation.",
+    content: `Google's AI Overviews now sit above the organic results for a growing share of queries, and they often answer the question completely. The result is a wave of "zero-click" searches where the user never reaches your page. Ranking #1 is no longer the finish line — being cited inside the AI answer is. That discipline is Generative Engine Optimization (GEO), and here's how to do it.\n\n1. Accept the Zero-Click Reality\nFor informational queries, assume a meaningful slice of traffic will never click. Your job shifts from "win the click" to "win the mention." A cited brand inside an AI Overview earns awareness, trust, and the high-intent clicks that still happen — even as raw sessions fall. Re-baseline your reporting so a drop in clicks with stable conversions reads as a win, not a loss.\n\n2. Structure Content for Extraction\nAI systems lift answers from cleanly structured pages. Lead each section with a direct, self-contained answer in the first sentence, then support it. Use descriptive H2/H3 questions, short definitional paragraphs, comparison tables, and ordered steps. If a model can extract a clean two-sentence answer without parsing fluff, you become the easy citation.\n\n3. Earn Citations, Not Just Rankings\nAI Overviews disproportionately cite pages with strong corroboration — original data, expert quotes, and consensus across the web. Publish primary research, get mentioned on third-party sites the models already trust (industry pubs, G2, Reddit), and make your claims verifiable. Citations follow authority signals, not keyword density.\n\n4. Build Entity Authority\nLLMs reason about entities, not strings. Tighten your Knowledge Graph footprint: consistent NAP, a complete Organization and Author schema, sameAs links to your real profiles, and an About/Author page that establishes credentials. The clearer your entity, the more confidently a model will name you.\n\n5. Add an llms.txt and Clean Schema\nShip FAQPage, HowTo, Article, and Product structured data so machines parse intent unambiguously. Publish an llms.txt that points AI crawlers to your highest-value, most quotable pages. These are cheap, high-leverage signals most competitors haven't touched yet.\n\n6. Measure AI Visibility\nYou can't optimize what you don't track. Monitor branded mentions and citations across Google AI Overviews, ChatGPT, Gemini, and Perplexity. Watch impressions-without-clicks in Search Console, and prompt the major assistants with your core queries monthly to see whether you're named. Treat "share of AI answer" as a first-class KPI alongside rankings.\n\nThe brands that win the next two years won't just rank — they'll be the source the machine quotes.`,
+    date: 'June 2026',
+    readTime: '8 min read',
+    img: THUMB_AIOVERVIEW
+  },
+  {
+    id: 10,
+    title: "Meta Advantage+ Took Over Your Account — Here's How to Actually Win",
+    category: 'Performance Marketing',
+    excerpt: "Advantage+ is now the default and manual controls are vanishing. When the algorithm runs the account, creative and signal are the only levers you have left.",
+    content: `Meta has spent the last two years quietly turning Advantage+ from an option into the default. Audience targeting, placements, budget allocation, and even creative variation are increasingly handed to the algorithm. Fighting that current with manual interest stacking and 14 ad sets is a losing game. The winners stop trying to out-target Meta and start feeding it better.\n\n1. Consolidate, Don't Fragment\nThe old playbook — granular ad sets per interest and audience — starves Advantage+ of the volume it needs to learn. Collapse into a small number of broad campaigns: one Advantage+ Shopping (or Sales) campaign for prospecting, plus tight retargeting. Fewer, better-funded ad sets exit the learning phase faster and stabilize.\n\n2. Creative Is the Only Real Lever\nWhen targeting and bidding are automated, your creative IS your targeting — Meta decides who sees what based on which creative resonates. Build a high-volume pipeline: 40–60 concepts a month across hooks, formats, and angles. Test statics, UGC, and motion. Your job is to give the algorithm enough quality raw material to find pockets of demand you'd never have segmented by hand.\n\n3. Feed Clean Conversion Signal\nAdvantage+ optimizes toward the events you send it. If your signal is noisy or browser-only, it optimizes toward shadows. Deploy the Conversions API server-side, deduplicate against the pixel, and pass high-value events (purchase with value, qualified lead) reliably. Better signal in, better optimization out — it's the closest thing to a cheat code that remains.\n\n4. Use Guardrails, Not Micromanagement\nYou still control the inputs that matter: cost controls/ROAS floors, exclusion lists, brand-safety settings, and the existing-customer budget cap that keeps prospecting truly prospecting. Set the guardrails, then resist the urge to touch the account daily — every edit resets learning.\n\n5. Judge at the Account Level\nAdvantage+ shifts spend between creatives and audiences in ways that make single-ad ROAS misleading. Manage to blended MER and new-customer CAC, not ad-level metrics. Kill creatives on statistical significance, not gut feel, and let the campaign breathe across a full learning window before declaring anything dead.\n\nThe account managers who thrive in 2026 are part creative director, part data engineer — and almost never button-pushers.`,
+    date: 'June 2026',
+    readTime: '7 min read',
+    img: THUMB_ADVPLUS
+  },
+  {
+    id: 11,
+    title: 'Google AI Max for Search: What Happens When Keywords Become Optional',
+    category: 'Performance Marketing',
+    excerpt: "AI Max bundles broad match, smart bidding, and auto-generated assets into one switch. Flip it carelessly and you'll bleed budget — here's the control framework.",
+    content: `Google's AI Max for Search packages broad match, keywordless query expansion, automatically created assets, and smart bidding into a single campaign-level toggle. Used well, it surfaces converting searches you'd never have built keywords for. Used carelessly, it spends your budget on loosely related junk. The difference is entirely in the controls you set before you flip it on.\n\n1. Understand What You're Turning On\nAI Max lets Google match your ads to queries based on the meaning of your landing pages and existing keywords — not an exact list you control. It will also auto-generate headlines and final URLs. That's powerful reach, but it means relevance is now Google's judgment call, governed by the signals you give it.\n\n2. Treat the Search Terms Report as Your Map\nWith keywordless matching, the search terms report becomes the single most important screen in the account. Review it weekly. The new URL and asset-level reporting shows which queries and auto-generated text actually drove conversions — and which wasted spend. This is where you find both your negatives and your next winning landing pages.\n\n3. Negative Keywords Are Non-Negotiable\nBroad, AI-driven matching without disciplined negatives is how accounts hemorrhage money. Build a robust shared negative list before launch, layer brand and competitor terms deliberately, and add new negatives from the search terms report every week. Guardrails are what turn "expansion" into "profitable expansion."\n\n4. Lock Down Brand Controls\nLeft unchecked, AI Max can route generic queries into brand campaigns (or vice versa) and muddy your data. Use brand inclusion/exclusion settings to keep brand and non-brand cleanly separated, so your efficiency metrics stay honest and you don't pay prospecting prices for people already searching your name.\n\n5. Feed Value-Based Signals\nKeywordless matching only optimizes as well as the conversion values you send. Pair AI Max with value-based smart bidding and offline conversion imports so Google chases revenue-grade outcomes, not raw lead volume. Without value signals, the system happily finds you cheap, low-quality conversions.\n\n6. Roll Out on a Test Budget\nDon't convert your whole account at once. Enable AI Max on one or two campaigns, hold the rest as a control, and compare incremental conversions and CPA over a few weeks before scaling. Let the data — not the marketing copy — decide how far you lean in.\n\nAI Max isn't "set and forget." It's "set the guardrails, then read the search terms report like your budget depends on it" — because it does.`,
+    date: 'May 2026',
+    readTime: '7 min read',
+    img: THUMB_AIMAX
+  },
+  {
+    id: 12,
+    title: 'The Cookieless Tipping Point: Consent Mode v2, Server-Side Tagging & First-Party Data',
+    category: 'Digital Marketing',
+    excerpt: "Third-party signal is collapsing and modeled conversions are filling the gap. If your tracking stack still relies on the browser, your bidding is flying blind.",
+    content: `The third-party cookie is finishing its long goodbye, and the brands still relying on browser-side pixels are quietly losing measurement accuracy every quarter. Signal loss doesn't announce itself — it shows up as smart bidding that underperforms and reporting that no longer ties out. The fix is a deliberate move to consented, first-party, server-side data.\n\n1. Consent Mode v2 Is the Foundation\nIf you run ads in regions with strict privacy rules, Consent Mode v2 isn't optional — it gates whether Google receives any signal at all. Implemented correctly, it passes consent state with every event and lets Google model the conversions of users who declined tracking. Implemented poorly (or not at all), you lose both the data and the modeling that recovers it.\n\n2. Move Tagging Server-Side\nBrowser-based tags are blocked by ad blockers, ITP, and short cookie lifespans. Server-side GTM moves collection to your own infrastructure: longer-lived first-party cookies, fewer dropped events, cleaner data, and faster pages. It's now table stakes for any program spending real money on paid media.\n\n3. Make First-Party Data Your Moat\nThe durable asset is data your customers give you directly: emails, purchases, survey responses, loyalty signals. Centralize it in a CDP or warehouse, then activate it — Customer Match, CAPI audiences, suppression lists. First-party data both improves targeting and feeds the conversion signal that automated bidding now depends on.\n\n4. Embrace Modeled Conversions\nYou will never again see 100% of conversions deterministically, and that's okay. Platforms now model the gap using consented signals and aggregate patterns. Your job is to feed those models well — strong consent rates, server-side events, value parameters — so the modeling is accurate rather than a guess. Stop chasing pixel-perfect last-click attribution that no longer exists.\n\n5. Re-anchor Measurement\nWith deterministic tracking eroding, lean on methods that survive privacy changes: incrementality tests, geo holdouts, marketing mix modeling, and post-purchase "how did you hear about us?" surveys. Triangulate platform-reported numbers against these to know what's truly driving revenue.\n\nThe cookieless era rewards the prepared. A clean consent + server-side + first-party stack isn't just compliance — it's a measurement advantage your slower competitors won't have.`,
+    date: 'May 2026',
+    readTime: '8 min read',
+    img: THUMB_COOKIELESS
+  },
+  {
+    id: 13,
+    title: 'Reddit, Forums & UGC: The New Ranking Currency in Google and ChatGPT',
+    category: 'AI & SEO',
+    excerpt: "Google surfaces forum threads and the major LLMs were trained on them. Community presence isn't optional anymore — it's a discovery channel you have to show up in.",
+    content: `Two shifts collided to make community content one of the most valuable real estate in marketing. Google now surfaces Reddit and forum threads prominently for opinion-driven and "best X" queries, and the large language models were trained heavily on that same community data. The upshot: what people say about you on Reddit increasingly shapes whether you're recommended by both Google and ChatGPT.\n\n1. Why Forums Suddenly Rank\nUsers append "reddit" to queries because they want real opinions, not SEO-optimized listicles. Google responded by elevating authentic discussion in Discussions and Forums features and across the SERP. A single well-upvoted thread can outrank pages you spent months building — and it's the page real buyers actually trust.\n\n2. Why LLMs Quote Communities\nWhen you ask an AI assistant for "the best tool for X," its answer is shaped by the consensus in its training data — much of which is Reddit, Stack Exchange, and niche forums. If your brand is absent or poorly regarded in those conversations, the model has no reason to recommend you. Community sentiment has become a ranking signal for machines, not just humans.\n\n3. Participate, Don't Spam\nThe fastest way to get banned and torched is to show up only to promote. Build genuine presence: answer questions in your niche, disclose your affiliation honestly, and add value before you ever mention your product. Moderators and users punish marketing; they reward expertise. Earned recommendations from others carry far more weight than anything you post yourself.\n\n4. Engineer Word-of-Mouth\nYou can't fake authenticity, but you can earn it. Deliver an experience worth talking about, then make it easy — prompt happy customers to share their stories, support the communities where your audience lives, and respond to criticism transparently. Every positive, organic mention is a vote both the SERP and the model count.\n\n5. Monitor Your Community Footprint\nTrack brand mentions across Reddit, Quora, industry Slacks, and forums the way you track backlinks. Watch sentiment, jump into threads where you're discussed (helpfully), and address misinformation fast. A handful of unanswered negative threads can quietly become the consensus an AI repeats to thousands of buyers.\n\nThe old game was building pages to rank. The new game is being the brand worth mentioning — because in 2026, the recommendation engine is everyone else.`,
+    date: 'June 2026',
+    readTime: '6 min read',
+    img: THUMB_UGC
+  }
+];
+
+function loadPosts() {
+  // Three content sources, in priority order:
+  //  1. Local drafts  ('wjh_blog_admin')      — this browser only, while editing
+  //  2. Published     (window.WJH_PUBLISHED)  — LIVE for every visitor (content/published.js)
+  //  3. Seed posts    (SEED_POSTS)            — built-in starter posts
+  let adminPosts = [];
+  try { adminPosts = JSON.parse(localStorage.getItem('wjh_blog_admin') || '[]'); } catch(e) { adminPosts = []; }
+  if (!Array.isArray(adminPosts)) adminPosts = [];
+  const published = (window.WJH_PUBLISHED && Array.isArray(window.WJH_PUBLISHED.blogs)) ? window.WJH_PUBLISHED.blogs : [];
+
+  // Custom posts first (newest). Local draft wins over published if same id; dedupe by id.
+  const seen = new Set();
+  const custom = [];
+  [...adminPosts, ...published].forEach(p => {
+    const id = String(p.id);
+    if (!seen.has(id)) { seen.add(id); custom.push(p); }
+  });
+  posts = [...custom, ...SEED_POSTS.filter(p => !seen.has(String(p.id)))];
+  if (!posts.length) posts = [...SEED_POSTS];
+
+  // Hide drafts and not-yet-due scheduled posts from the public blog.
+  posts = posts.filter(isLivePost);
+}
+
+// A post is live unless it's an explicit draft or scheduled for a future date.
+function isLivePost(p) {
+  if (!p) return false;
+  if (p.status === 'draft') return false;
+  if (p.publishAt) {
+    const d = new Date(p.publishAt + 'T00:00:00');
+    if (!isNaN(d) && d.getTime() > Date.now()) return false;
+  }
+  return true;
+}
+
+function savePosts() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+}
+
+
+
+// ─── RENDER ───────────────────────────────────────────────────────────────
+function filterPosts(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === cat);
+  });
+  renderPosts();
+}
+
+function searchPosts(val) {
+  searchQuery = val || '';
+  renderPosts();
+}
+
+function renderPosts() {
+  const grid = document.getElementById('posts-grid');
+  let filtered = currentFilter === 'all' ? posts.slice() : posts.filter(p => p.category === currentFilter);
+  const q = searchQuery.trim().toLowerCase();
+  if (q) {
+    filtered = filtered.filter(p =>
+      (p.title || '').toLowerCase().includes(q) ||
+      (p.excerpt || '').toLowerCase().includes(q) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.content || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (!filtered.length) {
+    grid.innerHTML = q
+      ? `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <h3>No articles match “${q.replace(/[<>&]/g, '')}”</h3>
+        <p>Try a different keyword or clear the search.</p>
+      </div>`
+      : `
+      <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <h3>No posts yet in this category</h3>
+        <p>Use the admin panel to publish your first post.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((post, i) => `
+    <div class="blog-card" onclick="openPost('${postSlug(post)}')" style="animation-delay:${i*0.08}s;">
+      <div class="blog-card-thumb">
+        <img src="${postThumb(post)}" alt="${post.title}" />
+      </div>
+      <div class="blog-card-body">
+        <div class="blog-card-cat">${post.category}</div>
+        <h2>${post.title}</h2>
+        <p>${post.excerpt}</p>
+        <div class="blog-card-meta">
+          <span>${post.date}</span>
+          <span class="blog-card-meta-dot">·</span>
+          <span>${post.readTime || '3 min read'}</span>
+          <span class="blog-card-read">Read →</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  renderCategories();
+}
+
+function renderCategories() {
+  const catMap = {};
+  posts.forEach(p => { catMap[p.category] = (catMap[p.category] || 0) + 1; });
+  const list = document.getElementById('cat-list');
+  list.innerHTML = Object.entries(catMap).map(([cat, count]) => `
+    <div class="cat-item" onclick="filterPosts('${cat}')">
+      <span>${cat}</span>
+      <span class="cat-count">${count}</span>
+    </div>
+  `).join('');
+}
+
+// ─── POST MODAL ──────────────────────────────────────────────────────────
+function openPost(idOrSlug) {
+  const post = posts.find(p => postSlug(p) === String(idOrSlug)) || posts.find(p => String(p.id) === String(idOrSlug));
+  if (!post) return;
+
+  document.getElementById('modal-cat').textContent = post.category;
+  document.getElementById('modal-title').textContent = post.title;
+  document.getElementById('modal-meta').innerHTML = `<span>${post.date}</span><span>·</span><span>${post.readTime || '3 min read'}</span>`;
+  // Render the body with safe rich markup: [text](url) links,
+  // [button:Label](url) buttons, **bold** and "## Heading" lines.
+  // Falls back to a built-in renderer if live.js hasn't loaded
+  // (e.g. a stale cached copy), so markup ALWAYS renders.
+  const bodyEl = document.getElementById('modal-content');
+  bodyEl.innerHTML = (window.WJH_RICH ? window.WJH_RICH.render : renderRichFallback)(post.content);
+
+  const imgWrap = document.getElementById('modal-img-wrap');
+  imgWrap.innerHTML = `<img src="${postThumb(post)}" class="post-modal-img" alt="${post.title}" />`;
+
+  const actions = document.getElementById('modal-actions');
+  actions.innerHTML = '';
+  actions.style.display = 'none';
+
+  renderFeedback(post);
+
+  const modal = document.getElementById('post-modal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Apply SEO meta (admin-defined meta title / description) for this post
+  applyPostSeo(post);
+
+  // Update URL with a readable, name-based slug (not the numeric id)
+  history.pushState({ postId: post.id }, '', '?post=' + postSlug(post));
+}
+
+// Build a readable URL slug from a post's title (falls back to stored slug).
+function postSlug(post) {
+  if (post && post.slug) return post.slug;
+  return String((post && post.title) || '')
+    .toLowerCase().trim()
+    .replace(/['’"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || String((post && post.id) || '');
+}
+
+// Set document title + meta description from the post's admin SEO fields.
+const __baseTitle = document.title;
+
+// Built-in rich-text renderer (mirror of WJH_RICH in content/live.js) —
+// used as a fallback so links/buttons/bold render even if a stale
+// cached live.js is in play.
+function renderRichFallback(src) {
+  let html = String(src == null ? '' : src).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const safeU = u => (/^\s*(javascript|data|vbscript)\s*:/i.test(u) ? '#' : u.trim());
+  const ext = u => (/^https?:\/\//i.test(u) ? ' target="_blank" rel="noopener"' : '');
+  html = html.replace(/\[button:([^\]\n]+)\]\(([^\s)]+)\)/g, (m, l, u) => `<a class="rich-btn" href="${safeU(u)}"${ext(u)}>${l.trim()}</a>`);
+  html = html.replace(/\[([^\]\n]+)\]\(([^\s)]+)\)/g, (m, l, u) => `<a class="rich-link" href="${safeU(u)}"${ext(u)}>${l}</a>`);
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/(^|\n)##\s+([^\n]+)/g, '$1<strong class="rich-h">$2</strong>');
+  return html;
+}
+function setMeta(name, attr, content) {
+  let el = document.querySelector(`meta[${attr}="${name}"]`);
+  if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+  el.setAttribute('content', content);
+}
+function applyPostSeo(post) {
+  const t = (post.metaTitle && post.metaTitle.trim()) || post.title;
+  const d = (post.metaDescription && post.metaDescription.trim()) || post.excerpt || '';
+  document.title = t;
+  setMeta('description', 'name', d);
+  setMeta('og:title', 'property', t);
+  setMeta('og:description', 'property', d);
+  if (post.focusKeyword) setMeta('keywords', 'name', post.focusKeyword);
+}
+
+/* ─── POST FEEDBACK ──────────────────────────────────────────
+   Helpful vote (👍/👎) + 1–5 star rating + comment, with required
+   name & email. Stored in localStorage (wjh_feedback) and POSTed
+   to the Netlify `feedback` function so it shows in the dashboard. */
+const FEEDBACK_KEY = 'wjh_feedback';
+const FEEDBACK_API = '/.netlify/functions/feedback';
+const fbEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function recordFeedback(entry) {
+  const fb = {
+    postId: entry.postId, postTitle: entry.postTitle,
+    name: entry.name, email: entry.email,
+    helpful: entry.helpful, rating: entry.rating, comment: entry.comment || '',
+    page: location.pathname + location.search,
+    ts: new Date().toISOString()
+  };
+  try {
+    const arr = JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '[]');
+    arr.push(fb);
+    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(arr));
+  } catch (e) {}
+  try {
+    fetch(FEEDBACK_API, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(fb),
+      keepalive: true
+    }).catch(function () {});
+  } catch (e) {}
+}
+
+function renderFeedback(post) {
+  const el = document.getElementById('post-feedback');
+  if (!el) return;
+  const state = { helpful: null, rating: 0 };
+  el.innerHTML =
+    '<div class="fb-head">Was this article helpful?</div>' +
+    '<p class="fb-sub">Your feedback helps me write better. Takes 15 seconds.</p>' +
+    '<div class="fb-row">' +
+      '<div><div class="fb-block-lbl">Helpful?</div>' +
+        '<div class="fb-helpful">' +
+          '<button type="button" class="fb-vote" data-v="up">\uD83D\uDC4D Yes</button>' +
+          '<button type="button" class="fb-vote no" data-v="down">\uD83D\uDC4E No</button>' +
+        '</div></div>' +
+      '<div><div class="fb-block-lbl">Rating</div>' +
+        '<div class="fb-stars">' +
+          [1,2,3,4,5].map(n => '<button type="button" class="fb-star" data-n="' + n + '">\u2605</button>').join('') +
+        '</div></div>' +
+    '</div>' +
+    '<div class="fb-fields">' +
+      '<input class="fb-input" id="fb-name" type="text" placeholder="Your name *" autocomplete="name"/>' +
+      '<input class="fb-input" id="fb-email" type="email" placeholder="you@email.com *" autocomplete="email"/>' +
+    '</div>' +
+    '<textarea class="fb-textarea" id="fb-comment" placeholder="Leave a comment (optional)"></textarea>' +
+    '<div class="fb-err" id="fb-err"></div>' +
+    '<button class="fb-submit" id="fb-submit">Send feedback</button>';
+
+  const helpfulBtns = el.querySelectorAll('.fb-vote');
+  helpfulBtns.forEach(b => b.addEventListener('click', () => {
+    state.helpful = b.dataset.v;
+    helpfulBtns.forEach(x => x.classList.toggle('sel', x === b));
+  }));
+  const stars = el.querySelectorAll('.fb-star');
+  const paintStars = n => stars.forEach(s => s.classList.toggle('on', +s.dataset.n <= n));
+  stars.forEach(s => {
+    s.addEventListener('mouseenter', () => paintStars(+s.dataset.n));
+    s.addEventListener('click', () => { state.rating = +s.dataset.n; paintStars(state.rating); });
+  });
+  el.querySelector('.fb-stars').addEventListener('mouseleave', () => paintStars(state.rating));
+
+  el.querySelector('#fb-submit').addEventListener('click', () => {
+    const name = el.querySelector('#fb-name').value.trim();
+    const email = el.querySelector('#fb-email').value.trim();
+    const comment = el.querySelector('#fb-comment').value.trim();
+    const err = el.querySelector('#fb-err');
+    if (name.length < 2) { err.textContent = 'Please enter your name.'; return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Please enter a valid email address.'; return; }
+    if (!state.helpful && !state.rating && !comment) { err.textContent = 'Add a vote, rating, or comment before sending.'; return; }
+    err.textContent = '';
+    const btn = el.querySelector('#fb-submit');
+    btn.disabled = true; btn.textContent = 'Sending\u2026';
+    recordFeedback({
+      postId: post.id, postTitle: post.title,
+      name: name, email: email,
+      helpful: state.helpful, rating: state.rating, comment: comment
+    });
+    el.innerHTML =
+      '<div class="fb-thanks">' +
+        '<div class="fb-thanks-ico">\uD83D\uDE4C</div>' +
+        '<div class="fb-thanks-title">Thank you, ' + fbEsc(name.split(' ')[0]) + '!</div>' +
+        '<div class="fb-thanks-sub">Your feedback means a lot \u2014 I read every one.</div>' +
+      '</div>';
+  });
+}
+
+function closeModal() {
+  document.getElementById('post-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  document.title = __baseTitle;
+  history.pushState({}, '', 'blog.html');
+}
+
+function handleModalClick(e) {
+  if (e.target === document.getElementById('post-modal')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+
+
+
+
+// Dark mode toggle
+function toggleDark() {
+  const isDark = document.body.classList.toggle('dark');
+  document.getElementById('dark-toggle').textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('wjh_dark', isDark ? '1' : '0');
+}
+if (localStorage.getItem('wjh_dark') === '1') {
+  document.body.classList.add('dark');
+  document.getElementById('dark-toggle').textContent = '☀️';
+}
+
+// ─── NAV SCROLL ──────────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────
+loadPosts();
+renderPosts();
+
+// Pull the latest live content from the shared store and refresh the grid.
+if (window.WJH_LIVE) {
+  window.WJH_LIVE.fetchLive().then(function (d) {
+    if (d && d.blogs && d.blogs.length) {
+      window.WJH_PUBLISHED = window.WJH_PUBLISHED || { blogs: [], projects: [] };
+      window.WJH_PUBLISHED.blogs = d.blogs;
+      loadPosts();
+      renderPosts();
+    }
+  });
+}
+
+// Instant cross-tab updates: when the dashboard (in another tab) saves a
+// post or the live cache refreshes, re-render immediately — no reload needed.
+window.addEventListener('storage', function (e) {
+  if (e.key === 'wjh_blog_admin' || e.key === 'wjh_live_cache') {
+    loadPosts();
+    renderPosts();
+  }
+});
+
+// Open post from URL param
+const urlPost = new URLSearchParams(location.search).get('post');
+if (urlPost) {
+  setTimeout(() => openPost(urlPost), 300);
+}
+</script>
+</body>
+</html>

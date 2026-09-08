@@ -1,0 +1,2451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin · wajeeh.dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: oklch(98.5% 0.008 60);
+      --bg2: oklch(96% 0.012 60);
+      --surface: #fff;
+      --fg: oklch(18% 0.02 240);
+      --fg2: oklch(42% 0.02 240);
+      --fg3: oklch(62% 0.015 240);
+      --teal: oklch(52% 0.14 195);
+      --teal-deep: oklch(46% 0.14 195);
+      --teal-light: oklch(94% 0.04 195);
+      --teal-dim: oklch(52% 0.14 195 / 0.12);
+      --amber: oklch(68% 0.14 65);
+      --red: oklch(58% 0.18 25);
+      --red-dim: oklch(58% 0.18 25 / 0.12);
+      --green: oklch(58% 0.13 155);
+      --border: oklch(88% 0.01 60);
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Plus Jakarta Sans', sans-serif;
+      --radius: 14px;
+      --shadow: 0 2px 16px oklch(18% 0.02 240 / 0.08);
+      --shadow-lg: 0 12px 48px oklch(18% 0.02 240 / 0.16);
+    }
+    body.dark {
+      --bg: oklch(15% 0.015 240);
+      --bg2: oklch(18% 0.015 240);
+      --surface: oklch(20% 0.015 240);
+      --fg: oklch(96% 0.01 240);
+      --fg2: oklch(72% 0.015 240);
+      --fg3: oklch(58% 0.015 240);
+      --teal-light: oklch(30% 0.05 195);
+      --border: oklch(30% 0.015 240);
+      --shadow-lg: 0 12px 48px oklch(0% 0 0 / 0.5);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    a { color: var(--teal); }
+    .mono { font-family: var(--mono); }
+
+    /* ─── LOGIN ─────────────────────────────────────────────── */
+    .login-wrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse at 80% 10%, var(--teal-dim) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, oklch(52% 0.14 195 / 0.06) 0%, transparent 50%),
+        var(--bg);
+    }
+    .login-card {
+      width: 100%; max-width: 400px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow-lg); padding: 38px 34px;
+    }
+    .login-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--teal); background: var(--teal-dim);
+      padding: 6px 12px; border-radius: 999px; margin-bottom: 22px;
+    }
+    .login-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+    .login-card h1 { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; }
+    .login-card .sub { color: var(--fg2); font-size: 14px; margin-top: 6px; margin-bottom: 26px; }
+    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+    .field label { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg2); }
+    .field input, .field textarea, .field select {
+      width: 100%; font-family: var(--sans); font-size: 14.5px; color: var(--fg);
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 11px 13px; transition: border-color .15s, box-shadow .15s; outline: none;
+    }
+    .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
+    .btn {
+      font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: 0.03em;
+      border: none; border-radius: 10px; padding: 12px 18px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform .12s, background .15s, opacity .15s; white-space: nowrap;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-primary:hover { background: var(--teal-deep); }
+    .btn-ghost { background: transparent; color: var(--fg2); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-danger { background: var(--red-dim); color: var(--red); }
+    .btn-danger:hover { background: var(--red); color: #fff; }
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 8px 12px; font-size: 12px; }
+    @keyframes pubpulse { 0%,100% { box-shadow: 0 0 0 0 oklch(52% 0.14 195 / 0.5); } 50% { box-shadow: 0 0 0 6px oklch(52% 0.14 195 / 0); } }
+    #publish-btn.pulse { animation: pubpulse 1.6s ease-in-out infinite; }
+    /* publish help overlay */
+    .ov { position: fixed; inset: 0; background: oklch(18% 0.02 240 / 0.55); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+    .ov.open { display: flex; }
+    .ov-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); max-width: 460px; width: 100%; padding: 28px 28px 24px; }
+    .ov-card h3 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+    .ov-card .lead { font-size: 13.5px; color: var(--fg2); margin-bottom: 16px; }
+    .ov-steps { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .ov-steps li { display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; color: var(--fg); line-height: 1.5; }
+    .ov-steps .num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--teal); color: #fff; font-family: var(--mono); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .ov-steps .mono { background: var(--bg2); padding: 1px 6px; border-radius: 5px; font-size: 12px; }
+    .login-error {
+      display: none; margin-top: 4px; margin-bottom: 14px;
+      font-size: 13px; color: var(--red); font-weight: 500;
+      background: var(--red-dim); border-radius: 8px; padding: 9px 12px;
+    }
+    .login-note { margin-top: 20px; font-size: 11.5px; line-height: 1.6; color: var(--fg3); }
+
+    /* ─── APP SHELL (modern sidebar console) ─────────────────── */
+    #app-view { min-height: 100vh; display: flex; }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky; top: 0; align-self: flex-start;
+      width: 252px; flex-shrink: 0; height: 100vh;
+      display: flex; flex-direction: column;
+      background: var(--surface); border-right: 1px solid var(--border);
+      padding: 18px 14px;
+    }
+    .side-brand { display: flex; align-items: center; gap: 11px; padding: 6px 8px 16px; }
+    .side-logo {
+      width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal), var(--teal-deep));
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-weight: 700; font-size: 17px;
+      box-shadow: 0 6px 16px var(--teal-dim);
+    }
+    .side-brand .bn { font-weight: 700; font-size: 15px; line-height: 1.15; letter-spacing: -0.01em; }
+    .side-brand .bb { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg3); }
+
+    .side-nav { display: flex; flex-direction: column; gap: 2px; }
+    .side-label { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg3); padding: 14px 12px 5px; }
+    .tab {
+      display: flex; align-items: center; gap: 11px; width: 100%;
+      font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: -0.01em;
+      padding: 9px 12px; border-radius: 9px; border: none; background: transparent;
+      color: var(--fg2); cursor: pointer; transition: background .15s, color .15s; text-align: left;
+    }
+    .tab .ti { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; filter: grayscale(0.2); }
+    .tab:hover { background: var(--bg2); color: var(--fg); }
+    .tab.active { background: var(--teal-dim); color: var(--teal-deep); font-weight: 600; }
+    .tab.active .ti { filter: none; }
+    body.dark .tab.active { color: var(--teal); }
+
+    .side-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); }
+    .side-status { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--fg3); padding: 6px 10px; }
+    .side-status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px oklch(58% 0.13 155 / 0.15); }
+
+    /* Main column */
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; gap: 16px;
+      padding: 15px 30px; border-bottom: 1px solid var(--border);
+      background: oklch(98.5% 0.008 60 / 0.82); backdrop-filter: saturate(1.4) blur(12px);
+    }
+    body.dark .topbar { background: oklch(15% 0.015 240 / 0.82); }
+    .topbar h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; }
+    .topbar .sub { font-size: 12.5px; color: var(--fg3); margin-top: 1px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: transparent; cursor: pointer; font-size: 16px; display: inline-flex;
+      align-items: center; justify-content: center; color: var(--fg2);
+    }
+    .icon-btn:hover { border-color: var(--teal); }
+
+    .wrap { max-width: 1040px; margin: 0 auto; width: 100%; padding: 28px 30px 80px; }
+
+    /* mobile: sidebar becomes a top strip with scrollable nav */
+    @media (max-width: 860px) {
+      #app-view { flex-direction: column; }
+      .sidebar {
+        width: 100%; height: auto; position: sticky; top: 0; z-index: 40;
+        flex-direction: column; padding: 10px 12px 8px;
+        border-right: none; border-bottom: 1px solid var(--border);
+      }
+      .side-brand { padding: 4px 6px 8px; }
+      .side-label, .side-foot { display: none; }
+      .side-nav { flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+      .side-nav::-webkit-scrollbar { height: 0; }
+      .tab { width: auto; white-space: nowrap; padding: 8px 14px; border-radius: 999px; }
+      .topbar { padding: 13px 18px; }
+      .topbar h1 { font-size: 17px; }
+      .wrap { padding: 22px 18px 70px; }
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; animation: fade .25s ease; }
+    @keyframes fade { from { transform: translateY(7px); } to { transform: none; } }
+
+    /* stat row */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 26px; }
+    .stat { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: transform .16s, box-shadow .16s, border-color .16s; overflow: hidden; }
+    .stat::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(var(--teal), var(--teal-deep)); opacity: 0; transition: opacity .16s; }
+    .stat:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--teal-dim); }
+    .stat:hover::before { opacity: 1; }
+    .stat .n { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+    .stat .l { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg3); margin-top: 4px; }
+
+    /* ─── OVERVIEW ─────────────────────────────────────────── */
+    .ov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .ov-col { display: flex; flex-direction: column; gap: 18px; }
+    .ov-actions { display: grid; gap: 9px; }
+    .ov-action { display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; padding: 13px 15px; border: 1px solid var(--border); border-radius: 11px; background: var(--bg); cursor: pointer; text-decoration: none; color: inherit; font-family: var(--sans); transition: border-color .15s, transform .15s, box-shadow .15s; }
+    .ov-action:hover { border-color: var(--teal); transform: translateX(2px); box-shadow: var(--shadow); }
+    .ov-action .oa-ico { width: 40px; height: 40px; flex-shrink: 0; border-radius: 10px; background: var(--teal-dim); display: flex; align-items: center; justify-content: center; font-size: 19px; }
+    .ov-action b { display: block; font-size: 14px; font-weight: 600; }
+    .ov-action small { display: block; font-size: 12px; color: var(--fg3); margin-top: 1px; }
+    .ov-activity, .ov-inbox, .ov-drafts { display: flex; flex-direction: column; }
+    .ov-row { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+    .ov-row:last-child { border-bottom: none; }
+    .ov-row .or-ico { width: 30px; height: 30px; flex-shrink: 0; border-radius: 8px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+    .ov-row .or-main { flex: 1; min-width: 0; }
+    .ov-row .or-main b { font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ov-row .or-main span { color: var(--fg3); font-size: 12px; }
+    .ov-row .or-go { font-family: var(--mono); font-size: 11px; color: var(--teal); font-weight: 700; flex-shrink: 0; }
+    .ov-empty { color: var(--fg3); font-size: 13px; padding: 14px 2px; }
+    @media (max-width: 760px) { .ov-grid { grid-template-columns: 1fr; } }
+
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .section-head h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+    .section-head .hint { font-size: 12.5px; color: var(--fg3); }
+
+    /* collected emails (leads) */
+    .leads-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .leads-table th { text-align: left; font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg3); padding: 8px 12px; border-bottom: 1.5px solid var(--border); }
+    .leads-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--fg); }
+    .leads-table tbody tr:hover td { background: var(--bg2); }
+    .leads-table a { color: var(--teal); text-decoration: none; font-weight: 600; }
+    .leads-table a:hover { text-decoration: underline; }
+    .leads-empty { text-align: center; color: var(--fg3); padding: 44px 20px; font-size: 13.5px; line-height: 1.6; border: 1.5px dashed var(--border); border-radius: 12px; }
+    .lead-svc { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--teal-dim, var(--bg2)); color: var(--teal); }
+    .lead-when { color: var(--fg3); font-size: 12px; white-space: nowrap; }
+    .lead-sum { color: var(--fg3); font-size: 11.5px; line-height: 1.5; margin-top: 4px; max-width: 340px; white-space: normal; }
+
+    /* feedback cards */
+    #feedback-list { display: flex; flex-direction: column; gap: 12px; }
+    .fb-card { border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; background: var(--bg, #fff); }
+    .fb-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+    .fb-card-name { font-weight: 700; font-size: 14px; color: var(--fg); }
+    .fb-card-email { font-size: 12.5px; color: var(--teal); text-decoration: none; }
+    .fb-card-email:hover { text-decoration: underline; }
+    .fb-card-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .fb-stars-ro { font-size: 15px; letter-spacing: 1px; }
+    .fb-tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+    .fb-tag.up { background: var(--teal-dim, #e0f3f3); color: var(--teal); }
+    .fb-tag.down { background: oklch(55% 0.18 25 / 0.12); color: oklch(50% 0.18 25); }
+    .fb-card-comment { margin: 12px 0 4px; font-size: 13.5px; line-height: 1.65; color: var(--fg2); font-style: italic; }
+    .fb-card-foot { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border); }
+    .fb-card-post { font-size: 12px; color: var(--fg3); }
+    .fb-card-when { font-family: var(--mono); font-size: 11px; color: var(--fg3); white-space: nowrap; }
+    .fb-card-del { margin-left: auto; font-family: var(--mono); font-size: 11px; font-weight: 600; color: oklch(50% 0.18 25); background: transparent; border: 1.5px solid oklch(55% 0.18 25 / 0.3); border-radius: 8px; padding: 5px 11px; cursor: pointer; transition: all 0.18s; }
+    .fb-card-del:hover { background: oklch(55% 0.18 25); border-color: oklch(55% 0.18 25); color: #fff; }
+
+    /* editor card */
+    .editor { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 26px; overflow: hidden; display: none; }
+    .editor.open { display: block; }
+    .editor-head { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .editor-head h3 { font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--teal); }
+    .editor-body { padding: 22px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    .editor-actions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+
+    /* image upload */
+    .upload {
+      border: 2px dashed var(--border); border-radius: 12px; padding: 18px;
+      text-align: center; position: relative; cursor: pointer; transition: .15s; background: var(--bg);
+    }
+    .upload:hover { border-color: var(--teal); background: var(--teal-light); }
+    .upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload .up-label { font-size: 13px; color: var(--fg2); }
+    .upload .up-hint { font-size: 11px; color: var(--fg3); margin-top: 4px; }
+    .img-preview { display: none; margin-top: 12px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .img-preview img { display: block; width: 100%; max-height: 200px; object-fit: cover; }
+    .img-preview .rm { position: absolute; }
+
+    /* SEO block */
+    .seo-block { border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 4px; margin-bottom: 8px; background: var(--bg); }
+    .seo-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .seo-tag { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--teal); }
+    .seo-score { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; padding: 4px 11px; border-radius: 999px; background: var(--bg2); color: var(--fg3); }
+    .seo-score.good { background: oklch(58% 0.13 155 / 0.16); color: var(--green); }
+    /* status pills (publishing state) */
+    .status-pill { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: oklch(58% 0.13 155 / 0.16); color: var(--green); white-space: nowrap; }
+    .status-pill.draft { background: oklch(70% 0.02 60 / 0.18); color: var(--fg3); }
+    .status-pill.scheduled { background: oklch(70% 0.15 70 / 0.18); color: oklch(55% 0.15 70); }
+    .item-badges { display: inline-flex; gap: 6px; margin-left: 8px; vertical-align: middle; }
+    /* list search / filter toolbar */
+    .list-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .list-search { flex: 1; min-width: 200px; font-family: var(--sans); font-size: 14px; color: var(--fg); background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; outline: none; transition: border-color .15s, box-shadow .15s; }
+    .list-search:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
+    .list-filter { font-family: var(--sans); font-size: 14px; color: var(--fg); background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; outline: none; cursor: pointer; }
+    .list-filter:focus { border-color: var(--teal); }
+    .seo-score.ok { background: oklch(68% 0.14 65 / 0.18); color: var(--amber); }
+    .seo-score.bad { background: var(--red-dim); color: var(--red); }
+    .counter { float: right; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0; text-transform: none; color: var(--fg3); font-weight: 500; }
+    .counter.good { color: var(--green); }
+    .counter.over { color: var(--red); }
+
+    .serp-preview { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin: 4px 0 14px; }
+    .serp-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg3); margin-bottom: 8px; }
+    .serp-url { font-size: 12.5px; color: var(--fg2); display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .serp-fav { font-size: 11px; }
+    .serp-title { color: #1a0dab; font-size: 18px; line-height: 1.3; font-weight: 400; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+    body.dark .serp-title { color: #8ab4f8; }
+    .serp-desc { color: #4d5156; font-size: 13px; line-height: 1.45; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    body.dark .serp-desc { color: var(--fg2); }
+
+    .seo-checks { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .seo-checks li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--fg2); }
+    .seo-checks li .mk { flex-shrink: 0; width: 16px; }
+    .seo-checks li.pass .mk { color: var(--green); }
+    .seo-checks li.warn .mk { color: var(--amber); }
+    .seo-checks li.fail .mk { color: var(--red); }
+
+    /* dynamic rows (results) */
+    .kv-row { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .kv-row input { padding: 9px 11px; }
+    .mini-x { width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--red); cursor: pointer; font-size: 15px; }
+    .mini-x:hover { background: var(--red); color: #fff; border-color: var(--red); }
+    .add-row { font-family: var(--mono); font-size: 12px; color: var(--teal); background: none; border: none; cursor: pointer; padding: 4px 0; }
+
+    /* item list */
+    .items { display: flex; flex-direction: column; gap: 12px; }
+    .item {
+      display: flex; gap: 14px; align-items: center; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
+    }
+    .item-thumb { width: 92px; height: 60px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--bg2); border: 1px solid var(--border); }
+    .item-thumb img, .item-thumb svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .item-main { flex: 1; min-width: 0; }
+    .item-main .cat { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); }
+    .item-main h4 { font-size: 15px; font-weight: 600; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-main .meta { font-size: 12px; color: var(--fg3); }
+    .item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .badge-builtin { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg3); border: 1px solid var(--border); padding: 2px 7px; border-radius: 999px; }
+    .empty { text-align: center; padding: 40px 20px; color: var(--fg3); border: 1.5px dashed var(--border); border-radius: 12px; }
+    .empty .ico { font-size: 30px; margin-bottom: 10px; }
+
+    /* data panel */
+    .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; }
+    .info-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .info-card p { font-size: 13.5px; color: var(--fg2); margin-bottom: 8px; }
+    .info-card.warn { border-color: oklch(68% 0.14 65 / 0.5); background: oklch(68% 0.14 65 / 0.06); }
+    .row-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+
+    /* toast */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--fg); color: var(--bg); font-size: 13.5px; font-weight: 500;
+      padding: 12px 20px; border-radius: 999px; box-shadow: var(--shadow-lg);
+      opacity: 0; pointer-events: none; transition: .25s; z-index: 100;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .req { color: var(--red); }
+    .help { font-size: 11.5px; color: var(--fg3); margin-top: 4px; }
+
+    /* rich-text toolbar (blog body) */
+    .rt-toolbar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .rt-btn { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--fg2); background: var(--bg2); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 11px; cursor: pointer; transition: .15s; }
+    .rt-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .rt-btn.on { background: var(--teal-dim); color: var(--teal); border-color: var(--teal); }
+    .rt-spacer { flex: 1; }
+    .rt-preview { display: none; white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.8; color: var(--fg2); background: var(--bg); border: 1.5px dashed var(--border); border-radius: 10px; padding: 16px 18px; margin-top: 10px; }
+    .rt-preview.open { display: block; }
+    .rich-link { color: var(--teal); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .rich-btn { display: inline-block; background: var(--teal); color: #fff; font-family: var(--mono); font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; padding: 9px 18px; border-radius: 9px; text-decoration: none; margin: 4px 0; }
+    .rich-btn:hover { background: var(--teal-deep); }
+    .rich-h { font-weight: 700; font-size: 1.15em; color: var(--fg); letter-spacing: -0.01em; }
+
+    /* robots.txt editor */
+    #s-robots { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; min-height: 340px; white-space: pre; overflow-x: auto; }
+  </style>
+  <script src="content/live.js?v=3"></script>
+  <style id="dash-modern">
+    /* ═══ MODERN THEME LAYER — visual only, no functional changes ═══ */
+
+    /* ambient app background */
+    #app-view {
+      background:
+        radial-gradient(900px 400px at 85% -10%, var(--teal-dim), transparent 65%),
+        radial-gradient(700px 380px at -10% 110%, oklch(52% 0.14 195 / 0.06), transparent 60%),
+        var(--bg);
+    }
+
+    /* ── dark console rail (both light & dark modes) ── */
+    .sidebar {
+      background: #0e1626 !important;
+      border-right: 1px solid #1c2b47 !important;
+    }
+    .side-brand .bn { color: #e8f1f8; }
+    .side-brand .bb { color: #5f7191; }
+    .side-logo { box-shadow: 0 6px 20px oklch(52% 0.14 195 / 0.45); }
+    .side-label { color: #4d5f7d; }
+    .sidebar .tab { color: #8fa4c0; }
+    .sidebar .tab:hover { background: rgba(255, 255, 255, 0.05); color: #d4e5f0; }
+    .sidebar .tab.active {
+      background: linear-gradient(120deg, oklch(52% 0.14 195 / 0.24), oklch(52% 0.14 195 / 0.1));
+      color: oklch(78% 0.11 195);
+      box-shadow: inset 0 0 0 1px oklch(52% 0.14 195 / 0.35);
+      font-weight: 600;
+    }
+    .sidebar .tab { position: relative; }
+    .sidebar .tab.active::before {
+      content: ''; position: absolute; left: -14px; top: 22%; bottom: 22%;
+      width: 3px; border-radius: 0 3px 3px 0;
+      background: linear-gradient(oklch(70% 0.13 195), oklch(52% 0.14 195));
+      box-shadow: 0 0 12px oklch(70% 0.13 195 / 0.6);
+    }
+    .side-foot { border-top: 1px solid #1c2b47 !important; }
+    .side-status { color: #5f7191; }
+    .side-status .dot { box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.15); animation: dashPing 2.4s infinite; }
+    @keyframes dashPing { 0% { box-shadow: 0 0 0 0 rgba(61, 220, 151, 0.35); } 70%, 100% { box-shadow: 0 0 0 7px transparent; } }
+
+    /* ── topbar: frosted glass + hairline ── */
+    .topbar {
+      background: oklch(98.5% 0.008 60 / 0.7) !important;
+      backdrop-filter: blur(16px) saturate(1.5) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(1.5);
+      border-bottom: 1px solid oklch(88% 0.01 60 / 0.7) !important;
+    }
+    body.dark .topbar {
+      background: oklch(15% 0.015 240 / 0.72) !important;
+      border-bottom-color: oklch(30% 0.015 240 / 0.7) !important;
+    }
+    .topbar h1 { letter-spacing: -0.03em; }
+
+    /* ── publish button: gradient + shine ── */
+    #publish-btn {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--teal), var(--teal-deep)) !important;
+      box-shadow: 0 6px 18px oklch(52% 0.14 195 / 0.35);
+      border-radius: 999px !important;
+    }
+    #publish-btn::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 34px; left: -50px;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      transform: skewX(-18deg); animation: dashShine 4.2s 1.5s ease-in-out infinite;
+    }
+    @keyframes dashShine { 0% { left: -50px; } 30%, 100% { left: 115%; } }
+    .topbar .btn-ghost, .topbar .icon-btn { border-radius: 999px !important; }
+
+    /* ── cards: softer, deeper, livelier ── */
+    .stat, .info-card, .editor, .item, .ov-card { border-radius: 16px !important; }
+    .stat { padding: 20px 22px !important; }
+    .stat .n { font-family: var(--mono); letter-spacing: -0.04em; }
+    .stats .stat:nth-child(1) { --ac: var(--teal); }
+    .stats .stat:nth-child(2) { --ac: oklch(58% 0.13 155); }
+    .stats .stat:nth-child(3) { --ac: oklch(68% 0.14 65); }
+    .stats .stat:nth-child(4) { --ac: oklch(55% 0.13 300); }
+    .stats .stat:nth-child(5) { --ac: oklch(55% 0.13 250); }
+    .stat::before {
+      width: 100% !important; height: 3px !important; bottom: auto !important;
+      background: linear-gradient(90deg, var(--ac, var(--teal)), transparent 80%) !important;
+    }
+    .stat .n { color: var(--ac, var(--fg)); }
+    .stat:hover { transform: translateY(-3px) !important; box-shadow: 0 14px 34px color-mix(in oklab, var(--ac, var(--teal)) 18%, transparent) !important; border-color: color-mix(in oklab, var(--ac, var(--teal)) 45%, var(--border)) !important; }
+
+    .item { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, border-color 0.2s !important; }
+    .item:hover { transform: translateY(-2px); border-color: var(--teal) !important; box-shadow: 0 10px 26px oklch(52% 0.14 195 / 0.12); }
+    .info-card { transition: box-shadow 0.25s, border-color 0.25s; }
+    .info-card:hover { box-shadow: var(--shadow); }
+
+    .ov-action { border-radius: 13px !important; transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.22s !important; }
+    .ov-action:hover { transform: translateX(4px) !important; box-shadow: 0 10px 24px oklch(52% 0.14 195 / 0.14) !important; }
+    .ov-action .oa-ico { border-radius: 11px; }
+
+    /* inputs slightly rounder + focus ring pop */
+    .field input, .field textarea, .field select { border-radius: 11px !important; }
+
+    /* editor header: accent strip */
+    .editor { box-shadow: 0 14px 40px oklch(18% 0.02 240 / 0.1) !important; }
+    .editor-head { background: linear-gradient(90deg, var(--teal-dim), transparent 60%); }
+
+    /* empty states */
+    .empty { border-radius: 16px !important; background: color-mix(in oklab, var(--teal) 3%, transparent); }
+
+    /* thin scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+
+    /* mobile top-strip rail */
+    @media (max-width: 860px) {
+      .sidebar { border-right: none !important; border-bottom: 1px solid #1c2b47 !important; }
+      .sidebar .tab.active::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── APP ───────────────────────────────────────────── -->
+  <div id="app-view">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <div class="side-logo">W</div>
+        <div>
+          <div class="bn">wajeeh.dev</div>
+          <div class="bb">Admin Console</div>
+        </div>
+      </div>
+      <nav class="side-nav">
+        <div class="side-label">Dashboard</div>
+        <button class="tab active" data-tab="overview" onclick="switchTab('overview')"><span class="ti">📊</span> Overview</button>
+        <div class="side-label">Content</div>
+        <button class="tab" data-tab="blogs" onclick="switchTab('blogs')"><span class="ti">📝</span> Blogs</button>
+        <button class="tab" data-tab="projects" onclick="switchTab('projects')"><span class="ti">💼</span> Projects</button>
+        <div class="side-label">Configuration</div>
+        <button class="tab" data-tab="seo" onclick="switchTab('seo')"><span class="ti">🌍</span> Site &amp; SEO</button>
+        <button class="tab" data-tab="data" onclick="switchTab('data')"><span class="ti">⚙️</span> Data</button>
+        <div class="side-label">Inbox</div>
+        <button class="tab" data-tab="leads" onclick="switchTab('leads')"><span class="ti">📥</span> Leads</button>
+        <button class="tab" data-tab="feedback" onclick="switchTab('feedback')"><span class="ti">💬</span> Feedback</button>
+      </nav>
+      <div class="side-foot">
+        <div class="side-status"><span class="dot"></span> Signed in as admin</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="section-title">Overview</h1>
+          <div class="sub" id="section-sub">Your site at a glance</div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary btn-sm" id="publish-btn" onclick="syncLive(true)" title="Push your changes live to all visitors">🌐 Saved &amp; live</button>
+          <a class="btn btn-ghost btn-sm" href="index.html" target="_blank" rel="noopener">View site ↗</a>
+          <button class="icon-btn" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()">🌙</button>
+          <button class="btn btn-ghost btn-sm" onclick="logout()">Log out</button>
+        </div>
+      </header>
+
+      <div class="wrap">
+
+      <!-- ===== OVERVIEW ===== -->
+      <div class="panel active" id="panel-overview">
+        <div class="stats" id="ov-stats"></div>
+
+        <div class="ov-grid">
+          <div class="ov-col">
+            <div class="info-card">
+              <h3>⚡ Quick actions</h3>
+              <div class="ov-actions">
+                <button class="ov-action" onclick="switchTab('blogs');newBlog();"><span class="oa-ico">📝</span><span><b>New blog post</b><small>Write &amp; publish an article</small></span></button>
+                <button class="ov-action" onclick="switchTab('projects');newProject();"><span class="oa-ico">💼</span><span><b>New project</b><small>Add a portfolio case study</small></span></button>
+                <button class="ov-action" onclick="switchTab('seo')"><span class="oa-ico">🌍</span><span><b>Edit page SEO</b><small>Titles, descriptions, robots</small></span></button>
+                <a class="ov-action" href="index.html" target="_blank" rel="noopener"><span class="oa-ico">🔗</span><span><b>View live site</b><small>Open the homepage in a new tab</small></span></a>
+              </div>
+            </div>
+            <div class="info-card">
+              <h3>📥 Inbox</h3>
+              <div class="ov-inbox" id="ov-inbox"></div>
+            </div>
+          </div>
+          <div class="ov-col">
+            <div class="info-card">
+              <h3>🕑 Recent activity</h3>
+              <div class="ov-activity" id="ov-activity"></div>
+            </div>
+            <div class="info-card" id="ov-draft-card" style="display:none;">
+              <h3>✏️ Drafts &amp; scheduled</h3>
+              <div class="ov-drafts" id="ov-drafts"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BLOGS ===== -->
+      <div class="panel" id="panel-blogs">
+        <div class="stats">
+          <div class="stat"><div class="n" id="stat-blog-admin">0</div><div class="l">Posts you added</div></div>
+          <div class="stat"><div class="n" id="stat-blog-builtin">13</div><div class="l">Built-in posts</div></div>
+          <div class="stat"><div class="n" id="stat-blog-total">13</div><div class="l">In dashboard</div></div>
+        </div>
+
+        <div class="section-head">
+          <h2>Blog posts</h2>
+          <button class="btn btn-primary btn-sm" onclick="newBlog()">+ New post</button>
+        </div>
+
+        <!-- editor -->
+        <div class="editor" id="blog-editor">
+          <div class="editor-head"><h3 id="blog-editor-title">New post</h3></div>
+          <div class="editor-body">
+            <input type="hidden" id="b-id" />
+            <div class="grid-2">
+              <div class="field">
+                <label for="b-title">Title <span class="req">*</span></label>
+                <input type="text" id="b-title" placeholder="e.g. The 2026 Local SEO Playbook" oninput="updateSeo()" />
+              </div>
+              <div class="field">
+                <label for="b-cat">Category <span class="req">*</span></label>
+                <input list="cat-list" id="b-cat" placeholder="SEO" />
+                <datalist id="cat-list">
+                  <option>SEO</option><option>AI &amp; SEO</option><option>Local SEO</option>
+                  <option>Performance Marketing</option><option>Digital Marketing</option>
+                  <option>Paid Social</option><option>Content</option>
+                </datalist>
+              </div>
+            </div>
+            <div class="field">
+              <label for="b-excerpt">Excerpt / summary <span class="req">*</span></label>
+              <textarea id="b-excerpt" placeholder="One or two sentences shown on the blog card." style="min-height:70px;" oninput="updateSeo()"></textarea>
+            </div>
+            <div class="field">
+              <label for="b-content">Article body <span class="req">*</span></label>
+              <div class="rt-toolbar">
+                <button type="button" class="rt-btn" title="Bold — wraps the selection in **" onclick="rtWrap('**','**','bold text')"><b>B</b></button>
+                <button type="button" class="rt-btn" title="Turn the current line into a sub-heading" onclick="rtHeading()">H — Heading</button>
+                <button type="button" class="rt-btn" title="Attach a link to the selected text" onclick="openInsert('link')">🔗 Link</button>
+                <button type="button" class="rt-btn" title="Place a call-to-action button in the post" onclick="openInsert('button')">▭ Button</button>
+                <span class="rt-spacer"></span>
+                <button type="button" class="rt-btn" id="rt-preview-btn" onclick="togglePreview()">👁 Preview</button>
+              </div>
+              <textarea id="b-content" placeholder="Full post. Press Enter for new paragraphs — they're preserved. Select text and use the toolbar to add links, buttons, bold and headings." style="min-height:220px;" oninput="updateSeo();refreshPreview()"></textarea>
+              <div class="rt-preview" id="b-preview"></div>
+              <div class="help" id="b-readtime-hint">Reading time is calculated automatically. Markup: <span class="mono">[text](url)</span> link · <span class="mono">[button:Label](url)</span> button · <span class="mono">**bold**</span> · <span class="mono">## Heading</span></div>
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="b-date">Display date</label>
+                <input type="text" id="b-date" placeholder="June 2026" />
+              </div>
+              <div class="field">
+                <label>Feature image <span style="color:var(--fg3);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                <div class="upload" id="b-upload">
+                  <input type="file" accept="image/*" id="b-img-file" />
+                  <div class="up-label">📎 Drop or choose an image</div>
+                  <div class="up-hint">Ideal size: <b>1200×675px</b> (16:9 landscape) · PNG/JPG/WebP · up to 15MB — big images auto-compress</div>
+                </div>
+                <div class="img-preview" id="b-img-preview"><img id="b-img-el" alt="preview" /></div>
+                <div class="help" id="b-img-info"></div>
+                <button type="button" class="add-row" id="b-img-clear" style="display:none;" onclick="clearBlogImg()">✕ Remove image</button>
+                <div class="help">Shown as the card thumbnail and cropped to a wide banner (≈760×280px) at the top of the open post — keep the subject centered.</div>
+              </div>
+            </div>
+
+            <!-- Publishing status & scheduling -->
+            <div class="seo-block" style="border-color:var(--border);">
+              <div class="seo-head">
+                <span class="seo-tag" style="background:var(--bg2);color:var(--fg2);">📣 Publishing</span>
+                <span class="status-pill" id="b-status-pill">Published</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="b-status">Status</label>
+                  <select id="b-status" onchange="updatePublishUI()">
+                    <option value="published">Published — visible on the site</option>
+                    <option value="draft">Draft — hidden until you publish</option>
+                  </select>
+                  <div class="help">Drafts are saved here and stay private. They never appear on the public blog.</div>
+                </div>
+                <div class="field">
+                  <label for="b-schedule">Schedule (optional)</label>
+                  <input type="date" id="b-schedule" onchange="updatePublishUI()" />
+                  <div class="help" id="b-schedule-help">Leave empty to go live immediately. Set a future date to auto-publish then.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO section -->
+            <div class="seo-block">
+              <div class="seo-head">
+                <span class="seo-tag">🔍 Search Engine Optimization</span>
+                <span class="seo-score" id="b-seo-score">—</span>
+              </div>
+              <div class="field">
+                <label for="b-focus">Focus keyword</label>
+                <input type="text" id="b-focus" placeholder="e.g. local SEO playbook" oninput="updateSeo()" />
+                <div class="help">The main phrase you want this post to rank for. We'll check it appears in the right places.</div>
+              </div>
+              <div class="field">
+                <label for="b-meta-title">Meta title
+                  <span class="counter" id="b-mt-count">0 / 60</span>
+                </label>
+                <input type="text" id="b-meta-title" maxlength="80" placeholder="Shown as the clickable headline in Google" oninput="updateSeo()" />
+                <div class="help">Aim for 50–60 characters. Leave blank to use the post title.</div>
+              </div>
+              <div class="field">
+                <label for="b-meta-desc">Meta description
+                  <span class="counter" id="b-md-count">0 / 160</span>
+                </label>
+                <textarea id="b-meta-desc" maxlength="200" placeholder="The summary snippet under the title in search results" style="min-height:64px;" oninput="updateSeo()"></textarea>
+                <div class="help">Aim for 150–160 characters. Leave blank to use the excerpt.</div>
+              </div>
+
+              <!-- google preview -->
+              <div class="serp-preview">
+                <div class="serp-label">Google preview</div>
+                <div class="serp-url"><span class="serp-fav">🌐</span> syedwajeehulhassan.com › blog</div>
+                <div class="serp-title" id="serp-title">Your post title</div>
+                <div class="serp-desc" id="serp-desc">Your meta description will appear here as a preview of the search snippet…</div>
+              </div>
+
+              <!-- checklist -->
+              <ul class="seo-checks" id="seo-checks"></ul>
+            </div>
+
+            <div class="editor-actions">
+              <button class="btn btn-primary" onclick="saveBlog()">Save post</button>
+              <button class="btn btn-ghost" onclick="closeBlogEditor()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-toolbar">
+          <input type="search" class="list-search" id="blog-search" placeholder="🔍 Search posts by title, category…" oninput="blogQuery=this.value;renderAll()" />
+          <select class="list-filter" id="blog-status-filter" onchange="blogStatusFilter=this.value;renderAll()">
+            <option value="all">All statuses</option>
+            <option value="live">Live</option>
+            <option value="draft">Draft</option>
+            <option value="scheduled">Scheduled</option>
+          </select>
+        </div>
+        <div class="items" id="blog-list"></div>
+      </div>
+
+      <!-- ===== PROJECTS ===== -->
+      <div class="panel" id="panel-projects">
+        <div class="stats">
+          <div class="stat"><div class="n" id="stat-proj-admin">0</div><div class="l">Projects you added</div></div>
+          <div class="stat"><div class="n" id="stat-proj-builtin">13</div><div class="l">Built-in projects</div></div>
+          <div class="stat"><div class="n" id="stat-proj-total">13</div><div class="l">In dashboard</div></div>
+        </div>
+
+        <div class="section-head">
+          <h2>Portfolio projects</h2>
+          <button class="btn btn-primary btn-sm" onclick="newProject()">+ New project</button>
+        </div>
+
+        <div class="editor" id="proj-editor">
+          <div class="editor-head"><h3 id="proj-editor-title">New project</h3></div>
+          <div class="editor-body">
+            <input type="hidden" id="pr-id" />
+            <div class="grid-2">
+              <div class="field">
+                <label for="pr-title">Title <span class="req">*</span></label>
+                <input type="text" id="pr-title" placeholder="e.g. Meta Ads — DTC Skincare Scale" />
+              </div>
+              <div class="field">
+                <label for="pr-cat">Category <span class="req">*</span></label>
+                <select id="pr-cat">
+                  <option>SEO</option><option>Paid Media</option><option>Web Dev</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="pr-type">Type label <span class="req">*</span></label>
+                <input type="text" id="pr-type" placeholder="Meta Ads · Paid Social" />
+              </div>
+              <div class="field">
+                <label for="pr-accent">Card accent</label>
+                <select id="pr-accent">
+                  <option value="195">Teal</option>
+                  <option value="245">Blue</option>
+                  <option value="285">Violet</option>
+                  <option value="25">Coral</option>
+                  <option value="155">Green</option>
+                  <option value="65">Amber</option>
+                </select>
+                <div class="help">Used for the auto-generated card if you don't upload an image.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="pr-excerpt">Card excerpt <span class="req">*</span></label>
+              <textarea id="pr-excerpt" placeholder="Short summary shown on the project card." style="min-height:64px;"></textarea>
+            </div>
+            <div class="field">
+              <label for="pr-desc">Overview <span class="req">*</span></label>
+              <textarea id="pr-desc" placeholder="The headline summary at the top of the case study." style="min-height:80px;"></textarea>
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="pr-problem">The problem</label>
+                <textarea id="pr-problem" placeholder="What was broken / the challenge."></textarea>
+              </div>
+              <div class="field">
+                <label for="pr-solution">The solution</label>
+                <textarea id="pr-solution" placeholder="What you did about it."></textarea>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Result metrics</label>
+              <div id="pr-results"></div>
+              <button type="button" class="add-row" onclick="addResultRow()">+ Add metric</button>
+              <div class="help">First two also become the highlight chips on the card.</div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="pr-tasks">What I did <span style="color:var(--fg3);font-weight:400;text-transform:none;letter-spacing:0;">(one per line)</span></label>
+                <textarea id="pr-tasks" placeholder="Full technical audit&#10;Schema implementation&#10;Content strategy" style="min-height:110px;"></textarea>
+              </div>
+              <div class="field">
+                <label for="pr-tools">Tools / stack <span style="color:var(--fg3);font-weight:400;text-transform:none;letter-spacing:0;">(comma separated)</span></label>
+                <textarea id="pr-tools" placeholder="Google Ads, GA4, Looker Studio, GTM" style="min-height:110px;"></textarea>
+                <div class="field" style="margin-top:14px;">
+                  <label>Feature image <span style="color:var(--fg3);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                  <div class="upload" id="pr-upload">
+                    <input type="file" accept="image/*" id="pr-img-file" />
+                    <div class="up-label">📎 Drop or choose an image</div>
+                    <div class="up-hint">A real screenshot beats the auto card · ideal <b>1200×675px</b> (16:9)</div>
+                  </div>
+                  <div class="img-preview" id="pr-img-preview"><img id="pr-img-el" alt="preview" /></div>
+                  <div class="help" id="pr-img-info"></div>
+                  <button type="button" class="add-row" id="pr-img-clear" style="display:none;" onclick="clearProjImg()">✕ Remove image</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="editor-actions">
+              <button class="btn btn-primary" onclick="saveProject()">Save project</button>
+              <button class="btn btn-ghost" onclick="closeProjEditor()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-toolbar">
+          <input type="search" class="list-search" id="proj-search" placeholder="🔍 Search projects by title, type, category…" oninput="projQuery=this.value;renderAll()" />
+        </div>
+        <div class="items" id="proj-list"></div>
+      </div>
+
+      <!-- ===== SITE & SEO ===== -->
+      <div class="panel" id="panel-seo">
+        <div class="section-head">
+          <h2>Site &amp; SEO</h2>
+          <span class="hint">Synced live the same way as posts &amp; projects</span>
+        </div>
+
+        <div class="info-card">
+          <h3>🌍 Page meta tags <span class="seo-score" id="s-seo-score" style="float:right;">—</span></h3>
+          <p>The title, description and focus keyphrase Google shows for each <strong>page</strong> of your site. Pick a page below, edit its SEO, then <strong>Save &amp; sync</strong>. (Blog posts have their own SEO inside the post editor.)</p>
+          <div class="field">
+            <label for="s-page">Which page are you editing?</label>
+            <select id="s-page" onchange="switchSeoPage()">
+              <option value="home">🏠 Home page</option>
+              <option value="about">👤 About</option>
+              <option value="services">⚡ Services</option>
+              <option value="projections">📊 Estimators</option>
+              <option value="projects">💼 Projects</option>
+              <option value="blog">📝 Blog</option>
+              <option value="contact">✉️ Contact</option>
+            </select>
+            <div class="help">Each page keeps its own title, description and keyphrase.</div>
+          </div>
+          <div class="field">
+            <label for="s-meta-title">Meta title <span class="counter" id="s-mt-count">0 / 60</span></label>
+            <input type="text" id="s-meta-title" maxlength="120" placeholder="Syed Wajeeh Ul Hassan — Growth Developer &amp; Performance Marketer" oninput="updateSiteSeo()" />
+            <div class="help">Aim for 50–60 characters. Leave blank to keep the built-in page title.</div>
+          </div>
+          <div class="field">
+            <label for="s-meta-desc">Meta description <span class="counter" id="s-md-count">0 / 160</span></label>
+            <textarea id="s-meta-desc" maxlength="300" style="min-height:64px;" placeholder="The summary snippet under the title in search results" oninput="updateSiteSeo()"></textarea>
+            <div class="help">Aim for 150–160 characters.</div>
+          </div>
+          <div class="field">
+            <label for="s-focus">Focus keyphrase</label>
+            <input type="text" id="s-focus" placeholder="e.g. performance marketing consultant" oninput="updateSiteSeo()" />
+            <div class="help">The main phrase the homepage should rank for. We check it appears in the right places.</div>
+          </div>
+          <div class="serp-preview">
+            <div class="serp-label">Google preview</div>
+            <div class="serp-url"><span class="serp-fav">🌐</span> <span id="s-serp-url">syedwajeehulhassan.com</span></div>
+            <div class="serp-title" id="s-serp-title">Your site title</div>
+            <div class="serp-desc" id="s-serp-desc">Your meta description will appear here as a preview of the search snippet…</div>
+          </div>
+          <ul class="seo-checks" id="s-seo-checks"></ul>
+          <div class="row-btns" style="margin-top:14px;">
+            <button class="btn btn-primary btn-sm" onclick="saveSiteSettings()">Save &amp; sync</button>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>🪪 Brand &amp; contact</h3>
+          <p>Your contact email, social links and footer line — used across the site's footer and contact page. Updates sync live, just like posts.</p>
+          <div class="grid-2">
+            <div class="field">
+              <label for="s-contact-email">Contact email</label>
+              <input type="email" id="s-contact-email" placeholder="hello@syedwajeehulhassan.com" />
+              <div class="help">Powers the “email me” links in the footer &amp; contact page.</div>
+            </div>
+            <div class="field">
+              <label for="s-footer-text">Footer copyright line</label>
+              <input type="text" id="s-footer-text" placeholder="© 2026 Syed Wajeeh Ul Hassan · Lahore, Pakistan" />
+              <div class="help">Shown at the bottom of every page.</div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="s-social-linkedin">LinkedIn URL</label>
+              <input type="text" id="s-social-linkedin" placeholder="https://linkedin.com/in/…" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label for="s-social-github">GitHub URL</label>
+              <input type="text" id="s-social-github" placeholder="https://github.com/…" spellcheck="false" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="s-social-instagram">Instagram URL</label>
+              <input type="text" id="s-social-instagram" placeholder="https://instagram.com/…" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label for="s-social-x">X (Twitter) URL</label>
+              <input type="text" id="s-social-x" placeholder="https://x.com/…" spellcheck="false" />
+            </div>
+          </div>
+          <div class="row-btns" style="margin-top:6px;">
+            <button class="btn btn-primary btn-sm" onclick="saveSiteSettings()">Save &amp; sync</button>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>🧩 Head tags &amp; verification</h3>
+          <p>Verification and analytics tags for webmasters — Google Search Console, Bing, GA4, or any custom meta tag / pixel. On the live site these are injected <strong>server-side into the raw HTML</strong> of every page's <span class="mono">&lt;head&gt;</span>, so site verification actually passes. Paste the full meta tag or just the code; both work.</p>
+          <div class="grid-2">
+            <div class="field">
+              <label for="s-verify-google">Google Search Console</label>
+              <input type="text" id="s-verify-google" placeholder="google-site-verification code" spellcheck="false" />
+              <div class="help">Search Console → Settings → Ownership verification → HTML tag.</div>
+            </div>
+            <div class="field">
+              <label for="s-verify-bing">Bing Webmaster Tools</label>
+              <input type="text" id="s-verify-bing" placeholder="msvalidate.01 code" spellcheck="false" />
+              <div class="help">Bing Webmaster → Verify ownership → Meta tag.</div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="s-ga4-id">Google Analytics 4 ID</label>
+              <input type="text" id="s-ga4-id" placeholder="G-XXXXXXXXXX" spellcheck="false" />
+              <div class="help">Adds the gtag.js snippet to every page automatically.</div>
+            </div>
+            <div class="field">
+              <label for="s-verify-fb">Meta domain verification</label>
+              <input type="text" id="s-verify-fb" placeholder="facebook-domain-verification code" spellcheck="false" />
+              <div class="help">Business Manager → Brand Safety → Domains.</div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="s-head-custom">Custom head HTML</label>
+            <textarea id="s-head-custom" spellcheck="false" placeholder="&lt;meta name=&quot;…&quot; content=&quot;…&quot;&gt; or tracking scripts (Hotjar, Ahrefs, Pinterest tag…)" style="min-height:80px;font-family:var(--mono);font-size:12.5px;"></textarea>
+            <div class="help">Advanced: extra tags appended as-is to every page's &lt;head&gt;.</div>
+          </div>
+          <div class="row-btns" style="margin-top:6px;">
+            <button class="btn btn-primary btn-sm" onclick="saveSiteSettings()">Save &amp; sync</button>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>🤖 robots.txt</h3>
+          <p>Controls which crawlers may index which parts of the site. Served live at <span class="mono">/robots.txt</span> once the site is on Netlify — changes sync just like posts, no redeploy.</p>
+          <div class="row-btns" style="margin-bottom:10px;">
+            <button class="btn btn-ghost btn-sm" onclick="robotsPreset('default')">↺ Restore default</button>
+            <button class="btn btn-ghost btn-sm" onclick="robotsPreset('open')">Allow everything</button>
+            <button class="btn btn-ghost btn-sm" onclick="robotsPreset('blockai')">+ Block AI training bots</button>
+          </div>
+          <div class="field">
+            <textarea id="s-robots" spellcheck="false" oninput="lintRobots()"></textarea>
+          </div>
+          <ul class="seo-checks" id="robots-lint"></ul>
+          <div class="row-btns" style="margin-top:14px;">
+            <button class="btn btn-primary btn-sm" onclick="saveSiteSettings()">Save &amp; sync</button>
+            <a class="btn btn-ghost btn-sm" href="robots.txt" target="_blank" rel="noopener">View current /robots.txt ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DATA ===== -->
+      <div class="panel" id="panel-data">
+        <div class="info-card" style="border-color: var(--teal); border-width: 1.5px;">
+          <h3>🌐 Live publishing <span id="live-badge" style="font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--bg2);color:var(--fg3);">checking…</span></h3>
+          <p>When connected, every change you save here is pushed to a shared store and goes <strong>live for all visitors automatically</strong> — no export, no redeploy. This works once the site is deployed to Netlify.</p>
+          <p style="font-size:12.5px;color:var(--fg3);">Currently storing <strong><span id="pub-blog-count">0</span></strong> posts and <strong><span id="pub-proj-count">0</span></strong> projects you've added.</p>
+          <div class="row-btns" style="margin-top:10px;">
+            <button class="btn btn-primary btn-sm" onclick="syncLive(true)">↻ Sync now</button>
+            <button class="btn btn-ghost btn-sm" onclick="testLive()">🔌 Test connection</button>
+            <a class="btn btn-ghost btn-sm" href="blog.html" target="_blank" rel="noopener">Preview /blog ↗</a>
+          </div>
+          <p id="live-help" style="display:none;font-size:12px;color:var(--amber);margin-top:10px;line-height:1.6;"></p>
+          <pre id="live-diag" style="display:none;font-family:var(--mono);font-size:11.5px;line-height:1.6;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:10px;white-space:pre-wrap;word-break:break-word;"></pre>
+        </div>
+        <div class="info-card">
+          <h3>Offline fallback (optional)</h3>
+          <p>Not deployed yet, or the live store is unreachable? You can still publish the old way: download <span class="mono">published.js</span>, replace <span class="mono">content/published.js</span>, and redeploy.</p>
+          <div class="row-btns">
+            <button class="btn btn-ghost btn-sm" onclick="exportPublished()">⬇ Export published.js</button>
+          </div>
+        </div>
+        <div class="info-card">
+          <h3>Backup &amp; transfer</h3>
+          <p>Export a JSON snapshot to move your work to another device / browser, or restore one here.</p>
+          <div class="row-btns">
+            <button class="btn btn-ghost btn-sm" onclick="exportData()">⬇ Export JSON backup</button>
+            <button class="btn btn-ghost btn-sm" onclick="copyData()">⧉ Copy to clipboard</button>
+            <label class="btn btn-ghost btn-sm" style="position:relative;overflow:hidden;cursor:pointer;">
+              ⬆ Import JSON
+              <input type="file" accept="application/json,.json" onchange="importData(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;" />
+            </label>
+          </div>
+        </div>
+        <div class="info-card warn">
+          <h3>Danger zone</h3>
+          <p>This permanently deletes every post and project you've added in this browser. Built-in items are untouched.</p>
+          <button class="btn btn-danger btn-sm" onclick="clearAll()">Delete all my content</button>
+        </div>
+      </div>
+
+      <!-- ===== LEADS / COLLECTED EMAILS ===== -->
+      <div class="panel" id="panel-leads">
+        <div class="stats">
+          <div class="stat"><div class="n" id="stat-leads-total">0</div><div class="l">Collected emails</div></div>
+          <div class="stat"><div class="n" id="stat-leads-unique">0</div><div class="l">Unique contacts</div></div>
+          <div class="stat"><div class="n" id="stat-leads-week">0</div><div class="l">Last 7 days</div></div>
+        </div>
+        <div class="section-head">
+          <h2>Collected emails</h2>
+          <div class="row-btns">
+            <button class="btn btn-ghost btn-sm" onclick="refreshLeads()">↻ Refresh</button>
+            <button class="btn btn-primary btn-sm" onclick="exportLeadsCsv()">⬇ Export CSV</button>
+          </div>
+        </div>
+        <p class="hint" style="margin:-6px 0 16px;">Captured from the <strong>“Free Projection”</strong> lead magnet on your service pages. Names &amp; emails appear here automatically — and once the site is deployed to Netlify, every visitor's submission lands here too.</p>
+        <div id="leads-list"></div>
+      </div>
+
+      <!-- ===== FEEDBACK ===== -->
+      <div class="panel" id="panel-feedback">
+        <div class="stats">
+          <div class="stat"><div class="n" id="stat-fb-total">0</div><div class="l">Responses</div></div>
+          <div class="stat"><div class="n" id="stat-fb-avg">—</div><div class="l">Avg rating</div></div>
+          <div class="stat"><div class="n" id="stat-fb-helpful">—</div><div class="l">Found helpful</div></div>
+        </div>
+        <div class="section-head">
+          <h2>Reader feedback</h2>
+          <div class="row-btns">
+            <button class="btn btn-ghost btn-sm" onclick="refreshFeedback()">↻ Refresh</button>
+            <button class="btn btn-primary btn-sm" onclick="exportFeedbackCsv()">⬇ Export CSV</button>
+          </div>
+        </div>
+        <p class="hint" style="margin:-6px 0 16px;">Collected from the <strong>“Was this helpful?”</strong> form at the end of each blog post. Once the site is deployed to Netlify, feedback from every reader lands here.</p>
+        <div id="feedback-list"></div>
+      </div>
+    </div>
+    </main>
+  </div>
+
+  <!-- Post-download publish instructions -->
+  <div class="ov" id="publish-help">
+    <div class="ov-card">
+      <h3>✅ published.js downloaded</h3>
+      <p class="lead">Your content is in the file. Two quick steps make it live for <strong>everyone</strong>:</p>
+      <ul class="ov-steps">
+        <li><span class="num">1</span><span>Find the downloaded <span class="mono">published.js</span> and use it to replace the file at <span class="mono">content/published.js</span> in your website folder.</span></li>
+        <li><span class="num">2</span><span>Redeploy to Netlify — drag your site folder onto the Netlify dashboard, or push to your connected Git repo.</span></li>
+      </ul>
+      <p class="lead" style="margin-bottom:18px;">That's it. Within seconds your new content shows for all visitors, on every device.</p>
+      <div class="row-btns">
+        <button class="btn btn-primary btn-sm" onclick="closePublishHelp()">Got it</button>
+        <a class="btn btn-ghost btn-sm" href="https://app.netlify.com" target="_blank" rel="noopener">Open Netlify ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insert link / button dialog (blog editor) -->
+  <div class="ov" id="insert-ov">
+    <div class="ov-card">
+      <h3 id="ins-title">Insert link</h3>
+      <p class="lead" id="ins-lead">Turns the selected text into a clickable link inside the post.</p>
+      <div class="field">
+        <label for="ins-text">Text / label</label>
+        <input type="text" id="ins-text" placeholder="e.g. read the full guide" />
+      </div>
+      <div class="field">
+        <label for="ins-url">URL</label>
+        <input type="text" id="ins-url" placeholder="https://…  ·  contact.html  ·  mailto:…" spellcheck="false" />
+        <div class="help">External links open in a new tab automatically. Internal pages like <span class="mono">contact.html</span> work too.</div>
+      </div>
+      <div class="row-btns">
+        <button class="btn btn-primary btn-sm" onclick="confirmInsert()">Insert</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeInsert()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+  /* ─── AUTH GUARD ─────────────────────────────────────────── */
+  const SESSION_KEY = 'wjh_admin_session';
+  function isAuthed() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
+  // Guard: the dashboard is only reachable once signed in at /admin.
+  if (!isAuthed()) { location.replace('admin.html'); }
+  function logout() { sessionStorage.removeItem(SESSION_KEY); location.replace('admin.html'); }
+
+  /* ─── STORAGE ────────────────────────────────────────────── */
+  const BLOG_KEY = 'wjh_blog_admin';
+  const PROJ_KEY = 'wjh_project_admin';
+  const BUILTIN_BLOGS = 13, BUILTIN_PROJECTS = 13;
+  function getBlogs() { try { return JSON.parse(localStorage.getItem(BLOG_KEY) || '[]'); } catch(e) { return []; } }
+  function setBlogs(a) { localStorage.setItem(BLOG_KEY, JSON.stringify(a)); }
+  function getProjects() { try { return JSON.parse(localStorage.getItem(PROJ_KEY) || '[]'); } catch(e) { return []; } }
+  function setProjects(a) { localStorage.setItem(PROJ_KEY, JSON.stringify(a)); }
+
+  /* ─── PUBLISHING STATUS ─────────────────────────────────────
+     A post's live state is derived from two optional fields:
+       status   : 'published' (default) | 'draft'
+       publishAt: ISO date 'YYYY-MM-DD' — if in the future, the post
+                  is scheduled and stays hidden until that date.
+     postState() returns 'draft' | 'scheduled' | 'live'. The public
+     site (blog.html, homepage teaser) hides anything that isn't live. */
+  function postState(p) {
+    if (!p) return 'live';
+    if (p.status === 'draft') return 'draft';
+    if (p.publishAt) {
+      const d = new Date(p.publishAt + 'T00:00:00');
+      if (!isNaN(d) && d.getTime() > Date.now()) return 'scheduled';
+    }
+    return 'live';
+  }
+  function statusBadge(p) {
+    const s = postState(p);
+    if (s === 'draft') return '<span class="status-pill draft">Draft</span>';
+    if (s === 'scheduled') return '<span class="status-pill scheduled">Scheduled</span>';
+    return '<span class="status-pill">Live</span>';
+  }
+
+  /* ─── TOAST ──────────────────────────────────────────────── */
+  let toastT;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  /* ─── TABS ───────────────────────────────────────────────── */
+  const TAB_META = {
+    overview: ['Overview', 'Your site at a glance'],
+    blogs:    ['Blog posts', 'Write, edit and publish articles'],
+    projects: ['Portfolio projects', 'Manage your case studies'],
+    seo:      ['Site & SEO', 'Per-page meta tags and robots.txt'],
+    data:     ['Data & publishing', 'Sync, back up and restore your content'],
+    leads:    ['Leads', 'Emails captured from your lead magnet'],
+    feedback: ['Feedback', 'Reader responses from your blog']
+  };
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    const meta = TAB_META[name];
+    if (meta) {
+      const ti = document.getElementById('section-title'), su = document.getElementById('section-sub');
+      if (ti) ti.textContent = meta[0];
+      if (su) su.textContent = meta[1];
+    }
+    if (name === 'overview') renderOverview();
+    if (name === 'leads') refreshLeads();
+    if (name === 'feedback') refreshFeedback();
+  }
+
+  /* ─── LEADS / COLLECTED EMAILS ─────────────────────
+     Emails captured by the “Free Projection” lead magnet on the
+     service pages. They're stored in localStorage (key wjh_leads)
+     and, once deployed, in a shared Netlify Blob via the `leads`
+     function. The dashboard merges both sources. */
+  const LEADS_KEY = 'wjh_leads';
+  const LEADS_API = '/.netlify/functions/leads';
+  const LEAD_SVC = { seo:'SEO', content:'Content', sem:'Google Ads / PPC', paid:'Paid Social', social:'Social', email:'Email', webdev:'Web Dev', wordpress:'WordPress', automation:'Automation' };
+  let leadsCache = [];
+
+  function localLeads() { try { return JSON.parse(localStorage.getItem(LEADS_KEY) || '[]'); } catch (e) { return []; } }
+  function leadKey(l) { return (l.email || '').toLowerCase() + '|' + (l.ts || ''); }
+  function mergeLeads(a, b) {
+    const seen = {}, out = [];
+    [].concat(a || [], b || []).forEach(l => {
+      if (!l || !l.email) return;
+      const k = leadKey(l);
+      if (seen[k]) return; seen[k] = 1; out.push(l);
+    });
+    out.sort((x, y) => String(y.ts || '').localeCompare(String(x.ts || '')));
+    return out;
+  }
+  function leadSvcLabel(s) { return LEAD_SVC[s] || s || ''; }
+  function fmtWhen(ts) {
+    const t = Date.parse(ts); if (!t) return '—';
+    const d = new Date(t);
+    return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+  }
+  async function fetchRemoteLeads() {
+    try {
+      const res = await fetch(LEADS_API, { headers: { accept:'application/json', 'x-admin-token': adminToken() }, cache:'no-store' });
+      if (!res.ok) return [];
+      const d = await res.json();
+      return Array.isArray(d.leads) ? d.leads : [];
+    } catch (e) { return []; }
+  }
+  function renderLeads() {
+    const list = document.getElementById('leads-list');
+    if (!list) return;
+    const leads = leadsCache;
+    const emails = leads.map(l => (l.email || '').toLowerCase()).filter(Boolean);
+    const uniq = new Set(emails).size;
+    const weekAgo = Date.now() - 7 * 864e5;
+    const wk = leads.filter(l => { const t = Date.parse(l.ts); return t && t >= weekAgo; }).length;
+    document.getElementById('stat-leads-total').textContent = leads.length;
+    document.getElementById('stat-leads-unique').textContent = uniq;
+    document.getElementById('stat-leads-week').textContent = wk;
+    if (!leads.length) {
+      list.innerHTML = '<div class="leads-empty">No emails collected yet.<br/>When a visitor unlocks a projection on your service pages, their name &amp; email show up here.</div>';
+      return;
+    }
+    list.innerHTML = '<table class="leads-table"><thead><tr><th>Name</th><th>Email</th><th>Interested in</th><th>When</th></tr></thead><tbody>' +
+      leads.map(l => '<tr>' +
+        '<td>' + esc(l.name || '—') + '</td>' +
+        '<td><a href="mailto:' + esc(l.email) + '">' + esc(l.email) + '</a></td>' +
+        '<td>' + (l.service ? '<span class="lead-svc">' + esc(leadSvcLabel(l.service)) + '</span>' : '—') +
+          (l.summary ? '<div class="lead-sum">' + esc(l.summary) + '</div>' : '') + '</td>' +
+        '<td class="lead-when">' + esc(fmtWhen(l.ts)) + '</td>' +
+      '</tr>').join('') +
+      '</tbody></table>';
+  }
+  async function refreshLeads() {
+    leadsCache = mergeLeads(localLeads(), []);
+    renderLeads();
+    const remote = await fetchRemoteLeads();
+    if (remote.length) { leadsCache = mergeLeads(localLeads(), remote); renderLeads(); }
+  }
+  function exportLeadsCsv() {
+    if (!leadsCache.length) { toast('No emails to export yet.'); return; }
+    const rows = [['Name', 'Email', 'Service', 'Projection summary', 'Page', 'Timestamp']];
+    leadsCache.forEach(l => rows.push([l.name || '', l.email || '', leadSvcLabel(l.service || ''), l.summary || '', l.page || '', l.ts || '']));
+    const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'wajeeh-leads-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Exported ' + leadsCache.length + ' lead' + (leadsCache.length === 1 ? '' : 's') + ' to CSV.');
+  }
+
+  /* ─── FEEDBACK ───────────────────────────────────
+     Reader feedback from the “Was this helpful?” form on blog
+     posts. Stored locally (wjh_feedback) and in a shared Netlify
+     Blob via the `feedback` function. Each entry can be removed. */
+  const FEEDBACK_KEY = 'wjh_feedback';
+  const FEEDBACK_API = '/.netlify/functions/feedback';
+  let feedbackCache = [];
+
+  function localFeedback() { try { return JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '[]'); } catch (e) { return []; } }
+  function ensureFbId(f) { if (!f.id) f.id = 'fb_local_' + ((f.email||'') + (f.ts||'')).replace(/[^a-z0-9]/gi, '').slice(0, 24); return f; }
+  function mergeFeedback(a, b) {
+    const seen = {}, out = [];
+    [].concat(a || [], b || []).forEach(f => {
+      if (!f) return; ensureFbId(f);
+      const k = f.id || ((f.email||'') + '|' + (f.ts||''));
+      if (seen[k]) return; seen[k] = 1; out.push(f);
+    });
+    out.sort((x, y) => String(y.ts || '').localeCompare(String(x.ts || '')));
+    return out;
+  }
+  async function fetchRemoteFeedback() {
+    try {
+      const res = await fetch(FEEDBACK_API, { headers: { accept:'application/json', 'x-admin-token': adminToken() }, cache:'no-store' });
+      if (!res.ok) return [];
+      const d = await res.json();
+      return Array.isArray(d.feedback) ? d.feedback : [];
+    } catch (e) { return []; }
+  }
+  function fbStars(n) {
+    n = +n || 0;
+    let s = '';
+    for (let i = 1; i <= 5; i++) s += '<span style="color:' + (i <= n ? 'var(--amber, #e0a030)' : 'var(--border)') + '">★</span>';
+    return '<span class="fb-stars-ro">' + s + '</span>';
+  }
+  function renderFeedback() {
+    const list = document.getElementById('feedback-list');
+    if (!list) return;
+    const fb = feedbackCache;
+    const rated = fb.filter(f => +f.rating > 0);
+    const avg = rated.length ? (rated.reduce((s, f) => s + (+f.rating), 0) / rated.length).toFixed(1) : '—';
+    const voted = fb.filter(f => f.helpful === 'up' || f.helpful === 'down');
+    const helpfulPct = voted.length ? Math.round(voted.filter(f => f.helpful === 'up').length / voted.length * 100) + '%' : '—';
+    document.getElementById('stat-fb-total').textContent = fb.length;
+    document.getElementById('stat-fb-avg').textContent = avg;
+    document.getElementById('stat-fb-helpful').textContent = helpfulPct;
+    if (!fb.length) {
+      list.innerHTML = '<div class="leads-empty">No feedback yet.<br/>When a reader fills out the “Was this helpful?” form on a blog post, it shows up here.</div>';
+      return;
+    }
+    list.innerHTML = fb.map(f => '<div class="fb-card" data-id="' + esc(f.id) + '">' +
+      '<div class="fb-card-top">' +
+        '<div>' +
+          '<div class="fb-card-name">' + esc(f.name || 'Anonymous') + '</div>' +
+          '<a class="fb-card-email" href="mailto:' + esc(f.email) + '">' + esc(f.email || '') + '</a>' +
+        '</div>' +
+        '<div class="fb-card-meta">' +
+          (f.rating ? fbStars(f.rating) : '') +
+          (f.helpful === 'up' ? '<span class="fb-tag up">👍 Helpful</span>' : f.helpful === 'down' ? '<span class="fb-tag down">👎 Not helpful</span>' : '') +
+        '</div>' +
+      '</div>' +
+      (f.comment ? '<div class="fb-card-comment">“' + esc(f.comment) + '”</div>' : '') +
+      '<div class="fb-card-foot">' +
+        '<span class="fb-card-post">on “' + esc(f.postTitle || ('post ' + f.postId)) + '”</span>' +
+        '<span class="fb-card-when">' + esc(fmtWhen(f.ts)) + '</span>' +
+        '<button class="fb-card-del" onclick="deleteFeedback(\'' + esc(f.id) + '\')" title="Remove this feedback">✕ Remove</button>' +
+      '</div>' +
+    '</div>').join('');
+  }
+  async function refreshFeedback() {
+    feedbackCache = mergeFeedback(localFeedback(), []);
+    renderFeedback();
+    const remote = await fetchRemoteFeedback();
+    feedbackCache = mergeFeedback(localFeedback(), remote);
+    renderFeedback();
+  }
+  async function deleteFeedback(id) {
+    if (!id || !confirm('Remove this feedback permanently?')) return;
+    // Remove locally.
+    try {
+      const arr = localFeedback().map(ensureFbId).filter(f => f.id !== id);
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(arr));
+    } catch (e) {}
+    // Remove from shared store (best-effort).
+    try { await fetch(FEEDBACK_API + '?id=' + encodeURIComponent(id), { method: 'DELETE', headers: { 'x-admin-token': adminToken() } }); } catch (e) {}
+    feedbackCache = feedbackCache.filter(f => f.id !== id);
+    renderFeedback();
+    toast('Feedback removed.');
+  }
+  function exportFeedbackCsv() {
+    if (!feedbackCache.length) { toast('No feedback to export yet.'); return; }
+    const rows = [['Name', 'Email', 'Rating', 'Helpful', 'Comment', 'Post', 'Timestamp']];
+    feedbackCache.forEach(f => rows.push([f.name || '', f.email || '', f.rating || '', f.helpful || '', f.comment || '', f.postTitle || f.postId || '', f.ts || '']));
+    const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'wajeeh-feedback-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Exported ' + feedbackCache.length + ' response' + (feedbackCache.length === 1 ? '' : 's') + ' to CSV.');
+  }
+
+  /* ─── ESCAPE HELPERS ─────────────────────────────────────── */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function readTime(text) {
+    const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.round(words / 200)) + ' min read';
+  }
+  function slugId(prefix) { return prefix + '-' + Date.now().toString(36); }
+
+  /* generated project card thumb (hue-based gradient + label) */
+  function genThumb(category, hue) {
+    hue = hue || 195;
+    return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="oklch(42% 0.13 ${hue})"/><stop offset="100%" stop-color="oklch(26% 0.08 ${hue})"/></linearGradient></defs>
+      <rect width="400" height="220" fill="url(#gg)"/>
+      <circle cx="330" cy="40" r="90" fill="oklch(100% 0 0 / 0.06)"/>
+      <circle cx="70" cy="200" r="70" fill="oklch(100% 0 0 / 0.05)"/>
+      <text x="28" y="120" font-family="'JetBrains Mono', monospace" font-size="13" letter-spacing="2" fill="oklch(100% 0 0 / 0.55)">${esc((category||'').toUpperCase())}</text>
+      <text x="28" y="150" font-family="'JetBrains Mono', monospace" font-size="11" fill="oklch(100% 0 0 / 0.32)">CASE STUDY</text>
+    </svg>`;
+  }
+
+  /* ─── BLOG IMAGE UPLOAD ──────────────────────────────────── */
+  let blogImgData = '';
+  document.getElementById('b-img-file').addEventListener('change', e => handleImg(e, d => {
+    blogImgData = d;
+    document.getElementById('b-img-el').src = d;
+    document.getElementById('b-img-preview').style.display = 'block';
+    document.getElementById('b-img-clear').style.display = 'inline-block';
+    checkImgSize(d, 'b-img-info');
+  }));
+  function clearBlogImg() {
+    blogImgData = '';
+    document.getElementById('b-img-preview').style.display = 'none';
+    document.getElementById('b-img-clear').style.display = 'none';
+    document.getElementById('b-img-file').value = '';
+    checkImgSize('', 'b-img-info');
+  }
+  let projImgData = '';
+  document.getElementById('pr-img-file').addEventListener('change', e => handleImg(e, d => {
+    projImgData = d;
+    document.getElementById('pr-img-el').src = d;
+    document.getElementById('pr-img-preview').style.display = 'block';
+    document.getElementById('pr-img-clear').style.display = 'inline-block';
+    checkImgSize(d, 'pr-img-info');
+  }));
+  function clearProjImg() {
+    projImgData = '';
+    document.getElementById('pr-img-preview').style.display = 'none';
+    document.getElementById('pr-img-clear').style.display = 'none';
+    document.getElementById('pr-img-file').value = '';
+    checkImgSize('', 'pr-img-info');
+  }
+  function handleImg(e, cb) {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > 15 * 1024 * 1024) { toast('Image too large — keep it under 15MB'); e.target.value = ''; return; }
+    const r = new FileReader();
+    r.onload = () => {
+      // Small files pass through untouched; big ones get resized +
+      // compressed in the browser so publishing never fails on size.
+      if (f.size <= 900 * 1024) { cb(r.result); return; }
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 1920;
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        let q = 0.85, out = c.toDataURL('image/jpeg', q);
+        while (out.length > 1.4 * 1024 * 1024 && q > 0.5) { q -= 0.1; out = c.toDataURL('image/jpeg', q); }
+        toast('Image optimized: ' + Math.round(f.size / 1024) + 'KB → ' + Math.round(out.length * 0.75 / 1024) + 'KB');
+        cb(out);
+      };
+      img.onerror = () => { toast('Could not read that image — try a JPG or PNG'); e.target.value = ''; };
+      img.src = r.result;
+    };
+    r.readAsDataURL(f);
+  }
+
+  /* Check an uploaded image's real dimensions and advise on size.
+     Blog/project images are cropped to wide (16:9-ish) frames, so
+     small or portrait images are flagged. */
+  function checkImgSize(dataUrl, infoId) {
+    const el = document.getElementById(infoId);
+    if (!el) return;
+    if (!dataUrl) { el.textContent = ''; return; }
+    const img = new Image();
+    img.onload = () => {
+      const w = img.naturalWidth, h = img.naturalHeight;
+      let msg = w + '×' + h + 'px — ', color = 'var(--green)';
+      if (w < 800) {
+        msg += 'quite small; it may look blurry. Aim for 1200px+ wide.'; color = 'var(--amber)';
+      } else if (h > w) {
+        msg += 'portrait images get heavily cropped to the wide banner. A landscape (16:9) image works best.'; color = 'var(--amber)';
+      } else if (w / h > 2.6) {
+        msg += 'very wide; fine for the post banner, but the card thumbnail will crop the sides.'; color = 'var(--amber)';
+      } else {
+        msg += '✓ good size — will display crisply.';
+      }
+      el.textContent = msg;
+      el.style.color = color;
+      el.style.fontWeight = '500';
+    };
+    img.onerror = () => { el.textContent = ''; };
+    img.src = dataUrl;
+  }
+
+  /* ─── BLOG CRUD ──────────────────────────────────────────── */
+  function newBlog() {
+    document.getElementById('blog-editor-title').textContent = 'New post';
+    document.getElementById('b-id').value = '';
+    ['b-title','b-cat','b-excerpt','b-content','b-date','b-focus','b-meta-title','b-meta-desc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('b-date').value = defaultDate();
+    document.getElementById('b-status').value = 'published';
+    document.getElementById('b-schedule').value = '';
+    updatePublishUI();
+    clearBlogImg();
+    updateSeo();
+    document.getElementById('blog-editor').classList.add('open');
+    document.getElementById('blog-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function editBlog(id) {
+    const post = getBlogs().find(p => String(p.id) === String(id)); if (!post) return;
+    document.getElementById('blog-editor-title').textContent = 'Edit post';
+    document.getElementById('b-id').value = post.id;
+    document.getElementById('b-title').value = post.title || '';
+    document.getElementById('b-cat').value = post.category || '';
+    document.getElementById('b-excerpt').value = post.excerpt || '';
+    document.getElementById('b-content').value = post.content || '';
+    document.getElementById('b-date').value = post.date || '';
+    document.getElementById('b-focus').value = post.focusKeyword || '';
+    document.getElementById('b-meta-title').value = post.metaTitle || '';
+    document.getElementById('b-meta-desc').value = post.metaDescription || '';
+    document.getElementById('b-status').value = post.status === 'draft' ? 'draft' : 'published';
+    document.getElementById('b-schedule').value = post.publishAt || '';
+    updatePublishUI();
+    blogImgData = post.img || '';
+    if (blogImgData) {
+      document.getElementById('b-img-el').src = blogImgData;
+      document.getElementById('b-img-preview').style.display = 'block';
+      document.getElementById('b-img-clear').style.display = 'inline-block';
+      checkImgSize(blogImgData, 'b-img-info');
+    } else { clearBlogImg(); }
+    updateSeo();
+    document.getElementById('blog-editor').classList.add('open');
+    document.getElementById('blog-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function closeBlogEditor() { document.getElementById('blog-editor').classList.remove('open'); }
+  function saveBlog() {
+    const title = document.getElementById('b-title').value.trim();
+    const cat = document.getElementById('b-cat').value.trim();
+    const excerpt = document.getElementById('b-excerpt').value.trim();
+    const content = document.getElementById('b-content').value.trim();
+    if (!title || !cat || !excerpt || !content) { toast('Title, category, excerpt and body are required'); return; }
+    const id = document.getElementById('b-id').value || Date.now();
+    const metaTitle = document.getElementById('b-meta-title').value.trim();
+    const metaDescription = document.getElementById('b-meta-desc').value.trim();
+    const focusKeyword = document.getElementById('b-focus').value.trim();
+    const post = {
+      id: isNaN(Number(id)) ? id : Number(id),
+      title, category: cat, excerpt, content,
+      date: document.getElementById('b-date').value.trim() || defaultDate(),
+      readTime: readTime(content),
+      img: blogImgData || '',
+      status: document.getElementById('b-status').value === 'draft' ? 'draft' : 'published',
+      publishAt: document.getElementById('b-schedule').value || '',
+      metaTitle, metaDescription, focusKeyword
+    };
+    let list = getBlogs();
+    const i = list.findIndex(p => String(p.id) === String(post.id));
+    if (i >= 0) list[i] = post; else list.unshift(post);
+    setBlogs(list);
+    closeBlogEditor(); renderAll(); markUnpublished(true);
+    const st = postState(post);
+    const msg = st === 'draft' ? 'Draft saved — not visible on the site'
+      : st === 'scheduled' ? 'Post scheduled — will go live on ' + post.publishAt
+      : (i >= 0 ? 'Post updated — syncing live…' : 'Post added — syncing live…');
+    toast(msg);
+  }
+
+  /* Reflects the chosen status/schedule in the editor's pill + helper text. */
+  function updatePublishUI() {
+    const sel = document.getElementById('b-status');
+    const sched = document.getElementById('b-schedule');
+    const pill = document.getElementById('b-status-pill');
+    if (!sel || !pill) return;
+    const st = postState({ status: sel.value, publishAt: sched.value });
+    pill.className = 'status-pill' + (st === 'live' ? '' : ' ' + st);
+    pill.textContent = st === 'draft' ? 'Draft' : st === 'scheduled' ? 'Scheduled' : 'Published';
+    sched.disabled = sel.value === 'draft';
+    sched.style.opacity = sel.value === 'draft' ? '0.5' : '1';
+  }
+  function deleteBlog(id) {
+    if (!confirm('Delete this post? This cannot be undone.')) return;
+    setBlogs(getBlogs().filter(p => String(p.id) !== String(id)));
+    renderAll(); markUnpublished(true); toast('Post deleted — syncing live…');
+  }
+
+  /* ─── SEO ENGINE (live preview + checks) ─────────────────── */
+  function setCounter(el, len, lo, hi) {
+    el.textContent = len + ' / ' + hi;
+    el.classList.remove('good', 'over');
+    if (len > hi) el.classList.add('over');
+    else if (len >= lo) el.classList.add('good');
+  }
+  function updateSeo() {
+    const title = document.getElementById('b-title').value.trim();
+    const excerpt = document.getElementById('b-excerpt').value.trim();
+    const content = document.getElementById('b-content').value.trim();
+    const focus = document.getElementById('b-focus').value.trim();
+    const metaTitle = document.getElementById('b-meta-title').value.trim();
+    const metaDesc = document.getElementById('b-meta-desc').value.trim();
+
+    const effTitle = metaTitle || title;
+    const effDesc = metaDesc || excerpt;
+
+    // counters
+    setCounter(document.getElementById('b-mt-count'), (metaTitle || '').length, 50, 60);
+    setCounter(document.getElementById('b-md-count'), (metaDesc || '').length, 150, 160);
+
+    // serp preview
+    document.getElementById('serp-title').textContent = effTitle || 'Your post title';
+    document.getElementById('serp-desc').textContent = effDesc || 'Your meta description will appear here as a preview of the search snippet…';
+
+    // checks
+    const checks = [];
+    const f = focus.toLowerCase();
+    const has = (s) => f && s.toLowerCase().includes(f);
+    if (focus) {
+      checks.push(['Focus keyword set', 'pass']);
+      checks.push([has(effTitle) ? 'Keyword is in the meta title' : 'Add the keyword to your meta title', has(effTitle) ? 'pass' : 'warn']);
+      checks.push([has(effDesc) ? 'Keyword is in the meta description' : 'Add the keyword to your meta description', has(effDesc) ? 'pass' : 'warn']);
+      checks.push([has(content) ? 'Keyword appears in the article body' : 'Use the keyword in your article body', has(content) ? 'pass' : 'warn']);
+    } else {
+      checks.push(['Set a focus keyword to unlock keyword checks', 'fail']);
+    }
+    const tl = (metaTitle || title).length;
+    checks.push([
+      tl === 0 ? 'Add a title' : (tl < 30 ? 'Title is a bit short' : (tl > 60 ? 'Meta title over 60 chars — may be cut off' : 'Title length looks good')),
+      tl === 0 ? 'fail' : (tl < 30 || tl > 60 ? 'warn' : 'pass')
+    ]);
+    const dl = (metaDesc || excerpt).length;
+    checks.push([
+      dl === 0 ? 'Add a meta description or excerpt' : (dl < 120 ? 'Description could be longer (aim 150–160)' : (dl > 160 ? 'Meta description over 160 chars — may be cut off' : 'Description length looks good')),
+      dl === 0 ? 'fail' : (dl < 120 || dl > 160 ? 'warn' : 'pass')
+    ]);
+
+    const ul = document.getElementById('seo-checks');
+    ul.innerHTML = checks.map(([txt, st]) => {
+      const mk = st === 'pass' ? '✓' : st === 'warn' ? '!' : '✕';
+      return `<li class="${st}"><span class="mk">${mk}</span><span>${esc(txt)}</span></li>`;
+    }).join('');
+
+    // score
+    const pass = checks.filter(c => c[1] === 'pass').length;
+    const score = Math.round((pass / checks.length) * 100);
+    const badge = document.getElementById('b-seo-score');
+    badge.textContent = (focus || metaTitle || metaDesc) ? score + '% SEO' : '—';
+    badge.classList.remove('good', 'ok', 'bad');
+    if (focus || metaTitle || metaDesc) badge.classList.add(score >= 80 ? 'good' : score >= 50 ? 'ok' : 'bad');
+  }
+
+  /* ─── PROJECT CRUD ───────────────────────────────────────── */
+  function resultRowHTML(num, lbl) {
+    return `<div class="kv-row">
+      <input type="text" placeholder="+45%" value="${esc(num)}" data-k="num" />
+      <input type="text" placeholder="Organic leads" value="${esc(lbl)}" data-k="lbl" />
+      <button type="button" class="mini-x" onclick="this.closest('.kv-row').remove()">✕</button>
+    </div>`;
+  }
+  function addResultRow(num, lbl) {
+    document.getElementById('pr-results').insertAdjacentHTML('beforeend', resultRowHTML(num || '', lbl || ''));
+  }
+  function newProject() {
+    document.getElementById('proj-editor-title').textContent = 'New project';
+    ['pr-id','pr-title','pr-type','pr-excerpt','pr-desc','pr-problem','pr-solution','pr-tasks','pr-tools'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('pr-cat').value = 'Paid Media';
+    document.getElementById('pr-accent').value = '195';
+    document.getElementById('pr-results').innerHTML = '';
+    addResultRow(); addResultRow();
+    clearProjImg();
+    document.getElementById('proj-editor').classList.add('open');
+    document.getElementById('proj-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function editProject(id) {
+    const p = getProjects().find(x => String(x.id) === String(id)); if (!p) return;
+    document.getElementById('proj-editor-title').textContent = 'Edit project';
+    document.getElementById('pr-id').value = p.id;
+    document.getElementById('pr-title').value = p.title || '';
+    document.getElementById('pr-type').value = p.type || '';
+    document.getElementById('pr-cat').value = p.category || 'Paid Media';
+    document.getElementById('pr-accent').value = p.accent || '195';
+    document.getElementById('pr-excerpt').value = p.excerpt || '';
+    document.getElementById('pr-desc').value = p.description || '';
+    document.getElementById('pr-problem').value = p.problem || '';
+    document.getElementById('pr-solution').value = p.solution || '';
+    document.getElementById('pr-tasks').value = (p.tasks || []).join('\n');
+    document.getElementById('pr-tools').value = (p.tools || []).join(', ');
+    document.getElementById('pr-results').innerHTML = '';
+    (p.results && p.results.length ? p.results : [{num:'',lbl:''},{num:'',lbl:''}]).forEach(r => addResultRow(r.num, r.lbl));
+    projImgData = p.imgData || '';
+    if (projImgData) {
+      document.getElementById('pr-img-el').src = projImgData;
+      document.getElementById('pr-img-preview').style.display = 'block';
+      document.getElementById('pr-img-clear').style.display = 'inline-block';
+      checkImgSize(projImgData, 'pr-img-info');
+    } else { clearProjImg(); }
+    document.getElementById('proj-editor').classList.add('open');
+    document.getElementById('proj-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function closeProjEditor() { document.getElementById('proj-editor').classList.remove('open'); }
+  function saveProject() {
+    const title = document.getElementById('pr-title').value.trim();
+    const type = document.getElementById('pr-type').value.trim();
+    const excerpt = document.getElementById('pr-excerpt').value.trim();
+    const description = document.getElementById('pr-desc').value.trim();
+    if (!title || !type || !excerpt || !description) { toast('Title, type, excerpt and overview are required'); return; }
+    const results = [...document.querySelectorAll('#pr-results .kv-row')].map(row => ({
+      num: row.querySelector('[data-k=num]').value.trim(),
+      lbl: row.querySelector('[data-k=lbl]').value.trim()
+    })).filter(r => r.num || r.lbl);
+    const tasks = document.getElementById('pr-tasks').value.split('\n').map(s => s.trim()).filter(Boolean);
+    const tools = document.getElementById('pr-tools').value.split(',').map(s => s.trim()).filter(Boolean);
+    const accent = document.getElementById('pr-accent').value;
+    const chips = results.slice(0, 2).map((r, i) => [(r.num ? r.num + ' ' : '') + r.lbl, i === 1]);
+    const id = document.getElementById('pr-id').value || slugId('admin');
+    const thumb = projImgData
+      ? `<img src="${projImgData}" alt="${esc(title)}" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" />`
+      : genThumb(document.getElementById('pr-cat').value, accent);
+    const proj = {
+      id, title, type, category: document.getElementById('pr-cat').value,
+      accent, excerpt, description,
+      problem: document.getElementById('pr-problem').value.trim(),
+      solution: document.getElementById('pr-solution').value.trim(),
+      results, tasks, tools, chips,
+      imgData: projImgData || '',
+      thumb
+    };
+    let list = getProjects();
+    const i = list.findIndex(x => String(x.id) === String(id));
+    if (i >= 0) list[i] = proj; else list.unshift(proj);
+    setProjects(list);
+    closeProjEditor(); renderAll(); markUnpublished(true);
+    toast(i >= 0 ? 'Project updated — syncing live…' : 'Project added — syncing live…');
+  }
+  function deleteProject(id) {
+    if (!confirm('Delete this project? This cannot be undone.')) return;
+    setProjects(getProjects().filter(x => String(x.id) !== String(id)));
+    renderAll(); markUnpublished(true); toast('Project deleted — syncing live…');
+  }
+
+  function defaultDate() {
+    return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  /* ─── RENDER ─────────────────────────────────────────────── */
+  let blogQuery = '', blogStatusFilter = 'all', projQuery = '';
+  function renderAll() {
+    const blogs = getBlogs(), projs = getProjects();
+    document.getElementById('stat-blog-admin').textContent = blogs.length;
+    document.getElementById('stat-blog-total').textContent = blogs.length + BUILTIN_BLOGS;
+    document.getElementById('stat-proj-admin').textContent = projs.length;
+    document.getElementById('stat-proj-total').textContent = projs.length + BUILTIN_PROJECTS;
+    const pbc = document.getElementById('pub-blog-count'); if (pbc) pbc.textContent = blogs.length;
+    const ppc = document.getElementById('pub-proj-count'); if (ppc) ppc.textContent = projs.length;
+
+    // Apply search + status filters (dashboard view only).
+    const bq = blogQuery.trim().toLowerCase();
+    const fBlogs = blogs.filter(p => {
+      if (blogStatusFilter !== 'all' && postState(p) !== blogStatusFilter) return false;
+      if (bq && !((p.title || '') + ' ' + (p.category || '')).toLowerCase().includes(bq)) return false;
+      return true;
+    });
+    const pq = projQuery.trim().toLowerCase();
+    const fProjs = projs.filter(p => !pq || ((p.title || '') + ' ' + (p.type || '') + ' ' + (p.category || '')).toLowerCase().includes(pq));
+
+    const bl = document.getElementById('blog-list');
+    if (!blogs.length) {
+      bl.innerHTML = `<div class="empty"><div class="ico">📝</div>No posts added yet.<br/>Click <strong>+ New post</strong> to publish your first one. The 13 built-in posts stay live.</div>`;
+    } else if (!fBlogs.length) {
+      bl.innerHTML = `<div class="empty"><div class="ico">🔍</div>No posts match your search or filter.</div>`;
+    } else {
+      bl.innerHTML = fBlogs.map(p => `
+        <div class="item">
+          <div class="item-thumb">${p.img ? `<img src="${p.img}" alt="" />` : genThumb(p.category, 195)}</div>
+          <div class="item-main">
+            <div class="cat">${esc(p.category)}</div>
+            <h4>${esc(p.title)}<span class="item-badges">${statusBadge(p)}</span></h4>
+            <div class="meta">${esc(p.date)} · ${esc(p.readTime || '')}${p.publishAt && postState(p) === 'scheduled' ? ' · goes live ' + esc(p.publishAt) : ''}</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editBlog('${p.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteBlog('${p.id}')">Delete</button>
+          </div>
+        </div>`).join('');
+    }
+
+    const pl = document.getElementById('proj-list');
+    if (!projs.length) {
+      pl.innerHTML = `<div class="empty"><div class="ico">💼</div>No projects added yet.<br/>Click <strong>+ New project</strong> to add a case study. The 13 built-in projects stay live.</div>`;
+    } else if (!fProjs.length) {
+      pl.innerHTML = `<div class="empty"><div class="ico">🔍</div>No projects match your search.</div>`;
+    } else {
+      pl.innerHTML = fProjs.map(p => `
+        <div class="item">
+          <div class="item-thumb">${p.thumb || genThumb(p.category, p.accent)}</div>
+          <div class="item-main">
+            <div class="cat">${esc(p.type)}</div>
+            <h4>${esc(p.title)}</h4>
+            <div class="meta">${esc(p.category)} · ${(p.results || []).length} metrics</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editProject('${p.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteProject('${p.id}')">Delete</button>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  /* ─── OVERVIEW ─────────────────────────────────────────────
+     A read-only snapshot of the whole site: headline counts,
+     recent edits, inbox totals, and anything not yet live. */
+  function renderOverview() {
+    const blogs = getBlogs(), projs = getProjects();
+    const drafts = blogs.filter(p => postState(p) === 'draft');
+    const scheduled = blogs.filter(p => postState(p) === 'scheduled');
+    const live = blogs.filter(p => postState(p) === 'live');
+    const leadN = (typeof leadsCache !== 'undefined' && leadsCache.length) ? leadsCache.length : localLeads().length;
+    const fbN = (typeof feedbackCache !== 'undefined' && feedbackCache.length) ? feedbackCache.length : localFeedback().length;
+
+    const stats = [
+      [live.length + BUILTIN_BLOGS, 'Live posts'],
+      [projs.length + BUILTIN_PROJECTS, 'Projects'],
+      [drafts.length + scheduled.length, 'Draft / scheduled'],
+      [leadN, 'Leads'],
+      [fbN, 'Feedback']
+    ];
+    document.getElementById('ov-stats').innerHTML = stats.map(s =>
+      `<div class="stat"><div class="n">${s[0]}</div><div class="l">${s[1]}</div></div>`).join('');
+
+    // Recent activity — newest blogs & projects you've added, by id (timestamp).
+    const acts = [];
+    blogs.forEach(p => acts.push({ ts: Number(p.id) || 0, ico: '📝', title: p.title, sub: 'Blog · ' + (p.category || ''), state: postState(p), tab: 'blogs', id: p.id }));
+    projs.forEach(p => acts.push({ ts: Number(p.id) || 0, ico: '💼', title: p.title, sub: 'Project · ' + (p.category || ''), tab: 'projects', id: p.id }));
+    acts.sort((a, b) => b.ts - a.ts);
+    const actEl = document.getElementById('ov-activity');
+    if (!acts.length) {
+      actEl.innerHTML = `<div class="ov-empty">No custom content yet. Use Quick actions to add your first post or project — the built-in content stays live.</div>`;
+    } else {
+      actEl.innerHTML = acts.slice(0, 6).map(a => `
+        <div class="ov-row">
+          <span class="or-ico">${a.ico}</span>
+          <div class="or-main"><b>${esc(a.title)}</b><span>${esc(a.sub)}${a.ts ? ' · ' + relTime(a.ts) : ''}</span></div>
+          <span class="or-go" style="cursor:pointer" onclick="switchTab('${a.tab}')">Open →</span>
+        </div>`).join('');
+    }
+
+    // Inbox summary
+    document.getElementById('ov-inbox').innerHTML = `
+      <div class="ov-row"><span class="or-ico">📥</span><div class="or-main"><b>${leadN} lead${leadN === 1 ? '' : 's'}</b><span>Captured emails from the lead magnet</span></div><span class="or-go" style="cursor:pointer" onclick="switchTab('leads')">View →</span></div>
+      <div class="ov-row"><span class="or-ico">💬</span><div class="or-main"><b>${fbN} feedback response${fbN === 1 ? '' : 's'}</b><span>From the “Was this helpful?” form</span></div><span class="or-go" style="cursor:pointer" onclick="switchTab('feedback')">View →</span></div>`;
+
+    // Drafts & scheduled card
+    const dq = [...drafts, ...scheduled];
+    const dcard = document.getElementById('ov-draft-card');
+    if (dq.length) {
+      dcard.style.display = '';
+      document.getElementById('ov-drafts').innerHTML = dq.slice(0, 6).map(p => `
+        <div class="ov-row">
+          <span class="or-ico">${postState(p) === 'draft' ? '✏️' : '🕓'}</span>
+          <div class="or-main"><b>${esc(p.title)}</b><span>${postState(p) === 'draft' ? 'Draft — not on the site' : 'Scheduled for ' + esc(p.publishAt)}</span></div>
+          <span class="or-go" style="cursor:pointer" onclick="switchTab('blogs');editBlog('${p.id}')">Edit →</span>
+        </div>`).join('');
+    } else {
+      dcard.style.display = 'none';
+    }
+  }
+
+  // Friendly "x days ago" from a millisecond timestamp.
+  function relTime(ts) {
+    const diff = Date.now() - ts;
+    if (diff < 0 || !ts) return '';
+    const m = 60000, h = 3600000, d = 86400000;
+    if (diff < h) return Math.max(1, Math.round(diff / m)) + 'm ago';
+    if (diff < d) return Math.round(diff / h) + 'h ago';
+    if (diff < 30 * d) return Math.round(diff / d) + 'd ago';
+    return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  /* ─── LIVE AUTO-SYNC ─────────────────────────────────────── */
+  // Whenever content changes, push it to the shared store so every
+  // visitor sees it automatically — no export, no redeploy.
+  const PUB_FLAG = 'wjh_unpublished';   // set when a sync is pending/failed
+  let liveAvailable = null;             // null=unknown, true/false once known
+  let syncTimer = null;
+  let lastSyncError = null;
+
+  // One-click connection test: pings the function and reports exactly
+  // what came back, so a failing deploy is diagnosable at a glance.
+  async function testLive() {
+    const diag = document.getElementById('live-diag');
+    if (diag) { diag.style.display = 'block'; diag.textContent = 'Testing /.netlify/functions/content …'; }
+    const lines = [];
+    const api = (window.WJH_LIVE && window.WJH_LIVE.API) || '/.netlify/functions/content';
+    // 1) GET — is the function reachable at all?
+    try {
+      const r = await fetch(api, { headers: { accept: 'application/json' }, cache: 'no-store' });
+      const d = await r.json().catch(() => ({}));
+      lines.push('GET  ' + api);
+      lines.push('  status: ' + r.status + (r.ok ? ' ✓' : ' ✗'));
+      lines.push('  store: ' + (d.store || 'n/a') + (d.detail ? ' — ' + d.detail : ''));
+      lines.push('  live posts: ' + ((d.blogs && d.blogs.length) || 0) + ', projects: ' + ((d.projects && d.projects.length) || 0));
+      if (r.status === 404) lines.push('  ⚠ 404 = the function is not deployed. Confirm the site is on Netlify and netlify/functions shipped.');
+    } catch (e) {
+      lines.push('GET  ' + api);
+      lines.push('  ✗ could not reach the function (' + ((e && e.message) || e) + ')');
+      lines.push('  ⚠ This is expected in local preview — it only runs on the deployed Netlify site.');
+    }
+    // 2) POST — can we actually write? (round-trips the current content)
+    try {
+      await window.WJH_LIVE.save({ blogs: getBlogs(), projects: getProjects(), settings: getSettings() }, adminToken());
+      lines.push('POST ' + api);
+      lines.push('  ✓ write succeeded — publishing is working. New posts go live automatically.');
+      liveAvailable = true; localStorage.removeItem(PUB_FLAG); refreshPublishBtn('live'); updateLiveBadge(true);
+    } catch (e) {
+      lines.push('POST ' + api);
+      lines.push('  ✗ write failed: ' + ((e && e.message) || e));
+      if (e && e.status === 401) lines.push('  ⚠ 401 = admin token mismatch. If you set an ADMIN_TOKEN env var in Netlify, it must match the dashboard password hash.');
+      if (e && e.status === 503) lines.push('  ⚠ 503 = Netlify Blobs unavailable. Open Netlify → your site → and ensure Blobs is enabled, then redeploy.');
+      liveAvailable = false; refreshPublishBtn('pending'); updateLiveBadge(false);
+    }
+    if (diag) diag.textContent = lines.join('\n');
+  }
+
+  function adminToken() {
+    return sessionStorage.getItem('wjh_admin_token') || '2411275664774193';
+  }
+
+  // Called after any add/edit/delete. Saves sync IMMEDIATELY; rapid
+  // keystroke-level changes are coalesced with a very short debounce.
+  function markUnpublished(immediate) {
+    localStorage.setItem(PUB_FLAG, '1');
+    refreshPublishBtn('saving');
+    clearTimeout(syncTimer);
+    if (immediate) { syncLive(false); return; }
+    syncTimer = setTimeout(() => syncLive(false), 150);
+  }
+
+  async function syncLive(manual) {
+    const data = { blogs: getBlogs(), projects: getProjects(), settings: getSettings() };
+    if (!window.WJH_LIVE) { liveAvailable = false; offlineMode(); return; }
+    refreshPublishBtn('saving');
+    try {
+      await window.WJH_LIVE.save(data, adminToken());
+      liveAvailable = true;
+      localStorage.removeItem(PUB_FLAG);
+      refreshPublishBtn('live');
+      updateLiveBadge(true);
+      lastSyncError = null;
+      if (manual) toast('Synced — live for all visitors ✓');
+    } catch (e) {
+      liveAvailable = false;
+      lastSyncError = (e && e.message) || 'unknown error';
+      refreshPublishBtn('pending');
+      updateLiveBadge(false);
+      if (manual) toast('Not synced: ' + lastSyncError);
+    }
+  }
+
+  function offlineMode() {
+    refreshPublishBtn('pending');
+    updateLiveBadge(false);
+  }
+
+  function refreshPublishBtn(state) {
+    const btn = document.getElementById('publish-btn');
+    if (!btn) return;
+    const pending = localStorage.getItem(PUB_FLAG) === '1';
+    if (state === 'saving') { btn.classList.remove('pulse'); btn.textContent = '⏳ Syncing…'; return; }
+    if (state === 'live' || (!pending && liveAvailable)) { btn.classList.remove('pulse'); btn.textContent = '🌐 Saved & live'; return; }
+    // pending / unknown
+    btn.classList.add('pulse');
+    btn.textContent = liveAvailable === false ? '⚠ Not synced — retry' : '🌐 Sync to live';
+  }
+
+  function updateLiveBadge(ok) {
+    const b = document.getElementById('live-badge');
+    const help = document.getElementById('live-help');
+    if (b) {
+      b.textContent = ok ? '● connected' : '○ offline';
+      b.style.background = ok ? 'oklch(58% 0.13 155 / 0.16)' : 'var(--bg2)';
+      b.style.color = ok ? 'var(--green)' : 'var(--fg3)';
+    }
+    if (help) {
+      if (ok) { help.style.display = 'none'; }
+      else {
+        help.style.display = 'block';
+        help.textContent = lastSyncError
+          ? ('Live sync failed: ' + lastSyncError + '  —  click “Test connection” for details.')
+          : 'Live sync needs the site deployed to Netlify (the content function isn\'t reachable here). Until then, use the offline export below to publish.';
+      }
+    }
+  }
+
+  // Probe the live store on load so the badge/button reflect reality.
+  // Also pull the current live content INTO the dashboard so you're always
+  // editing what's actually published (across devices).
+  async function probeLive() {
+    if (!window.WJH_LIVE) { liveAvailable = false; offlineMode(); return; }
+    try {
+      const d = await window.WJH_LIVE.fetchLive();
+      liveAvailable = d !== null;
+      if (d && !localStorage.getItem(PUB_FLAG)) {
+        // No pending local changes → trust the live store as source of truth.
+        if (Array.isArray(d.blogs)) setBlogs(d.blogs);
+        if (Array.isArray(d.projects)) setProjects(d.projects);
+        if (d.settings && typeof d.settings === 'object') { setSettings(d.settings); loadSettingsUI(); }
+        renderAll();
+      }
+    } catch (e) { liveAvailable = false; }
+    updateLiveBadge(!!liveAvailable);
+    refreshPublishBtn();
+  }
+
+  function slimForExport(data) {
+    const strip = (p) => {
+      const o = {};
+      for (const k of Object.keys(p || {})) {
+        const v = p[k];
+        o[k] = (typeof v === 'string' && v.startsWith('data:')) ? '' : v;
+      }
+      return o;
+    };
+    return { blogs: (data.blogs || []).map(strip), projects: (data.projects || []).map(strip), settings: data.settings || null };
+  }
+
+  async function exportPublished() {
+    // NOTE: the exported fallback file is slim — base64 images are
+    // stripped (they live in the shared store; keeping them here made
+    // every page load 2MB+ heavier).
+    // Prefer the authoritative LIVE store so the export contains what's
+    // actually published for everyone — not just whatever happens to be
+    // in this browser's local storage (which may be empty on a fresh
+    // device). Fall back to local content if the store is unreachable.
+    let data = { blogs: getBlogs(), projects: getProjects(), settings: getSettings() };
+    let source = 'this browser';
+    if (window.WJH_LIVE) {
+      try {
+        const live = await window.WJH_LIVE.fetchLive();
+        if (live && (live.blogs.length || live.projects.length)) {
+          data = {
+            blogs: live.blogs.length ? live.blogs : data.blogs,
+            projects: live.projects.length ? live.projects : data.projects,
+            settings: live.settings || data.settings
+          };
+          source = 'the live store';
+        }
+      } catch (e) { /* keep local fallback */ }
+    }
+    const stamp = new Date().toISOString();
+    const js =
+'/* ============================================================\n' +
+'   PUBLISHED CONTENT for wajeeh.dev\n' +
+'   Generated by the dashboard on ' + stamp + '\n' +
+'   Source: ' + source + ' (' + data.blogs.length + ' posts, ' + data.projects.length + ' projects)\n' +
+'   ------------------------------------------------------------\n' +
+'   Replace content/published.js with this file and redeploy to\n' +
+'   Netlify to make this content live for ALL visitors.\n' +
+'   ============================================================ */\n' +
+'window.WJH_PUBLISHED = ' + JSON.stringify(slimForExport(data), null, 2) + ';\n';
+    const blob = new Blob([js], { type: 'application/javascript' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'published.js';
+    a.click(); URL.revokeObjectURL(a.href);
+    if (!data.blogs.length && !data.projects.length) {
+      toast('Export is empty — no posts found locally or in the live store.');
+      return;
+    }
+    toast('Exported ' + data.blogs.length + ' post' + (data.blogs.length === 1 ? '' : 's') + ' from ' + source + '.');
+    // Mark as published in this browser (clears the pulse). The content only truly
+    // goes live once the user replaces content/published.js and redeploys.
+    localStorage.removeItem(PUB_FLAG);
+    refreshPublishBtn();
+    showPublishHelp();
+  }
+  function showPublishHelp() {
+    const ov = document.getElementById('publish-help');
+    if (ov) ov.classList.add('open');
+  }
+  function closePublishHelp() {
+    const ov = document.getElementById('publish-help');
+    if (ov) ov.classList.remove('open');
+  }
+  function exportData() {
+    const data = { blogs: getBlogs(), projects: getProjects(), settings: getSettings(), exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'wajeeh-dashboard-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('Exported JSON');
+  }
+  function copyData() {
+    const data = { blogs: getBlogs(), projects: getProjects(), settings: getSettings() };
+    navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(
+      () => toast('Copied to clipboard'),
+      () => toast('Copy failed — use Export instead')
+    );
+  }
+  function importData(e) {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (!confirm('Import will REPLACE your current added posts & projects in this browser. Continue?')) { e.target.value=''; return; }
+        if (Array.isArray(d.blogs)) setBlogs(d.blogs);
+        if (Array.isArray(d.projects)) setProjects(d.projects);
+        if (d.settings && typeof d.settings === 'object') { setSettings(d.settings); loadSettingsUI(); }
+        renderAll(); markUnpublished(true); toast('Data imported — syncing live…');
+      } catch (err) { toast('Invalid JSON file'); }
+      e.target.value = '';
+    };
+    r.readAsText(f);
+  }
+  function clearAll() {
+    if (!confirm('Delete ALL posts and projects you added in this browser? Built-in items are kept.')) return;
+    localStorage.removeItem(BLOG_KEY); localStorage.removeItem(PROJ_KEY);
+    renderAll(); markUnpublished(true); toast('All added content cleared — syncing live…');
+  }
+
+  /* ─── DARK MODE ──────────────────────────────────────────── */
+  /* ─── SITE SETTINGS (Site & SEO tab) ───────────────────── */
+  const SETTINGS_KEY = 'wjh_site_settings';
+  const DEFAULT_ROBOTS = `# robots.txt — Syed Wajeeh Ul Hassan · Portfolio
+
+# --- All search engines: allow the public site -----------------
+User-agent: *
+Allow: /
+
+# Block admin, uploads, and source-only files
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin.html
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /dashboard.html
+Disallow: /uploads/
+Disallow: /scraps/
+Disallow: /screenshots/
+Disallow: /*.jsx$
+Disallow: /*.json$
+
+# Block low-value internal query parameters (filter views)
+Disallow: /services.html?s=
+Disallow: /*?utm_
+Disallow: /*?fbclid=
+Disallow: /*?gclid=
+
+# --- Google ------------------------------------------------------
+User-agent: Googlebot
+Allow: /Syed_Wajeeh_Ul_Hassan_CV.pdf
+Allow: /
+Disallow: /uploads/
+Disallow: /scraps/
+Disallow: /screenshots/
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /dashboard
+Disallow: /dashboard.html
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# --- Sitemap ------------------------------------------------------
+Sitemap: https://syedwajeehulhassan.com/sitemap.xml
+`;
+  const AI_BLOCK = `
+# --- AI / LLM training crawlers (opt-out) -------------------------
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+`;
+
+  function getSettings() { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null'); } catch (e) { return null; } }
+  function setSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+  function settingsOrDefault() {
+    return getSettings() || { metaTitle: '', metaDescription: '', focusKeyword: '', robots: DEFAULT_ROBOTS, pages: {} };
+  }
+
+  /* Per-page SEO is held in a draft while editing, then saved into
+     settings. The homepage maps to the legacy top-level fields so old
+     published settings keep working; every other page lives in settings.pages. */
+  const SEO_PAGES = [['home','Home'],['about','About'],['services','Services'],['projections','Estimators'],['projects','Projects'],['blog','Blog'],['contact','Contact']];
+  const SEO_PAGE_URL = { home:'syedwajeehulhassan.com', about:'syedwajeehulhassan.com/about', services:'syedwajeehulhassan.com/services', projections:'syedwajeehulhassan.com/projections', projects:'syedwajeehulhassan.com/projects', blog:'syedwajeehulhassan.com/blog', contact:'syedwajeehulhassan.com/contact' };
+  let currentSeoPage = 'home';
+  let seoDraft = {};
+
+  function loadSettingsUI() {
+    const s = settingsOrDefault();
+    const pages = s.pages || {};
+    seoDraft = {};
+    seoDraft.home = { metaTitle: s.metaTitle || '', metaDescription: s.metaDescription || '', focusKeyword: s.focusKeyword || '' };
+    SEO_PAGES.forEach(([k]) => {
+      if (k === 'home') return;
+      const p = pages[k] || {};
+      seoDraft[k] = { metaTitle: p.metaTitle || '', metaDescription: p.metaDescription || '', focusKeyword: p.focusKeyword || '' };
+    });
+    document.getElementById('s-robots').value = s.robots || DEFAULT_ROBOTS;
+    // Brand & contact
+    const site = s.site || {};
+    const sc = site.social || {};
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+    set('s-contact-email', site.contactEmail);
+    set('s-footer-text', site.footerText);
+    set('s-social-linkedin', sc.linkedin);
+    set('s-social-github', sc.github);
+    set('s-social-instagram', sc.instagram);
+    set('s-social-x', sc.x);
+    const hd = s.head || {};
+    set('s-verify-google', hd.googleVerify);
+    set('s-verify-bing', hd.bingVerify);
+    set('s-verify-fb', hd.facebookVerify);
+    set('s-ga4-id', hd.ga4);
+    set('s-head-custom', hd.custom);
+    currentSeoPage = 'home';
+    document.getElementById('s-page').value = 'home';
+    loadPageSeoFields('home');
+    lintRobots();
+  }
+  function loadPageSeoFields(k) {
+    const d = seoDraft[k] || { metaTitle:'', metaDescription:'', focusKeyword:'' };
+    document.getElementById('s-meta-title').value = d.metaTitle;
+    document.getElementById('s-meta-desc').value = d.metaDescription;
+    document.getElementById('s-focus').value = d.focusKeyword;
+    document.getElementById('s-serp-url').textContent = SEO_PAGE_URL[k] || 'syedwajeehulhassan.com';
+    updateSiteSeo();
+  }
+  function switchSeoPage() {
+    currentSeoPage = document.getElementById('s-page').value;
+    loadPageSeoFields(currentSeoPage);
+  }
+  function saveSiteSettings() {
+    const home = seoDraft.home || { metaTitle:'', metaDescription:'', focusKeyword:'' };
+    const pages = {};
+    SEO_PAGES.forEach(([k]) => {
+      if (k === 'home') return;
+      const d = seoDraft[k] || {};
+      if (d.metaTitle || d.metaDescription || d.focusKeyword) pages[k] = { metaTitle: d.metaTitle||'', metaDescription: d.metaDescription||'', focusKeyword: d.focusKeyword||'' };
+    });
+    const val = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    // Accept either the bare code or a pasted full <meta> tag; keep just the code.
+    const codeVal = (id, re) => { let v = val(id); const m = v.match(/content=["']([^"']+)["']/i); if (m) v = m[1]; if (re) { const g = v.match(re); if (g) v = g[0]; } return v; };
+    setSettings({
+      metaTitle: home.metaTitle || '',
+      metaDescription: home.metaDescription || '',
+      focusKeyword: home.focusKeyword || '',
+      robots: document.getElementById('s-robots').value,
+      pages,
+      head: {
+        googleVerify: codeVal('s-verify-google'),
+        bingVerify: codeVal('s-verify-bing'),
+        facebookVerify: codeVal('s-verify-fb'),
+        ga4: codeVal('s-ga4-id', /G-[A-Z0-9]{4,}/i),
+        custom: val('s-head-custom')
+      },
+      site: {
+        contactEmail: val('s-contact-email'),
+        footerText: val('s-footer-text'),
+        social: {
+          linkedin: val('s-social-linkedin'),
+          github: val('s-social-github'),
+          instagram: val('s-social-instagram'),
+          x: val('s-social-x')
+        }
+      }
+    });
+    markUnpublished(true);
+    toast('Settings saved — syncing live…');
+  }
+
+  function updateSiteSeo() {
+    const title = document.getElementById('s-meta-title').value.trim();
+    const desc = document.getElementById('s-meta-desc').value.trim();
+    const focus = document.getElementById('s-focus').value.trim();
+
+    // Keep the current page's draft in sync as the user types.
+    if (typeof seoDraft === 'object' && seoDraft) {
+      seoDraft[currentSeoPage] = { metaTitle: title, metaDescription: desc, focusKeyword: focus };
+    }
+
+    setCounter(document.getElementById('s-mt-count'), title.length, 50, 60);
+    setCounter(document.getElementById('s-md-count'), desc.length, 150, 160);
+
+    document.getElementById('s-serp-title').textContent = title || 'Your site title';
+    document.getElementById('s-serp-desc').textContent = desc || 'Your meta description will appear here as a preview of the search snippet…';
+
+    const checks = [];
+    const f = focus.toLowerCase();
+    const has = (s) => f && s.toLowerCase().includes(f);
+    if (focus) {
+      checks.push(['Focus keyphrase set', 'pass']);
+      checks.push([has(title) ? 'Keyphrase is in the meta title' : 'Add the keyphrase to your meta title', has(title) ? 'pass' : 'warn']);
+      checks.push([has(desc) ? 'Keyphrase is in the meta description' : 'Add the keyphrase to your meta description', has(desc) ? 'pass' : 'warn']);
+    } else {
+      checks.push(['Set a focus keyphrase to unlock keyword checks', 'fail']);
+    }
+    checks.push([
+      title.length === 0 ? 'Add a meta title' : (title.length < 30 ? 'Meta title is a bit short' : (title.length > 60 ? 'Meta title over 60 chars — may be cut off' : 'Meta title length looks good')),
+      title.length === 0 ? 'fail' : (title.length < 30 || title.length > 60 ? 'warn' : 'pass')
+    ]);
+    checks.push([
+      desc.length === 0 ? 'Add a meta description' : (desc.length < 120 ? 'Description could be longer (aim 150–160)' : (desc.length > 160 ? 'Meta description over 160 chars — may be cut off' : 'Description length looks good')),
+      desc.length === 0 ? 'fail' : (desc.length < 120 || desc.length > 160 ? 'warn' : 'pass')
+    ]);
+
+    document.getElementById('s-seo-checks').innerHTML = checks.map(([txt, st]) => {
+      const mk = st === 'pass' ? '✓' : st === 'warn' ? '!' : '✕';
+      return `<li class="${st}"><span class="mk">${mk}</span><span>${esc(txt)}</span></li>`;
+    }).join('');
+
+    const pass = checks.filter(c => c[1] === 'pass').length;
+    const score = Math.round((pass / checks.length) * 100);
+    const badge = document.getElementById('s-seo-score');
+    const any = focus || title || desc;
+    badge.textContent = any ? score + '% SEO' : '—';
+    badge.classList.remove('good', 'ok', 'bad');
+    if (any) badge.classList.add(score >= 80 ? 'good' : score >= 50 ? 'ok' : 'bad');
+  }
+
+  /* robots.txt linting + presets */
+  function lintRobots() {
+    const txt = document.getElementById('s-robots').value;
+    const lines = txt.split('\n');
+    const checks = [];
+
+    const uaLines = lines.filter(l => /^\s*user-agent\s*:/i.test(l));
+    checks.push([
+      uaLines.length ? `${uaLines.length} crawler group${uaLines.length > 1 ? 's' : ''} defined` : 'No “User-agent:” line — crawlers will ignore this file',
+      uaLines.length ? 'pass' : 'fail'
+    ]);
+
+    // Directives appearing before the first User-agent line are ignored by crawlers.
+    let firstUa = lines.findIndex(l => /^\s*user-agent\s*:/i.test(l));
+    const orphan = lines.slice(0, firstUa === -1 ? lines.length : firstUa)
+      .some(l => /^\s*(allow|disallow|crawl-delay)\s*:/i.test(l));
+    if (orphan) checks.push(['Allow/Disallow rules before the first “User-agent:” line are ignored', 'warn']);
+
+    // Does the "*" group block the whole site?
+    let inStar = false, blocksAll = false;
+    for (const l of lines) {
+      const ua = l.match(/^\s*user-agent\s*:\s*(.+?)\s*$/i);
+      if (ua) { inStar = ua[1].trim() === '*'; continue; }
+      if (inStar && /^\s*disallow\s*:\s*\/\s*$/i.test(l)) { blocksAll = true; }
+    }
+    checks.push([
+      blocksAll ? '“Disallow: /” under “User-agent: *” blocks your ENTIRE site from all search engines' : 'Search engines can reach the public site',
+      blocksAll ? 'fail' : 'pass'
+    ]);
+
+    const hasSitemap = /^\s*sitemap\s*:/im.test(txt);
+    checks.push([hasSitemap ? 'Sitemap line present' : 'Add a “Sitemap:” line so crawlers find sitemap.xml', hasSitemap ? 'pass' : 'warn']);
+
+    const blocksAdmin = /disallow\s*:\s*\/(admin|dashboard)/i.test(txt);
+    checks.push([blocksAdmin ? 'Admin pages are blocked from indexing' : 'Consider blocking /admin and /dashboard', blocksAdmin ? 'pass' : 'warn']);
+
+    document.getElementById('robots-lint').innerHTML = checks.map(([t, st]) => {
+      const mk = st === 'pass' ? '✓' : st === 'warn' ? '!' : '✕';
+      return `<li class="${st}"><span class="mk">${mk}</span><span>${esc(t)}</span></li>`;
+    }).join('');
+  }
+  function robotsPreset(kind) {
+    const ta = document.getElementById('s-robots');
+    if (kind === 'default') {
+      if (!ta.value.trim() || confirm('Replace the current robots.txt with the recommended default?')) ta.value = DEFAULT_ROBOTS;
+    } else if (kind === 'open') {
+      if (confirm('Replace with a minimal “allow everything” robots.txt?')) {
+        ta.value = 'User-agent: *\nAllow: /\n\nSitemap: https://syedwajeehulhassan.com/sitemap.xml\n';
+      }
+    } else if (kind === 'blockai') {
+      if (/GPTBot/i.test(ta.value)) { toast('AI crawler rules are already in the file'); return; }
+      ta.value = ta.value.replace(/\s*$/, '\n') + AI_BLOCK;
+      toast('AI training crawler block appended');
+    }
+    lintRobots();
+  }
+
+  /* ─── RICH TEXT TOOLBAR (blog body) ────────────────────── */
+  let insMode = 'link', insSel = [0, 0];
+  function rtTextarea() { return document.getElementById('b-content'); }
+  function rtWrap(before, after, placeholder) {
+    const ta = rtTextarea();
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    const sel = ta.value.slice(s, e) || placeholder;
+    ta.setRangeText(before + sel + after, s, e, 'end');
+    ta.focus(); updateSeo(); refreshPreview();
+  }
+  function rtHeading() {
+    const ta = rtTextarea();
+    const lineStart = ta.value.lastIndexOf('\n', ta.selectionStart - 1) + 1;
+    if (ta.value.slice(lineStart, lineStart + 3) === '## ') { ta.focus(); return; }
+    ta.setRangeText('## ', lineStart, lineStart, 'end');
+    ta.focus(); updateSeo(); refreshPreview();
+  }
+  function openInsert(mode) {
+    insMode = mode;
+    const ta = rtTextarea();
+    insSel = [ta.selectionStart, ta.selectionEnd];
+    const sel = ta.value.slice(insSel[0], insSel[1]).trim();
+    document.getElementById('ins-title').textContent = mode === 'link' ? 'Insert link' : 'Insert button';
+    document.getElementById('ins-lead').textContent = mode === 'link'
+      ? 'Attaches a link to the selected text (or inserts new linked text at the cursor).'
+      : 'Places a call-to-action button in the post at the cursor position.';
+    document.getElementById('ins-text').value = sel || (mode === 'button' ? 'Get in touch' : '');
+    document.getElementById('ins-url').value = '';
+    document.getElementById('insert-ov').classList.add('open');
+    document.getElementById(sel ? 'ins-url' : 'ins-text').focus();
+  }
+  function closeInsert() { document.getElementById('insert-ov').classList.remove('open'); }
+  function confirmInsert() {
+    const text = document.getElementById('ins-text').value.trim();
+    let url = document.getElementById('ins-url').value.trim();
+    if (!text || !url) { toast('Both the text and the URL are needed'); return; }
+    if (/^(javascript|data|vbscript):/i.test(url)) { toast('That URL scheme is not allowed'); return; }
+    if (!/^(https?:|mailto:|tel:|\/|#|\.)/i.test(url) && !/\.html/i.test(url)) url = 'https://' + url;
+    const safeText = text.replace(/[\[\]]/g, '');
+    const snippet = insMode === 'link' ? `[${safeText}](${url})` : `[button:${safeText}](${url})`;
+    const ta = rtTextarea();
+    ta.setRangeText(snippet, insSel[0], insSel[1], 'end');
+    closeInsert(); ta.focus(); updateSeo(); refreshPreview();
+  }
+  document.getElementById('insert-ov').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); confirmInsert(); }
+    if (e.key === 'Escape') closeInsert();
+  });
+  document.getElementById('insert-ov').addEventListener('mousedown', e => {
+    if (e.target === document.getElementById('insert-ov')) closeInsert();
+  });
+  function togglePreview() {
+    document.getElementById('b-preview').classList.toggle('open');
+    document.getElementById('rt-preview-btn').classList.toggle('on');
+    refreshPreview();
+  }
+  function refreshPreview() {
+    const p = document.getElementById('b-preview');
+    if (!p.classList.contains('open')) return;
+    const v = rtTextarea().value;
+    p.innerHTML = v.trim()
+      ? (window.WJH_RICH ? WJH_RICH.render(v) : esc(v))
+      : '<span style="color:var(--fg3);">Nothing to preview yet — start writing above.</span>';
+  }
+
+  function toggleDark() {
+    const d = document.body.classList.toggle('dark');
+    document.getElementById('dark-toggle').textContent = d ? '☀️' : '🌙';
+    localStorage.setItem('wjh_dark', d ? '1' : '0');
+  }
+  if (localStorage.getItem('wjh_dark') === '1') {
+    document.body.classList.add('dark');
+    document.getElementById('dark-toggle').textContent = '☀️';
+  }
+
+  /* ─── INIT ───────────────────────────────────────────────── */
+  if (isAuthed()) { renderAll(); loadSettingsUI(); probeLive(); leadsCache = mergeLeads(localLeads(), []); renderLeads(); feedbackCache = mergeFeedback(localFeedback(), []); renderFeedback(); renderOverview(); }
+  </script>
+</body>
+</html>
