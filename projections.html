@@ -1,798 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Estimators — Syed Wajeeh Ul Hassan</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="apple-touch-icon" href="favicon.svg" />
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
-<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/></noscript>
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: oklch(98.5% 0.008 60); --bg2: oklch(96% 0.012 60);
-  --fg: oklch(18% 0.02 240); --fg2: oklch(42% 0.02 240); --fg3: oklch(62% 0.015 240);
-  --teal: oklch(52% 0.14 195); --teal-light: oklch(94% 0.04 195); --teal-dim: oklch(52% 0.14 195 / 0.12);
-  --amber: oklch(68% 0.14 65); --amber-light: oklch(95% 0.04 65);
-  --border: oklch(88% 0.01 60); --mono: 'JetBrains Mono', monospace; --sans: 'Plus Jakarta Sans', sans-serif;
-  --radius: 12px; --shadow: 0 2px 16px oklch(18% 0.02 240 / 0.08); --shadow-lg: 0 8px 40px oklch(18% 0.02 240 / 0.12);
-}
-body.dark { --bg: oklch(14% 0.015 240); --bg2: oklch(18% 0.015 240); --fg: oklch(92% 0.008 60); --fg2: oklch(70% 0.008 60); --fg3: oklch(50% 0.008 60); --border: oklch(28% 0.015 240); --teal-light: oklch(30% 0.06 195); --teal-dim: oklch(52% 0.14 195 / 0.2); --amber-light: oklch(28% 0.06 65); }
-body.dark nav { background: oklch(14% 0.015 240 / 0.92); }
-body.dark .svc-card, body.dark .kw-card, body.dark .nav-dropdown { background: oklch(20% 0.015 240); }
-body.dark .page-header { background: linear-gradient(135deg, oklch(14% 0.015 240) 0%, oklch(16% 0.03 195) 50%, oklch(14% 0.015 240) 100%); }
-html { scroll-behavior: smooth; }
-body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.6; transition: background 0.3s, color 0.3s; }
-::selection { background: var(--teal-dim); }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes navSlideDown { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: translateY(0); } }
-@keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: oklch(98.5% 0.008 60 / 0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 5%; height: 72px; display: flex; align-items: center; justify-content: space-between; animation: navSlideDown 0.6s ease forwards; }
-.nav-logo { display: flex; align-items: center; text-decoration: none; }
-.nav-links { display: flex; gap: 4px; list-style: none; align-items: center; }
-.nav-links > li { position: relative; }
-.nav-links a { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--fg2); text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
-.nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-light); }
-.nav-cta { background: var(--teal) !important; color: white !important; padding: 9px 20px !important; border-radius: 10px !important; font-weight: 600 !important; }
-.nav-cta:hover { background: oklch(46% 0.14 195) !important; transform: translateY(-2px); }
-.dark-toggle { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; flex-shrink: 0; margin-left: 10px; }
-.dark-toggle:hover { background: var(--teal-light); border-color: var(--teal); transform: rotate(15deg); }
-
-.has-dropdown > a::after { content: '▾'; font-size: 10px; opacity: 0.7; }
-.nav-dropdown {
-  position: absolute; top: calc(100% + 4px); left: -8px;
-  background: white; border: 1px solid var(--border); border-radius: 14px;
-  box-shadow: var(--shadow-lg); padding: 10px;
-  min-width: 320px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-  opacity: 0; visibility: hidden; transform: translateY(-8px);
-  transition: opacity 0.18s, visibility 0.18s, transform 0.18s;
-}
-.has-dropdown:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
-.nav-dropdown a {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
-  padding: 10px 12px; border-radius: 8px;
-  font-family: var(--sans) !important; font-size: 13px !important; font-weight: 600;
-  color: var(--fg) !important;
-}
-.nav-dropdown a:hover { background: var(--teal-light); }
-.nav-dropdown a small { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--fg3); }
-
-.page-header { padding: 120px 5% 60px; background: linear-gradient(135deg, var(--bg) 0%, oklch(97% 0.018 195) 50%, var(--bg) 100%); background-size: 400% 400%; animation: gradientShift 12s ease infinite; position: relative; overflow: hidden; }
-.page-header-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 48px 48px; opacity: 0.35; pointer-events: none; }
-.page-header-inner { max-width: 900px; margin: 0 auto; animation: fadeUp 0.7s ease forwards; position: relative; }
-.svc-eyebrow { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--teal); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
-.svc-eyebrow .ico { width: 38px; height: 38px; border-radius: 10px; background: var(--teal-light); display: inline-flex; align-items: center; justify-content: center; font-size: 18px; }
-.page-header h1 { font-family: var(--mono); font-size: clamp(30px, 4.4vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
-.page-header h1 span { color: var(--teal); }
-.page-header .lead { font-size: 17px; color: var(--fg2); max-width: 640px; line-height: 1.7; }
-.bread { display: flex; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--fg3); margin-bottom: 18px; }
-.bread a { color: var(--teal); text-decoration: none; }
-.bread span { opacity: 0.5; }
-
-.layout { max-width: 1100px; margin: 0 auto; padding: 48px 5% 80px; }
-.svc-section { margin-bottom: 56px; }
-.svc-h2 { font-family: var(--mono); font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; color: var(--fg); }
-.svc-h2-lbl { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--teal); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-.svc-h2 + p { font-size: 15px; color: var(--fg2); margin-bottom: 28px; max-width: 760px; line-height: 1.75; }
-
-.svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.svc-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; transition: all 0.2s; }
-.svc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--teal-dim); }
-.svc-card .num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--teal); margin-bottom: 8px; }
-.svc-card h4 { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--fg); margin-bottom: 8px; letter-spacing: -0.01em; }
-.svc-card p { font-size: 13px; color: var(--fg2); line-height: 1.65; }
-
-.kr-flow { display: flex; flex-direction: column; gap: 14px; position: relative; }
-.kr-flow::before { content: ''; position: absolute; left: 27px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--teal) 0%, var(--teal-dim) 100%); border-radius: 2px; }
-.kr-step { display: flex; gap: 20px; align-items: flex-start; position: relative; }
-.kr-num { flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px; background: var(--teal); color: white; font-family: var(--mono); font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 4px 16px var(--teal-dim); }
-.kr-body { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 26px; flex: 1; transition: all 0.2s; }
-.kr-body:hover { transform: translateX(4px); box-shadow: var(--shadow); border-color: var(--teal-dim); }
-body.dark .kr-body { background: oklch(20% 0.015 240); }
-.kr-body h4 { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--fg); margin-bottom: 8px; letter-spacing: -0.01em; }
-.kr-body p { font-size: 14px; color: var(--fg2); line-height: 1.7; margin-bottom: 12px; }
-.kr-tools { display: flex; flex-wrap: wrap; gap: 6px; }
-.kr-tools span { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--teal); background: var(--teal-light); padding: 4px 9px; border-radius: 999px; letter-spacing: 0.02em; }
-@media (max-width: 640px) {
-  .kr-flow::before { left: 19px; }
-  .kr-num { width: 40px; height: 40px; font-size: 12px; border-radius: 10px; }
-  .kr-body { padding: 16px 18px; }
-}
-
-.kw-table { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-body.dark .kw-table { background: oklch(20% 0.015 240); }
-.kw-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 14px 22px; background: var(--bg2); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.06em; }
-.kw-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; padding: 14px 22px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.15s; }
-.kw-row:last-child { border-bottom: none; }
-.kw-row:hover { background: var(--bg2); }
-.kw-row .kw { font-family: var(--mono); font-size: 13px; color: var(--fg); font-weight: 600; }
-.kw-row .vol { font-family: var(--mono); font-size: 13px; color: var(--teal); font-weight: 700; }
-.kw-row .diff { font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; display: inline-block; width: fit-content; }
-.kw-row .diff.low { background: oklch(92% 0.05 145); color: oklch(40% 0.12 145); }
-.kw-row .diff.med { background: var(--amber-light); color: var(--amber); }
-.kw-row .diff.high { background: oklch(94% 0.06 25); color: oklch(50% 0.18 25); }
-body.dark .kw-row .diff.low { background: oklch(28% 0.06 145); color: oklch(75% 0.12 145); }
-body.dark .kw-row .diff.high { background: oklch(28% 0.08 25); color: oklch(80% 0.15 25); }
-.kw-row .intent { font-family: var(--mono); font-size: 11px; color: var(--fg3); font-weight: 500; }
-
-.deliv-list { display: flex; flex-direction: column; gap: 10px; }
-.deliv-item { display: flex; gap: 14px; padding: 16px 20px; background: var(--bg2); border-radius: 10px; border-left: 3px solid var(--teal); }
-.deliv-item .chk { color: var(--teal); flex-shrink: 0; font-weight: 700; font-size: 16px; }
-.deliv-item .txt { font-size: 14px; color: var(--fg); line-height: 1.6; }
-
-.cta-band { background: var(--fg); color: white; border-radius: 16px; padding: 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 48px; flex-wrap: wrap; }
-.cta-band h3 { font-family: var(--mono); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
-.cta-band p { color: oklch(75% 0.01 60); font-size: 14px; margin-top: 6px; }
-.cta-band .btn { background: var(--teal); color: white; font-family: var(--mono); font-size: 13px; font-weight: 600; padding: 14px 28px; border-radius: 10px; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
-.cta-band .btn:hover { background: oklch(46% 0.14 195); transform: translateY(-2px); }
-
-.svc-pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border); }
-.pager-link { display: flex; flex-direction: column; gap: 4px; padding: 14px 20px; background: var(--bg2); border-radius: 10px; text-decoration: none; transition: all 0.2s; flex: 1; max-width: 260px; }
-.pager-link:hover { background: var(--teal-light); transform: translateY(-2px); }
-.pager-link.next { text-align: right; align-items: flex-end; }
-.pager-link small { font-family: var(--mono); font-size: 10px; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.1em; }
-.pager-link span { font-family: var(--mono); font-size: 14px; color: var(--teal); font-weight: 600; }
-
-/* HUB GRID */
-.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-.hub-card {
-  background: white; border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 28px; text-decoration: none; color: inherit;
-  display: flex; flex-direction: column; gap: 10px;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  position: relative; overflow: hidden;
-  animation: fadeUp 0.5s ease forwards; opacity: 0;
-}
-body.dark .hub-card { background: oklch(20% 0.015 240); }
-.hub-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--teal), var(--amber));
-  transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
-}
-.hub-card:hover::before { transform: scaleX(1); }
-.hub-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--teal-dim); }
-.hub-card-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  background: var(--teal-light); color: var(--teal);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; margin-bottom: 8px;
-}
-.hub-card h3 {
-  font-family: var(--mono); font-size: 16px; font-weight: 700;
-  color: var(--fg); letter-spacing: -0.01em;
-}
-.hub-card .short {
-  font-family: var(--mono); font-size: 11px; color: var(--teal);
-  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
-}
-.hub-card p { font-size: 13px; color: var(--fg2); line-height: 1.7; }
-.hub-card .arrow {
-  font-family: var(--mono); font-size: 12px; color: var(--teal);
-  font-weight: 700; margin-top: auto; padding-top: 8px;
-}
-
-footer { background: var(--fg); color: oklch(85% 0.01 60); padding: 32px 5%; text-align: center; margin-top: 0; }
-.footer-back { display: inline-flex; align-items: center; gap: 6px; color: var(--teal); font-family: var(--mono); font-size: 13px; text-decoration: none; margin-bottom: 12px; }
-.footer-copy { font-size: 13px; color: oklch(50% 0.01 60); }
-
-@media (max-width: 820px) {
-  .nav-links { display: none; }
-  .nav-hamburger { display: flex !important; }
-  .nav-links.open { display: flex !important; flex-direction: column; align-items: stretch; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); box-shadow: var(--shadow-lg); padding: 10px 5% 16px; gap: 2px; max-height: calc(100vh - 64px); overflow-y: auto; z-index: 99; }
-  .nav-links.open > li { width: 100%; }
-  .nav-links.open > li > a { display: block; padding: 13px 14px; border-radius: 10px; font-size: 15px; }
-  /* Mobile services submenu: accordion toggled by the caret button */
-  .nav-links.open .has-dropdown { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 4px; }
-  .nav-links.open .has-dropdown > a { grid-column: 1; }
-  .nav-links.open .has-dropdown > a::after { display: none; }
-  .nav-links.open .has-dropdown > .dropdown-caret { display: inline-flex; grid-column: 2; }
-  .nav-links.open .has-dropdown > .nav-dropdown { grid-column: 1 / -1; }
-  .nav-links.open .has-dropdown.submenu-open .dropdown-caret { transform: rotate(180deg); color: var(--teal); }
-  .nav-links.open .nav-dropdown { position: static; opacity: 0; visibility: hidden; max-height: 0; overflow: hidden; transform: none; box-shadow: none; border: none; background: transparent; padding: 0; min-width: 0; grid-template-columns: 1fr; gap: 2px; transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.2s ease; }
-  .nav-links.open .has-dropdown.submenu-open .nav-dropdown { opacity: 1; visibility: visible; max-height: 800px; padding: 4px 0 8px 12px; }
-  .nav-links.open .nav-cta { width: 100% !important; text-align: center; justify-content: center; margin-top: 6px; }
-  .kw-header, .kw-row { grid-template-columns: 1.5fr 1fr 1fr; }
-  .kw-header .col-intent, .kw-row .intent { display: none; }
-  .cta-band { padding: 28px; flex-direction: column; align-items: flex-start; }
-}
-
-/* ─── ESTIMATOR ─────────────────────────────────────────── */
-.est-section { scroll-margin-top: 90px; }
-.est-card { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 20px; align-items: start; }
-.est-form, .est-result { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
-body.dark .est-form, body.dark .est-result { background: oklch(20% 0.015 240); }
-.est-field { margin-bottom: 16px; }
-.est-label { display: block; font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--fg); margin-bottom: 7px; }
-.est-input { width: 100%; font-family: var(--sans); font-size: 14px; color: var(--fg); background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 13px; outline: none; transition: border-color .15s, box-shadow .15s; }
-.est-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
-.est-hint { font-size: 12px; color: var(--fg2); margin-top: 5px; line-height: 1.5; }
-.est-budget { display: flex; align-items: stretch; gap: 0; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 0; overflow: hidden; transition: border-color .15s, box-shadow .15s; }
-.est-budget:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
-.est-budget span { display: flex; align-items: center; padding: 0 13px; background: var(--bg2); border-right: 1.5px solid var(--border); font-family: var(--mono); font-weight: 700; color: var(--fg2); }
-.est-budget:focus-within span { border-right-color: var(--teal); color: var(--teal); }
-.est-budget .est-input { border: none; background: none; padding: 11px 13px; border-radius: 0; }
-.est-rangewrap { display: flex; align-items: center; gap: 14px; }
-.est-range { flex: 1; -webkit-appearance: none; appearance: none; height: 5px; border-radius: 5px; background: var(--border); outline: none; }
-.est-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--teal); cursor: pointer; border: 3px solid white; box-shadow: var(--shadow); }
-.est-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--teal); cursor: pointer; border: 3px solid white; }
-.est-rangeval { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--teal); min-width: 28px; text-align: center; }
-.est-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.est-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg); cursor: pointer; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 9px; transition: .15s; }
-.est-check:hover { border-color: var(--teal-dim); }
-.est-check input { accent-color: var(--teal); width: 15px; height: 15px; cursor: pointer; }
-.est-check:has(input:checked) { border-color: var(--teal); background: var(--teal-light); }
-.est-run { width: 100%; margin-top: 6px; font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.02em; background: var(--teal); color: white; border: none; border-radius: 10px; padding: 13px; cursor: pointer; transition: background .15s, transform .1s; }
-.est-run:hover { background: oklch(46% 0.14 195); }
-.est-run:active { transform: translateY(1px); }
-
-.est-result.empty { position: relative; display: block; min-height: 340px; border-style: dashed; overflow: hidden; padding: 22px; }
-.est-ghost { filter: blur(5px); opacity: 0.5; pointer-events: none; user-select: none; }
-.est-ghost-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.est-ghost-pill { display: block; width: 108px; height: 13px; border-radius: 999px; background: var(--teal); opacity: 0.45; }
-.est-ghost-tag { display: block; width: 64px; height: 18px; border-radius: 999px; background: var(--teal-light); }
-.est-ghost-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-.est-ghost-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-.est-ghost-stat.lead { grid-column: 1 / -1; background: linear-gradient(115deg, var(--teal-light), transparent 72%) var(--bg2); border-color: var(--teal-dim); }
-.est-ghost-stat span { display: block; width: 62%; height: 8px; border-radius: 4px; background: var(--fg3); opacity: 0.5; margin-bottom: 11px; }
-.est-ghost-stat b { display: block; width: 46%; height: 22px; border-radius: 5px; background: var(--teal); opacity: 0.55; }
-.est-ghost-stat.lead b { width: 56%; height: 34px; opacity: 0.7; }
-.est-ghost-chart { display: flex; align-items: flex-end; gap: 8px; height: 72px; background: var(--bg2); border-radius: 12px; padding: 12px; }
-.est-ghost-chart i { flex: 1; background: linear-gradient(to top, var(--teal), oklch(62% 0.13 195)); border-radius: 4px 4px 0 0; opacity: 0.6; }
-.est-ghost-chart i:nth-child(1) { height: 26%; }
-.est-ghost-chart i:nth-child(2) { height: 40%; }
-.est-ghost-chart i:nth-child(3) { height: 55%; }
-.est-ghost-chart i:nth-child(4) { height: 70%; }
-.est-ghost-chart i:nth-child(5) { height: 86%; }
-.est-ghost-chart i:nth-child(6) { height: 100%; }
-.est-result.empty .est-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; margin: 0; max-width: none; background: radial-gradient(ellipse 80% 60% at center, var(--bg) 34%, transparent 78%); }
-.est-empty-lock { width: 50px; height: 50px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--border); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; color: var(--teal); margin-bottom: 14px; }
-.est-empty-lock svg { width: 22px; height: 22px; }
-.est-empty p { font-size: 13.5px; line-height: 1.65; color: var(--fg2); max-width: 248px; }
-.est-empty p strong { color: var(--fg); }
-.est-result.filled { position: relative; display: block; border-style: solid; animation: fadeUp 0.4s ease; overflow: visible; }
-.est-result-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
-.est-result-title { font-family: var(--mono); font-size: 13.5px; font-weight: 700; color: var(--fg); letter-spacing: -0.01em; }
-.est-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); background: var(--teal-light); padding: 4px 10px; border-radius: 999px; }
-.est-pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: estPulse 1.8s ease-in-out infinite; }
-@keyframes estPulse { 50% { opacity: 0.3; } }
-.est-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-.est-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; text-align: left; min-width: 0; }
-.est-stat.lead { grid-column: 1 / -1; padding: 18px 18px 16px; background: linear-gradient(115deg, var(--teal-light), transparent 72%) var(--bg2); border-color: var(--teal-dim); }
-.est-stat-lbl { font-family: var(--mono); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg3); line-height: 1.45; }
-.est-stat-num { font-family: var(--mono); font-size: clamp(19px, 2vw, 23px); font-weight: 700; color: var(--fg); letter-spacing: -0.02em; line-height: 1.1; margin-top: 6px; }
-.est-stat.lead .est-stat-num { font-size: clamp(31px, 3.4vw, 40px); color: var(--teal); }
-.est-stat-sub { font-size: 11.5px; color: var(--fg2); margin-top: 4px; }
-.est-stat.lead .est-stat-sub { font-family: var(--mono); font-size: 10.5px; margin-top: 6px; }
-body.dark .est-stat { background: oklch(24% 0.015 240); }
-body.dark .est-stat.lead { background: linear-gradient(115deg, var(--teal-light), transparent 72%) oklch(24% 0.015 240); }
-
-.est-kw { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
-.est-kw-head, .est-kw-row { display: grid; grid-template-columns: 2.1fr 0.9fr 0.8fr 0.9fr; gap: 8px; padding: 9px 13px; align-items: center; }
-.est-kw-head { background: var(--bg2); font-family: var(--mono); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg3); }
-.est-kw-row { border-top: 1px solid var(--border); font-size: 12.5px; }
-.est-kw-term { color: var(--fg); font-weight: 600; }
-.est-kw-vol { font-family: var(--mono); color: var(--fg2); }
-.est-kw-visits { font-family: var(--mono); color: var(--teal); font-weight: 700; }
-.est-kw-diff { font-family: var(--mono); font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; width: fit-content; text-transform: capitalize; }
-.est-kw-diff.low { background: oklch(92% 0.05 145); color: oklch(40% 0.12 145); }
-.est-kw-diff.med { background: var(--amber-light); color: var(--amber); }
-.est-kw-diff.high { background: oklch(94% 0.06 25); color: oklch(50% 0.18 25); }
-body.dark .est-kw-diff.low { background: oklch(28% 0.06 145); color: oklch(78% 0.12 145); }
-body.dark .est-kw-diff.high { background: oklch(28% 0.08 25); color: oklch(80% 0.15 25); }
-
-.est-ramp { background: var(--bg2); border-radius: 12px; padding: 14px; margin-bottom: 4px; }
-.est-ramp-lbl { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg3); margin-bottom: 12px; }
-.est-ramp-bars { display: flex; align-items: flex-end; gap: 8px; height: 72px; }
-.est-ramp-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
-.est-ramp-col i { width: 100%; max-width: 28px; background: linear-gradient(to top, var(--teal), oklch(62% 0.13 195)); border-radius: 5px 5px 0 0; transition: height .6s cubic-bezier(.34,1.3,.64,1); }
-.est-ramp-col small { font-family: var(--mono); font-size: 9px; color: var(--fg3); }
-
-.est-phases { display: flex; flex-direction: column; gap: 11px; margin-bottom: 12px; }
-.est-phase-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--fg2); margin-bottom: 5px; font-weight: 600; }
-.est-phase-top span:last-child { font-family: var(--mono); color: var(--teal); }
-.est-phase-bar { height: 7px; background: var(--bg2); border-radius: 5px; overflow: hidden; }
-.est-phase-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), var(--amber)); border-radius: 5px; animation: estGrow .6s ease; }
-@keyframes estGrow { from { transform: scaleX(0); transform-origin: left; } }
-
-.est-split { margin-bottom: 12px; }
-.est-split-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--fg); margin-bottom: 5px; }
-.est-split-row b { font-family: var(--mono); color: var(--teal); }
-.est-split-bar { height: 8px; background: var(--bg2); border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
-.est-split-bar i { display: block; height: 100%; background: var(--teal); border-radius: 5px; animation: estGrow .6s ease; }
-.est-split-bar.amber i { background: var(--amber); }
-
-.est-range-band { margin-bottom: 4px; }
-.est-range-track { position: relative; height: 8px; background: var(--bg2); border-radius: 5px; overflow: visible; margin: 6px 0 8px; }
-.est-range-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 62%; background: linear-gradient(90deg, var(--teal-dim), var(--teal)); border-radius: 5px; }
-.est-range-dot { position: absolute; left: 62%; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--teal); border: 3px solid white; transform: translate(-50%, -50%); box-shadow: var(--shadow); }
-body.dark .est-range-dot { border-color: oklch(20% 0.015 240); }
-.est-range-lbls { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--fg3); }
-.est-note { font-size: 11.5px; color: var(--fg3); line-height: 1.55; margin-top: 10px; }
-
-.est-book { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 16px; font-family: var(--mono); font-size: 13px; font-weight: 700; background: var(--fg); color: var(--bg); border: none; border-radius: 11px; padding: 14px; cursor: pointer; transition: transform .12s, opacity .15s; }
-.est-book:hover { opacity: 0.9; transform: translateY(-2px); }
-.est-disclaimer { font-size: 10.5px; color: var(--fg3); line-height: 1.55; margin-top: 12px; text-align: center; }
-
-/* ─── CONSULTATION MODAL ─────────────────────────────────── */
-.consult-overlay { position: fixed; inset: 0; background: oklch(18% 0.02 240 / 0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; opacity: 0; transition: opacity .2s; }
-.consult-overlay.open { display: flex; opacity: 1; }
-.consult-modal { background: var(--bg); border-radius: 18px; box-shadow: var(--shadow-lg); max-width: 520px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; animation: consultIn .3s cubic-bezier(.34,1.4,.64,1); }
-@keyframes consultIn { from { opacity: 0; transform: translateY(20px) scale(.97); } }
-.consult-close { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 9px; border: 1.5px solid var(--border); background: var(--bg); color: var(--fg2); font-size: 15px; cursor: pointer; z-index: 2; transition: .15s; }
-.consult-close:hover { border-color: var(--teal); color: var(--teal); }
-.consult-body { padding: 32px 30px 28px; }
-.consult-eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
-.consult-body h3 { font-family: var(--mono); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); margin-bottom: 8px; line-height: 1.2; }
-.consult-lead { font-size: 13.5px; color: var(--fg2); line-height: 1.6; margin-bottom: 18px; }
-.consult-summary { background: var(--teal-light); border: 1px solid var(--teal-dim); border-radius: 11px; padding: 12px 14px; font-family: var(--mono); font-size: 12px; color: var(--fg); line-height: 1.5; margin-bottom: 18px; }
-.consult-summary-lbl { display: block; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); margin-bottom: 5px; }
-.consult-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.consult-fg { margin-bottom: 13px; }
-.consult-fg label { display: block; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--fg2); margin-bottom: 6px; }
-.consult-fg input, .consult-fg textarea { width: 100%; font-family: var(--sans); font-size: 14px; color: var(--fg); background: var(--bg2); border: 1.5px solid var(--border); border-radius: 9px; padding: 10px 12px; outline: none; transition: border-color .15s, box-shadow .15s; resize: vertical; }
-.consult-fg input:focus, .consult-fg textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
-.consult-submit { width: 100%; margin-top: 4px; font-family: var(--mono); font-size: 13px; font-weight: 700; background: var(--teal); color: white; border: none; border-radius: 10px; padding: 13px; cursor: pointer; transition: background .15s; }
-.consult-submit:hover { background: oklch(46% 0.14 195); }
-.consult-alt { text-align: center; font-size: 12px; color: var(--fg3); margin-top: 12px; }
-.consult-alt a { color: var(--teal); }
-.consult-success { display: none; text-align: center; padding: 14px 0; }
-.consult-success.show { display: block; animation: fadeUp .3s ease; }
-.consult-success-ico { width: 56px; height: 56px; border-radius: 50%; background: oklch(58% 0.13 155); color: white; font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-.consult-success h3 { margin-bottom: 10px; }
-.consult-success p { font-size: 13.5px; color: var(--fg2); line-height: 1.6; margin-bottom: 18px; }
-
-@media (max-width: 880px) {
-  .est-card { grid-template-columns: 1fr; }
-  .est-result.empty { min-height: 300px; }
-}
-@media (max-width: 460px) {
-  .est-stats { grid-template-columns: 1fr; }
-  .est-checks { grid-template-columns: 1fr; }
-  .consult-row { grid-template-columns: 1fr; }
-  .consult-body { padding: 26px 20px 22px; }
-}
-</style>
-<style id="mobile-nav-fix">
-    .nav-hamburger { display: none; cursor: pointer; flex-direction: column; justify-content: center; gap: 5px; margin-left: 10px; background: none; border: none; padding: 9px; }
-    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--fg); border-radius: 2px; transition: 0.3s; }
-    .dropdown-caret { display: none; background: transparent; border: none; cursor: pointer; color: var(--fg2); font-size: 20px; padding: 10px 16px; line-height: 1; border-radius: 8px; min-width: 48px; min-height: 44px; align-items: center; justify-content: center; transition: transform 0.25s ease, color 0.2s ease, background 0.2s ease; }
-    .dropdown-caret:hover { color: var(--teal); background: var(--teal-light); }
-  </style>
-
-<style id="projections-page">
-/* ─── PROJECTIONS PAGE ─────────────────────────────────────── */
-.proj-intro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 28px 0 8px; max-width: 720px; }
-.proj-intro-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
-.proj-intro-stat b { display: block; font-family: var(--mono); font-size: clamp(20px, 2.3vw, 26px); font-weight: 700; color: var(--teal); letter-spacing: -0.02em; }
-.proj-intro-stat span { font-family: var(--mono); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg3); }
-
-.chooser-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
-.chooser-card { position: relative; text-align: left; background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; padding: 24px; cursor: pointer; transition: transform .2s, box-shadow .2s, border-color .2s; overflow: hidden; display: flex; flex-direction: column; font-family: inherit; }
-.chooser-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--teal-dim); }
-.chooser-card.active { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-dim); }
-.chooser-deco { position: absolute; right: -34px; top: -34px; width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, var(--teal-light), transparent 68%); opacity: .7; pointer-events: none; }
-.chooser-ico { position: relative; width: 54px; height: 54px; border-radius: 15px; background: var(--teal-light); display: flex; align-items: center; justify-content: center; font-size: 27px; margin-bottom: 16px; }
-.chooser-card h3 { position: relative; font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--fg); margin-bottom: 7px; }
-.chooser-card .desc { position: relative; font-size: 13px; color: var(--fg2); line-height: 1.6; margin-bottom: 18px; flex: 1; }
-.chooser-meta { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.chooser-kpi { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--teal); background: var(--teal-light); padding: 5px 11px; border-radius: 999px; }
-.chooser-go { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--fg2); display: inline-flex; align-items: center; gap: 5px; transition: gap .15s, color .15s; }
-.chooser-card:hover .chooser-go, .chooser-card.active .chooser-go { color: var(--teal); gap: 8px; }
-
-.proj-detail { margin-top: 12px; scroll-margin-top: 86px; }
-.proj-detail:empty { margin-top: 0; }
-.proj-detail-inner { animation: fadeUp .4s ease; }
-.proj-back { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--fg2); background: var(--bg2); border: 1px solid var(--border); border-radius: 999px; padding: 8px 15px; cursor: pointer; margin-bottom: 26px; transition: border-color .15s, color .15s; }
-.proj-back:hover { border-color: var(--teal); color: var(--teal); }
-.svc-h2 + p em { color: var(--fg3); font-style: italic; }
-
-/* historical / benchmark card */
-.hist-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; padding: 24px; }
-body.dark .hist-card { background: oklch(20% 0.015 240); }
-.hist-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
-.hist-stat { background: var(--bg); border: 1px solid var(--border); border-radius: 13px; padding: 15px 16px; }
-body.dark .hist-stat { background: oklch(24% 0.015 240); }
-.hist-stat-num { font-family: var(--mono); font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; color: var(--fg); letter-spacing: -0.02em; line-height: 1.05; }
-.hist-stat:first-child .hist-stat-num { color: var(--teal); }
-.hist-stat-lbl { font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg3); margin-top: 6px; line-height: 1.4; }
-.hist-chart { background: var(--bg); border: 1px solid var(--border); border-radius: 13px; padding: 16px 16px 8px; }
-body.dark .hist-chart { background: oklch(24% 0.015 240); }
-.hist-chart-lbl { font-family: var(--mono); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg3); margin-bottom: 8px; }
-.spark { width: 100%; height: auto; display: block; }
-.spark-area { fill: var(--teal); opacity: 0.12; }
-.spark-line { fill: none; stroke: var(--teal); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.spark-dot { fill: var(--teal); }
-.spark-dot.last { stroke: var(--bg); stroke-width: 3; }
-.spark-lbl { fill: var(--fg3); font-family: var(--mono); font-size: 11px; }
-.spark-val { fill: var(--teal); font-family: var(--mono); font-size: 13px; font-weight: 700; }
-.hist-bars { display: flex; flex-direction: column; gap: 12px; }
-.hist-bar-row { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; gap: 12px; }
-.hist-bar-lbl { font-size: 12.5px; font-weight: 600; color: var(--fg); }
-.hist-bar-track { height: 9px; background: var(--border); border-radius: 5px; overflow: hidden; }
-.hist-bar-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal), oklch(62% 0.13 195)); border-radius: 5px; animation: estGrow .6s ease; }
-.hist-bar-val { font-family: var(--mono); font-size: 11.5px; color: var(--fg2); white-space: nowrap; }
-.hist-note { font-size: 12px; color: var(--fg2); line-height: 1.6; margin-top: 16px; }
-.hist-note strong { color: var(--fg); }
-
-@media (max-width: 620px) {
-  .proj-intro-grid { grid-template-columns: 1fr 1fr; }
-  .hist-stats { grid-template-columns: 1fr; }
-  .hist-bar-row { grid-template-columns: 88px 1fr; }
-  .hist-bar-val { grid-column: 2; justify-self: start; }
-}
-</style>
-
-<style id="nav-pill-v2">
-/* ═══ Floating glass pill navigation (site-wide, matches index.html) ═══ */
-body > nav {
-  top: 12px !important; left: max(14px, 2.2%) !important; right: max(14px, 2.2%) !important;
-  background: oklch(98.5% 0.008 60 / 0.72) !important;
-  backdrop-filter: blur(20px) saturate(1.6) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.6) !important;
-  border: 1px solid oklch(100% 0 0 / 0.65) !important;
-  box-shadow: 0 10px 40px oklch(18% 0.02 240 / 0.08), inset 0 1px 0 oklch(100% 0 0 / 0.7) !important;
-  border-radius: 999px !important;
-  height: 60px !important;
-  padding: 0 12px 0 24px !important;
-  transition: box-shadow 0.4s, background 0.4s, height 0.3s, top 0.3s !important;
-}
-body > nav.scrolled {
-  top: 8px !important; height: 54px !important;
-  background: oklch(98.5% 0.008 60 / 0.88) !important;
-  box-shadow: 0 14px 44px oklch(18% 0.02 240 / 0.14), inset 0 1px 0 oklch(100% 0 0 / 0.7) !important;
-}
-body.dark > nav {
-  background: oklch(16% 0.015 240 / 0.78) !important;
-  border-color: oklch(32% 0.02 240 / 0.7) !important;
-  box-shadow: 0 10px 40px oklch(0% 0 0 / 0.35) !important;
-}
-body.dark > nav.scrolled { background: oklch(16% 0.015 240 / 0.9) !important; }
-/* active page dot */
-.nav-links > li > a.active:not(.nav-cta) { position: relative; }
-.nav-links > li > a.active:not(.nav-cta)::before {
-  content: ''; position: absolute; left: 50%; bottom: -1px;
-  width: 4px; height: 4px; border-radius: 50%; background: var(--teal);
-  transform: translateX(-50%);
-}
-/* hamburger → animated ✕ */
-.nav-hamburger {
-  width: 42px !important; height: 42px !important;
-  align-items: center !important; justify-content: center !important;
-  border-radius: 50% !important; gap: 5px !important;
-  margin-left: 6px; transition: background 0.2s;
-  background: none; border: none; padding: 0 !important;
-}
-.nav-hamburger:hover { background: var(--teal-light) !important; }
-.nav-hamburger span {
-  width: 20px !important; height: 2px !important;
-  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.2s !important;
-}
-.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
-.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-/* mobile drawer → floating frosted card */
-.nav-links.open {
-  position: fixed !important;
-  top: 82px !important; left: max(14px, 2.2%) !important; right: max(14px, 2.2%) !important;
-  background: oklch(98.5% 0.008 60 / 0.92) !important;
-  backdrop-filter: blur(22px) saturate(1.6) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.6) !important;
-  border: 1px solid oklch(100% 0 0 / 0.65) !important;
-  border-bottom: 1px solid oklch(100% 0 0 / 0.65) !important;
-  border-radius: 22px !important;
-  padding: 14px 14px 18px !important;
-  box-shadow: 0 24px 60px oklch(18% 0.02 240 / 0.18) !important;
-  max-height: calc(100dvh - 96px) !important;
-  overflow-y: auto !important;
-  animation: navDrawerInV2 0.3s cubic-bezier(0.16,1,0.3,1);
-}
-@keyframes navDrawerInV2 { from { opacity: 0; transform: translateY(-10px) scale(0.98); } to { opacity: 1; transform: none; } }
-body > nav.scrolled .nav-links.open { top: 70px !important; max-height: calc(100dvh - 84px) !important; }
-body.dark .nav-links.open { background: oklch(16% 0.015 240 / 0.94) !important; border-color: oklch(30% 0.02 240 / 0.7) !important; }
-/* Harmonized collapse breakpoint (matches index.html) — prevents pill overflow at 900–1140px */
-@media (max-width: 1140px) {
-  .nav-links:not(.open) { display: none !important; }
-  .nav-hamburger { display: flex !important; }
-  .nav-links.open { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 4px !important; }
-  .nav-links.open > li { width: 100% !important; position: relative; }
-  .nav-links.open > li > a { display: block !important; padding: 12px 14px !important; border-radius: 10px !important; }
-  .nav-links.open .has-dropdown { display: grid !important; grid-template-columns: 1fr auto !important; align-items: center !important; column-gap: 4px; }
-  .nav-links.open .has-dropdown > a { grid-column: 1; }
-  .nav-links.open .has-dropdown > a::after { display: none !important; }
-  .nav-links.open .has-dropdown > .dropdown-caret { display: inline-flex !important; grid-column: 2; }
-  .nav-links.open .has-dropdown > .nav-dropdown { grid-column: 1 / -1; }
-  .nav-links.open .has-dropdown.submenu-open .dropdown-caret { transform: rotate(180deg); color: var(--teal); }
-  .nav-links.open .nav-dropdown {
-    position: static !important; min-width: 0 !important;
-    opacity: 0; visibility: hidden; max-height: 0; overflow: hidden;
-    transform: none !important; box-shadow: none !important; border: none !important;
-    background: transparent !important; padding: 0 !important;
-    transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.2s ease;
-  }
-  .nav-links.open .has-dropdown.submenu-open .nav-dropdown {
-    opacity: 1 !important; visibility: visible !important; max-height: 800px !important; padding: 4px 0 8px 12px !important;
-  }
-  .nav-links.open .nav-cta { width: 100% !important; justify-content: center !important; text-align: center !important; margin-top: 4px; }
-}
-</style>
-<script>
-/* Sync the hamburger's ✕ state with the drawer (works with each page's own toggle handler) */
-document.addEventListener('click', function (e) {
-  var h = e.target.closest('.nav-hamburger');
-  if (!h) return;
-  setTimeout(function () {
-    var n = document.querySelector('.nav-links');
-    var open = !!(n && n.classList.contains('open'));
-    h.classList.toggle('open', open);
-    h.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }, 0);
-});
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
 </head>
 <body>
+<x-dc>
+<helmet>
+<title>Free Marketing Estimators — Project Leads, ROAS, SEO Traffic &amp; Build Timelines</title>
+<meta name="description" content="Seven free estimators: Google Ads leads and CPL, paid social ROAS, SEO traffic, email revenue, organic social growth, automation ROI and web build timelines — each with a real-world benchmark." />
+<meta name="author" content="Syed Wajeeh Ul Hassan" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://syedwajeehulhassan.com/projections.html" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Syed Wajeeh Ul Hassan" />
+<meta property="og:title" content="Free Marketing Estimators — Project Leads, ROAS, SEO Traffic &amp; Build Timelines" />
+<meta property="og:description" content="Seven free estimators: Google Ads leads and CPL, paid social ROAS, SEO traffic, email revenue, organic social growth, automation ROI and web build timelines — each with a real-world benchmark." />
+<meta property="og:url" content="https://syedwajeehulhassan.com/projections.html" />
+<meta property="og:image" content="https://syedwajeehulhassan.com/about-photo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Free Marketing Estimators — Project Leads, ROAS, SEO Traffic &amp; Build Timelines" />
+<meta name="twitter:description" content="Seven free estimators: Google Ads leads and CPL, paid social ROAS, SEO traffic, email revenue, organic social growth, automation ROI and web build timelines — each with a real-world benchmark." />
+<meta name="twitter:image" content="https://syedwajeehulhassan.com/about-photo.png" />
+<script src="motion.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="estimator.css" rel="stylesheet" />
+<style>
+  body { margin: 0; background: oklch(98.5% 0.008 60); -webkit-font-smoothing: antialiased; }
+  a { color: oklch(52% 0.14 195); text-decoration: none; }
+  a:hover { color: oklch(56% 0.14 65); }
+  @keyframes navDrawerIn { from { opacity: 0; transform: translateY(-10px) scale(0.98); } to { opacity: 1; transform: none; } }
+  @keyframes orbDrift { to { transform: translate(24px, -18px) scale(1.08); } }
+  @keyframes sparkDraw { to { stroke-dashoffset: 0; } }
+  .spark-area { fill: oklch(52% 0.14 195 / 0.12); }
+  .spark-line { fill: none; stroke: oklch(52% 0.14 195); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 900; stroke-dashoffset: 900; animation: sparkDraw 1.6s cubic-bezier(0.16,1,0.3,1) forwards; }
+  .spark-dot { fill: oklch(52% 0.14 195); } .spark-dot.last { fill: oklch(56% 0.14 65); }
+  .spark-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: oklch(62% 0.015 240); }
+  .spark-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; fill: oklch(56% 0.14 65); }
+</style>
+</helmet>
+<div style="font-family: 'Plus Jakarta Sans', sans-serif; color: oklch(18% 0.02 240); line-height: 1.6;">
+  <dc-import name="SiteNav" active="projections" hint-size="100%,84px"></dc-import>
 
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo" style="gap:0;">
-    <svg width="150" height="44" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
-      <text x="2" y="32" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="700" fill="var(--teal)" letter-spacing="-1.5">Wajeeh</text>
-      <path d="M 4 38 Q 50 44 100 38 T 138 36" stroke="var(--amber)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-      <circle cx="142" cy="35" r="3.5" fill="var(--amber)"/>
-    </svg>
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="about.html">About Me</a></li>
-    <li class="has-dropdown">
-      <a href="services.html">Services</a>
-      <button type="button" class="dropdown-caret" aria-label="Toggle services submenu" aria-expanded="false">▾</button>
-      <div class="nav-dropdown" id="nav-dropdown"></div>
-    </li>
-    <li class="has-dropdown">
-      <a href="industries.html">Industries</a>
-      <button type="button" class="dropdown-caret" aria-label="Toggle industries submenu" aria-expanded="false">▾</button>
-      <div class="nav-dropdown">
-        <a href="industries.html?i=realestate"><span>🏡 Real Estate</span><small>Buyer &amp; seller lead-gen</small></a>
-        <a href="industries.html?i=ecommerce"><span>🛒 E-commerce</span><small>DTC &amp; marketplace growth</small></a>
-        <a href="industries.html?i=healthcare"><span>♿ NDIS &amp; Healthcare</span><small>Compliant patient acquisition</small></a>
-        <a href="industries.html?i=restaurants"><span>🍽️ Restaurants</span><small>Local visibility &amp; bookings</small></a>
-        <a href="industries.html?i=legal"><span>⚖️ Legal Services</span><small>High-intent case leads</small></a>
-        <a href="industries.html?i=outdoor"><span>📺 Outdoor Media</span><small>OOH × digital attribution</small></a>
-        <a href="industries.html?i=localservices"><span>🔧 Local Services</span><small>Booked jobs &amp; map pack</small></a>
-        <a href="industries.html?i=saas"><span>💻 SaaS &amp; Startups</span><small>Full-funnel product growth</small></a>
+  <header style="position: relative; overflow: hidden; padding: 90px 5% 70px; background: linear-gradient(135deg, oklch(98.5% 0.008 60) 0%, oklch(96.5% 0.02 195) 55%, oklch(98.5% 0.008 60) 100%); border-bottom: 1px solid oklch(88% 0.01 60);">
+    <div data-orb="0.18" style="position: absolute; width: 420px; height: 420px; border-radius: 50%; background: oklch(90% 0.06 195 / 0.5); filter: blur(60px); top: -140px; right: -80px; animation: orbDrift 14s ease-in-out infinite alternate;"></div>
+    <div data-orb="-0.12" style="position: absolute; width: 300px; height: 300px; border-radius: 50%; background: oklch(92% 0.05 65 / 0.5); filter: blur(60px); bottom: -120px; left: 5%; animation: orbDrift 18s ease-in-out infinite alternate-reverse;"></div>
+    <div style="max-width: 1200px; margin: 0 auto; position: relative; animation: fadeUp 0.6s ease both;">
+      <div style="display: flex; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(62% 0.015 240); margin-bottom: 22px;"><a href="index.html">Home</a><span>/</span><span>Estimators</span></div>
+      <div style="display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: oklch(42% 0.14 195); background: oklch(94% 0.04 195); border-radius: 999px; padding: 7px 15px; margin-bottom: 20px;"><span>📊</span><span>Free Estimators · No spreadsheets</span></div>
+      <h1 style="font-family: 'JetBrains Mono', monospace; font-size: clamp(32px, 4.6vw, 54px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; margin: 0 0 18px;">Project your results <span style="color: oklch(52% 0.14 195);">before</span> you spend a dollar</h1>
+      <p style="font-size: 17px; color: oklch(42% 0.02 240); max-width: 760px; line-height: 1.75; margin: 0 0 28px; text-wrap: pretty;">Pick the service you're weighing up — Google Ads, SEO, paid social, email, automation and more. You'll see a real-world benchmark from past work, then run your own tailored projection in about 20 seconds.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+        <div style="background: oklch(96% 0.012 60); border: 1px solid oklch(88% 0.01 60); border-radius: 12px; padding: 12px 18px;"><b style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: oklch(52% 0.14 195); letter-spacing: -0.02em;">$12M+</b><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(62% 0.015 240);">Ad spend managed</span></div>
+        <div style="background: oklch(96% 0.012 60); border: 1px solid oklch(88% 0.01 60); border-radius: 12px; padding: 12px 18px;"><b style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: oklch(52% 0.14 195); letter-spacing: -0.02em;">7</b><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(62% 0.015 240);">Estimator models</span></div>
+        <div style="background: oklch(96% 0.012 60); border: 1px solid oklch(88% 0.01 60); border-radius: 12px; padding: 12px 18px;"><b style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: oklch(52% 0.14 195); letter-spacing: -0.02em;">20 sec</b><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(62% 0.015 240);">To your estimate</span></div>
       </div>
-    </li>
-    <li><a href="projections.html" class="active">Estimators</a></li>
-    <li><a href="index.html#experience">Experience</a></li>
-    <li><a href="projects.html">Case Studies</a></li>
-    <li><a href="blog.html">Blog</a></li>
-    <li><a href="contact.html" class="nav-cta">Contact</a></li>
-  </ul>
-  <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
-  <button class="nav-hamburger" aria-label="Open menu" onclick="(function(){var n=document.querySelector('nav .nav-links');n.classList.toggle('open');if(!n.classList.contains('open')){n.querySelectorAll('.has-dropdown.submenu-open').forEach(function(li){li.classList.remove('submenu-open');var b=li.querySelector('.dropdown-caret');if(b)b.setAttribute('aria-expanded','false');});}})()"><span></span><span></span><span></span></button>
-</nav>
-
-<!-- HEADER -->
-<div class="page-header">
-  <div class="page-header-bg"></div>
-  <div class="page-header-inner">
-    <div class="bread"><a href="index.html">Home</a><span>/</span>Estimators</div>
-    <div class="svc-eyebrow"><span class="ico">📊</span> Free Estimators · No spreadsheets</div>
-    <h1>Project your results <span>before</span> you spend a dollar</h1>
-    <p class="lead">Pick the service you're weighing up — Google Ads, SEO, paid social, email, automation and more. You'll see a real-world benchmark from past work, then run your own tailored projection in seconds.</p>
-    <div class="proj-intro-grid">
-      <div class="proj-intro-stat"><b>$12M+</b><span>Ad spend managed</span></div>
-      <div class="proj-intro-stat"><b>7</b><span>Estimator models</span></div>
-      <div class="proj-intro-stat"><b>20 sec</b><span>To your estimate</span></div>
     </div>
-  </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 70px 5% 84px; display: flex; flex-direction: column; gap: 64px;">
+    <section>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: oklch(52% 0.14 195); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;">Choose an estimator</div>
+      <h2 style="font-family: 'JetBrains Mono', monospace; font-size: clamp(24px, 2.6vw, 30px); font-weight: 700; letter-spacing: -0.02em; margin: 0 0 12px;">What do you want to estimate?</h2>
+      <p style="font-size: 15px; color: oklch(42% 0.02 240); max-width: 760px; line-height: 1.7; margin: 0 0 30px;">Each model is tuned to the metric that actually matters for that service. Tap a card to see how it has played out in the real world — and to estimate your own numbers.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="7">
+          <button onClick="{{ c.pick }}" style="{{ c.style }}" style-hover="transform: translateY(-4px); box-shadow: 0 14px 34px oklch(18% 0.02 240 / 0.1);">
+            <span style="font-size: 26px; line-height: 1; display: block; margin-bottom: 14px;">{{ c.icon }}</span>
+            <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; margin: 0 0 8px;">{{ c.title }}</h3>
+            <div style="font-size: 13.5px; color: oklch(42% 0.02 240); line-height: 1.6; margin-bottom: 14px;">{{ c.desc }}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: oklch(50% 0.14 65); background: oklch(95% 0.04 65); border-radius: 999px; padding: 4px 10px;">{{ c.kpi }}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: oklch(52% 0.14 195);">Project it →</span>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+      <section id="proj-detail" style="display: flex; flex-direction: column; gap: 48px;">
+        <button onClick="{{ clear }}" style="align-self: flex-start; white-space: nowrap; background: none; border: 1px solid oklch(88% 0.01 60); border-radius: 999px; padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: oklch(42% 0.02 240); cursor: pointer;" style-hover="border-color: oklch(52% 0.14 195); color: oklch(52% 0.14 195);">← All estimators</button>
+
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: oklch(52% 0.14 195); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;">Real-world benchmark</div>
+          <h2 style="font-family: 'JetBrains Mono', monospace; font-size: clamp(24px, 2.6vw, 30px); font-weight: 700; letter-spacing: -0.02em; margin: 0 0 12px;">{{ sel.title }} — in practice</h2>
+          <p style="font-size: 15px; color: oklch(42% 0.02 240); max-width: 760px; line-height: 1.7; margin: 0 0 26px;">{{ hist.scenario }} <em>Anonymized from a real engagement.</em></p>
+          <div style="background: oklch(96% 0.012 60); border: 1px solid oklch(88% 0.01 60); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 22px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+              <sc-for list="{{ hist.stats }}" as="s" hint-placeholder-count="3">
+                <div style="background: oklch(98.5% 0.008 60); border: 1px solid oklch(88% 0.01 60); border-radius: 12px; padding: 16px; text-align: center;">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: oklch(52% 0.14 195); letter-spacing: -0.02em;">{{ s.num }}</div>
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(62% 0.015 240); margin-top: 6px;">{{ s.lbl }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: oklch(62% 0.015 240); margin-bottom: 10px;">{{ hist.chartLbl }}</div>
+              <sc-if value="{{ isLine }}" hint-placeholder-val="{{ true }}">
+                <svg viewBox="0 0 560 188" role="img" aria-label="Trend chart" style="width: 100%; height: auto; display: block;">
+                  <path class="spark-area" d="{{ chart.area }}"></path>
+                  <path class="spark-line" d="{{ chart.line }}"></path>
+                  <sc-for list="{{ chart.pts }}" as="p" hint-placeholder-count="6">
+                    <circle class="{{ p.cls }}" cx="{{ p.x }}" cy="{{ p.y }}" r="{{ p.r }}"></circle>
+                    <text class="spark-lbl" x="{{ p.x }}" y="180" text-anchor="middle">{{ p.lbl }}</text>
+                  </sc-for>
+                  <text class="spark-val" x="{{ chart.valX }}" y="{{ chart.valY }}" text-anchor="end">{{ chart.valTxt }}</text>
+                </svg>
+              </sc-if>
+              <sc-if value="{{ isBars }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <sc-for list="{{ bars }}" as="b" hint-placeholder-count="5">
+                    <div style="display: grid; grid-template-columns: minmax(0, 130px) minmax(0, 1fr) minmax(0, 150px); gap: 12px; align-items: center; font-size: 13px;">
+                      <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(42% 0.02 240);">{{ b.label }}</span>
+                      <div style="height: 10px; background: oklch(94% 0.04 195); border-radius: 999px; overflow: hidden;"><i style="{{ b.fill }}"></i></div>
+                      <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(62% 0.015 240);">{{ b.val }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <p style="font-size: 13.5px; color: oklch(42% 0.02 240); line-height: 1.65; margin: 0;" dangerouslySetInnerHTML="{{ hist.noteHtml }}"></p>
+          </div>
+        </div>
+
+        <x-import component-from-global-scope="Estimator" from="./estimator-mount.jsx" service="{{ selKey }}" hint-size="100%,520px"></x-import>
+      </section>
+    </sc-if>
+  </main>
+
+  <dc-import name="SiteFooter" hint-size="100%,260px"></dc-import>
 </div>
-
-<!-- MAIN -->
-<div class="layout">
-  <div class="svc-section" id="chooser-section">
-    <div class="svc-h2-lbl">Choose an estimator</div>
-    <h2 class="svc-h2">What do you want to estimate?</h2>
-    <p>Each model is tuned to the metric that actually matters for that service. Tap a card to see how it has played out in the real world — and to estimate your own numbers.</p>
-    <div class="chooser-grid" id="chooser"></div>
-  </div>
-  <div class="proj-detail" id="proj-detail"></div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div><a href="index.html" class="footer-back">← Back to Portfolio</a></div>
-  <p class="footer-copy">© 2026 Syed Wajeeh Ul Hassan · Lahore, Pakistan</p>
-</footer>
-
-<script src="services-data.js"></script>
-<script src="estimator.js"></script>
-<script>
-// ─── PROJECTION CARDS ──────────────────────────────────────────
-const CARDS = [
-  { key: 'sem',        icon: '🎯', title: 'Google Ads Leads & CPL', desc: 'Project clicks, leads and cost-per-lead from your monthly Google Ads budget.', kpi: '−51% CPL' },
-  { key: 'paid',       icon: '📣', title: 'Paid Social Reach & ROAS', desc: 'Estimate reach, results and ROAS from Meta and paid social spend.', kpi: '6.8× ROAS' },
-  { key: 'seo',        icon: '🔍', title: 'SEO Traffic & Rankings', desc: 'See target keywords, projected organic traffic and time-to-rank for your niche.', kpi: '+4× Traffic' },
-  { key: 'email',      icon: '✉️', title: 'Email Revenue', desc: 'Estimate the monthly revenue a lifecycle email program could add to your store.', kpi: '+32% Rev' },
-  { key: 'social',     icon: '📈', title: 'Organic Social Growth', desc: 'Project monthly reach and follower growth from a consistent content system.', kpi: '+38K / 6mo' },
-  { key: 'automation', icon: '🤖', title: 'Automation Time & ROI', desc: 'See the hours and dollars an AI agent or GHL / Zapier build hands back to you.', kpi: '43 hrs/mo' },
-  { key: 'webdev',     icon: '🛠️', title: 'Web Build Timeline', desc: 'Scope your project to see how many days to launch — and your target go-live date.', kpi: '10–14 days' }
-];
-const CARD_BY_KEY = Object.fromEntries(CARDS.map(c => [c.key, c]));
-
-// ─── HISTORICAL / BENCHMARK DATA ───────────────────────────────
-const HIST = {
-  sem: {
-    scenario: 'B2B legal firm running $6,000/mo on Google Ads in the US market.',
-    stats: [{ num: '83', lbl: 'Leads / month' }, { num: '$72', lbl: 'Cost per lead' }, { num: '−51%', lbl: 'CPL vs. month 1' }],
-    chart: 'line', chartLbl: 'Cost per lead, first 6 months', series: [142, 118, 98, 84, 75, 72], fmt: v => '$' + v,
-    note: '<strong>Lower is better.</strong> Cost-per-lead fell as negative-keyword discipline, tight ad groups and offline-conversion bidding compounded month over month.'
-  },
-  paid: {
-    scenario: 'DTC apparel brand scaling Meta from $30K to $280K/mo over 11 months.',
-    stats: [{ num: '6.8×', lbl: 'Blended ROAS' }, { num: '9×', lbl: 'Spend growth' }, { num: '11 mo', lbl: 'To full scale' }],
-    chart: 'line', chartLbl: 'Blended ROAS, first 6 months', series: [2.1, 3.0, 3.9, 4.8, 5.9, 6.8], fmt: v => v.toFixed(1) + '×',
-    note: 'Signal recovery (CAPI), a 60-ads/week creative pipeline and audience consolidation lifted ROAS even as spend climbed 9×.'
-  },
-  seo: {
-    scenario: 'B2B SaaS in a competitive category, cluster + programmatic SEO build.',
-    stats: [{ num: '14.2K', lbl: 'Organic visits / mo' }, { num: '+4×', lbl: 'Traffic lift' }, { num: '9 mo', lbl: 'To maturity' }],
-    chart: 'line', chartLbl: 'Monthly organic visits', series: [1200, 2100, 3800, 6400, 9900, 14200], fmt: v => v >= 1000 ? (v / 1000).toFixed(1) + 'K' : v,
-    note: 'Topical-authority clusters compound. The curve is slow for two months, then ranking momentum makes each new page rank faster than the last.'
-  },
-  email: {
-    scenario: 'DTC brand with a 15K-subscriber list, full Klaviyo lifecycle build.',
-    stats: [{ num: '$18.6K', lbl: 'Email rev / mo' }, { num: '+32%', lbl: 'Of total revenue' }, { num: '45%', lbl: 'From flows' }],
-    chart: 'line', chartLbl: 'Monthly email revenue', series: [4.2, 7.1, 9.8, 12.4, 15.0, 18.6], fmt: v => '$' + v.toFixed(1) + 'K',
-    note: 'Automated flows (welcome, browse, cart, post-purchase) do the heavy lifting and keep earning as the list grows — campaigns add the spikes.'
-  },
-  social: {
-    scenario: 'Coaching brand running an organic Instagram + TikTok content system.',
-    stats: [{ num: '+38K', lbl: 'Followers (6 mo)' }, { num: '1.2M', lbl: 'Reach / month' }, { num: '+1.2%', lbl: 'Follow rate' }],
-    chart: 'line', chartLbl: 'Total following (thousands)', series: [2.5, 6, 12, 20, 29, 40], fmt: v => v.toFixed(0) + 'K',
-    note: 'Consistent, platform-native posting at a steady cadence compounds. The first month is the hardest — momentum builds once the system is dialled in.'
-  },
-  automation: {
-    scenario: 'Marketing agency ops — AI chat agent plus a GoHighLevel workflow build.',
-    stats: [{ num: '43 hrs', lbl: 'Saved / month' }, { num: '70%', lbl: 'Of manual work' }, { num: '$12.9K', lbl: 'Value / year' }],
-    chart: 'line', chartLbl: 'Hours handed back per week', series: [2, 4, 6, 8, 9, 10], fmt: v => v + 'h',
-    note: 'As more of the workflow goes live — intake, routing, follow-up, reporting — the hours handed back climb until the system covers ~70% of the manual work.'
-  },
-  webdev: {
-    scenario: 'Typical days-to-launch from recent builds on a fast, modern stack.',
-    stats: [{ num: '6–18 days', lbl: 'Typical range' }, { num: '99', lbl: 'Lighthouse avg' }, { num: '<100ms', lbl: 'Publish speed' }],
-    chart: 'bars',
-    rows: [['Landing page', 4, '~1 week'], ['Marketing site', 9, '~2 weeks'], ['Blog / CMS', 11, '~2 weeks'], ['E-commerce', 16, '~3 weeks'], ['Web app / SaaS', 22, '~4 weeks']],
-    chartLbl: 'Business days to launch by project type',
-    note: 'Estimates assume timely feedback and content. A fixed scope — and a clear go-live date — is locked in the consultation call.'
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;estimator&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;sem&quot;,&quot;paid&quot;,&quot;seo&quot;,&quot;email&quot;,&quot;social&quot;,&quot;automation&quot;,&quot;webdev&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+class Component extends DCLogic {
+  state = { key: typeof window !== "undefined" ? (new URLSearchParams(window.location.search).get("t") || "") : "" };
+  CARDS = [
+    { key: "sem", icon: "🎯", title: "Google Ads Leads & CPL", desc: "Project clicks, leads and cost-per-lead from your monthly Google Ads budget.", kpi: "−51% CPL" },
+    { key: "paid", icon: "📣", title: "Paid Social Reach & ROAS", desc: "Estimate reach, results and ROAS from Meta and paid social spend.", kpi: "6.8× ROAS" },
+    { key: "seo", icon: "🔍", title: "SEO Traffic & Rankings", desc: "See target keywords, projected organic traffic and time-to-rank for your niche.", kpi: "+4× Traffic" },
+    { key: "email", icon: "✉️", title: "Email Revenue", desc: "Estimate the monthly revenue a lifecycle email program could add to your store.", kpi: "+32% Rev" },
+    { key: "social", icon: "📈", title: "Organic Social Growth", desc: "Project monthly reach and follower growth from a consistent content system.", kpi: "+38K / 6mo" },
+    { key: "automation", icon: "🤖", title: "Automation Time & ROI", desc: "See the hours and dollars an AI agent or GHL / Zapier build hands back to you.", kpi: "43 hrs/mo" },
+    { key: "webdev", icon: "🛠️", title: "Web Build Timeline", desc: "Scope your project to see how many days to launch — and your target go-live date.", kpi: "10–14 days" }
+  ];
+  HIST = {
+    sem: { scenario: "B2B legal firm running $6,000/mo on Google Ads in the US market.", stats: [{ num: "83", lbl: "Leads / month" }, { num: "$72", lbl: "Cost per lead" }, { num: "−51%", lbl: "CPL vs. month 1" }], chart: "line", chartLbl: "Cost per lead, first 6 months", series: [142, 118, 98, 84, 75, 72], fmt: (v) => "$" + v, note: "<strong>Lower is better.</strong> Cost-per-lead fell as negative-keyword discipline, tight ad groups and offline-conversion bidding compounded month over month." },
+    paid: { scenario: "DTC apparel brand scaling Meta from $30K to $280K/mo over 11 months.", stats: [{ num: "6.8×", lbl: "Blended ROAS" }, { num: "9×", lbl: "Spend growth" }, { num: "11 mo", lbl: "To full scale" }], chart: "line", chartLbl: "Blended ROAS, first 6 months", series: [2.1, 3.0, 3.9, 4.8, 5.9, 6.8], fmt: (v) => v.toFixed(1) + "×", note: "Signal recovery (CAPI), a 60-ads/week creative pipeline and audience consolidation lifted ROAS even as spend climbed 9×." },
+    seo: { scenario: "B2B SaaS in a competitive category, cluster + programmatic SEO build.", stats: [{ num: "14.2K", lbl: "Organic visits / mo" }, { num: "+4×", lbl: "Traffic lift" }, { num: "9 mo", lbl: "To maturity" }], chart: "line", chartLbl: "Monthly organic visits", series: [1200, 2100, 3800, 6400, 9900, 14200], fmt: (v) => v >= 1000 ? (v / 1000).toFixed(1) + "K" : v, note: "Topical-authority clusters compound. The curve is slow for two months, then ranking momentum makes each new page rank faster than the last." },
+    email: { scenario: "DTC brand with a 15K-subscriber list, full Klaviyo lifecycle build.", stats: [{ num: "$18.6K", lbl: "Email rev / mo" }, { num: "+32%", lbl: "Of total revenue" }, { num: "45%", lbl: "From flows" }], chart: "line", chartLbl: "Monthly email revenue", series: [4.2, 7.1, 9.8, 12.4, 15.0, 18.6], fmt: (v) => "$" + v.toFixed(1) + "K", note: "Automated flows (welcome, browse, cart, post-purchase) do the heavy lifting and keep earning as the list grows — campaigns add the spikes." },
+    social: { scenario: "Coaching brand running an organic Instagram + TikTok content system.", stats: [{ num: "+38K", lbl: "Followers (6 mo)" }, { num: "1.2M", lbl: "Reach / month" }, { num: "+1.2%", lbl: "Follow rate" }], chart: "line", chartLbl: "Total following (thousands)", series: [2.5, 6, 12, 20, 29, 40], fmt: (v) => v.toFixed(0) + "K", note: "Consistent, platform-native posting at a steady cadence compounds. The first month is the hardest — momentum builds once the system is dialled in." },
+    automation: { scenario: "Marketing agency ops — AI chat agent plus a GoHighLevel workflow build.", stats: [{ num: "43 hrs", lbl: "Saved / month" }, { num: "70%", lbl: "Of manual work" }, { num: "$12.9K", lbl: "Value / year" }], chart: "line", chartLbl: "Hours handed back per week", series: [2, 4, 6, 8, 9, 10], fmt: (v) => v + "h", note: "As more of the workflow goes live — intake, routing, follow-up, reporting — the hours handed back climb until the system covers ~70% of the manual work." },
+    webdev: { scenario: "Typical days-to-launch from recent builds on a fast, modern stack.", stats: [{ num: "6–18 days", lbl: "Typical range" }, { num: "99", lbl: "Lighthouse avg" }, { num: "<100ms", lbl: "Publish speed" }], chart: "bars", rows: [["Landing page", 4, "~1 week"], ["Marketing site", 9, "~2 weeks"], ["Blog / CMS", 11, "~2 weeks"], ["E-commerce", 16, "~3 weeks"], ["Web app / SaaS", 22, "~4 weeks"]], chartLbl: "Business days to launch by project type", note: "Estimates assume timely feedback and content. A fixed scope — and a clear go-live date — is locked in the consultation call." }
+  };
+  line(series, fmt) {
+    const w = 560, h = 188, padL = 14, padR = 30, padT = 22, padB = 28;
+    const max = Math.max(...series), min = Math.min(...series), span = (max - min) || 1, n = series.length;
+    const X = (i) => padL + i * (w - padL - padR) / (n - 1), Y = (v) => padT + (1 - (v - min) / span) * (h - padT - padB);
+    const pts = series.map((v, i) => ({ x: X(i).toFixed(1), y: Y(v).toFixed(1), r: i === n - 1 ? 5 : 3.2, cls: "spark-dot" + (i === n - 1 ? " last" : ""), lbl: "M" + (i + 1) }));
+    const lineD = pts.map((p, i) => (i ? "L" : "M") + p.x + "," + p.y).join(" ");
+    const area = "M" + X(0).toFixed(1) + "," + (h - padB) + " " + pts.map((p) => "L" + p.x + "," + p.y).join(" ") + " L" + X(n - 1).toFixed(1) + "," + (h - padB) + " Z";
+    const lastY = Y(series[n - 1]);
+    return { pts, line: lineD, area, valX: X(n - 1).toFixed(1), valY: (lastY < padT + 16 ? lastY + 18 : lastY - 11).toFixed(1), valTxt: fmt(series[n - 1]) };
   }
-};
-
-// ─── CHARTS ────────────────────────────────────────────────────
-function lineChart(series, fmt) {
-  const w = 560, h = 188, padL = 14, padR = 30, padT = 22, padB = 28;
-  const max = Math.max.apply(null, series), min = Math.min.apply(null, series);
-  const span = (max - min) || 1, n = series.length;
-  const X = i => padL + i * (w - padL - padR) / (n - 1);
-  const Y = v => padT + (1 - (v - min) / span) * (h - padT - padB);
-  const pts = series.map((v, i) => [X(i), Y(v)]);
-  const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-  const area = 'M' + X(0).toFixed(1) + ',' + (h - padB).toFixed(1) + ' ' + pts.map(p => 'L' + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') + ' L' + X(n - 1).toFixed(1) + ',' + (h - padB).toFixed(1) + ' Z';
-  const dots = pts.map((p, i) => '<circle class="spark-dot' + (i === n - 1 ? ' last' : '') + '" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (i === n - 1 ? 5 : 3.2) + '"/>').join('');
-  const labels = series.map((v, i) => '<text class="spark-lbl" x="' + X(i).toFixed(1) + '" y="' + (h - 8) + '" text-anchor="middle">M' + (i + 1) + '</text>').join('');
-  const lastY = Y(series[n - 1]);
-  const valY = lastY < padT + 16 ? lastY + 18 : lastY - 11;
-  const valTxt = '<text class="spark-val" x="' + X(n - 1).toFixed(1) + '" y="' + valY.toFixed(1) + '" text-anchor="end">' + fmt(series[n - 1]) + '</text>';
-  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="Trend chart">' +
-    '<path class="spark-area" d="' + area + '"/><path class="spark-line" d="' + line + '"/>' + dots + labels + valTxt + '</svg>';
-}
-function barChart(rows) {
-  const max = Math.max.apply(null, rows.map(r => r[1]));
-  return '<div class="hist-bars">' + rows.map(r =>
-    '<div class="hist-bar-row"><span class="hist-bar-lbl">' + r[0] + '</span>' +
-    '<div class="hist-bar-track"><i style="width:' + (r[1] / max * 100).toFixed(0) + '%"></i></div>' +
-    '<span class="hist-bar-val">' + r[1] + ' days · ' + r[2] + '</span></div>').join('') + '</div>';
-}
-
-// ─── HISTORICAL PANEL ──────────────────────────────────────────
-function histPanel(key) {
-  const c = CARD_BY_KEY[key], hh = HIST[key];
-  const chart = hh.chart === 'bars' ? barChart(hh.rows) : lineChart(hh.series, hh.fmt);
-  return '<div class="svc-section">' +
-    '<div class="svc-h2-lbl">Real-world benchmark</div>' +
-    '<h2 class="svc-h2">' + c.title + ' — in practice</h2>' +
-    '<p>' + hh.scenario + ' <em>Anonymized from a real engagement.</em></p>' +
-    '<div class="hist-card">' +
-      '<div class="hist-stats">' + hh.stats.map(s => '<div class="hist-stat"><div class="hist-stat-num">' + s.num + '</div><div class="hist-stat-lbl">' + s.lbl + '</div></div>').join('') + '</div>' +
-      '<div class="hist-chart"><div class="hist-chart-lbl">' + hh.chartLbl + '</div>' + chart + '</div>' +
-      '<p class="hist-note">' + hh.note + '</p>' +
-    '</div></div>';
-}
-
-// ─── SELECT / RENDER ───────────────────────────────────────────
-function renderChooser() {
-  document.getElementById('chooser').innerHTML = CARDS.map(c =>
-    '<button class="chooser-card" type="button" data-key="' + c.key + '" onclick="selectProjection(\'' + c.key + '\')">' +
-      '<span class="chooser-deco"></span>' +
-      '<span class="chooser-ico">' + c.icon + '</span>' +
-      '<h3>' + c.title + '</h3>' +
-      '<div class="desc">' + c.desc + '</div>' +
-      '<div class="chooser-meta"><span class="chooser-kpi">' + c.kpi + '</span><span class="chooser-go">Project it →</span></div>' +
-    '</button>').join('');
-}
-
-function selectProjection(key, scroll) {
-  const c = CARD_BY_KEY[key];
-  if (!c) return;
-  document.querySelectorAll('.chooser-card').forEach(b => b.classList.toggle('active', b.dataset.key === key));
-  const d = document.getElementById('proj-detail');
-  d.innerHTML = '<div class="proj-detail-inner">' +
-    '<button class="proj-back" type="button" onclick="closeProjection()">← All estimators</button>' +
-    histPanel(key) +
-    (window.renderEstimator ? window.renderEstimator(key) : '') +
-    '</div>';
-  if (window.attachEstimator) window.attachEstimator(key);
-  try { history.replaceState(null, '', 'projections.html?t=' + key); } catch (e) {}
-  if (scroll !== false) {
-    const top = d.getBoundingClientRect().top + window.pageYOffset - 78;
-    window.scrollTo({ top: top, behavior: 'smooth' });
+  select(key) {
+    this.setState({ key });
+    try { history.replaceState(null, "", key ? "projections.html?t=" + key : "projections.html"); } catch (e) {}
+    if (key) setTimeout(() => { const el = document.getElementById("proj-detail"); if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 100); }, 50);
+  }
+  renderVals() {
+    const key = this.props.estimator || this.state.key;
+    const sel = this.CARDS.find((c) => c.key === key) || null;
+    const hist = sel ? this.HIST[key] : null;
+    const card = (on) => "text-align: left; font: inherit; cursor: pointer; background: oklch(96% 0.012 60); border: 1px solid " + (on ? "oklch(52% 0.14 195)" : "oklch(88% 0.01 60)") + "; border-top: 3px solid " + (on ? "oklch(52% 0.14 195)" : "oklch(88% 0.01 60)") + "; border-radius: 12px; padding: 22px; color: inherit; transition: transform 0.25s, box-shadow 0.25s;";
+    const maxDays = hist && hist.rows ? Math.max(...hist.rows.map((r) => r[1])) : 1;
+    return {
+      cards: this.CARDS.map((c) => Object.assign({}, c, { style: card(c.key === key), pick: () => this.select(c.key) })),
+      hasSel: !!sel, sel: sel || {}, selKey: key,
+      hist: hist ? Object.assign({}, hist, { noteHtml: { __html: hist.note } }) : { stats: [], noteHtml: { __html: "" } },
+      isLine: !!(hist && hist.chart === "line"), isBars: !!(hist && hist.chart === "bars"),
+      chart: hist && hist.chart === "line" ? this.line(hist.series, hist.fmt) : { pts: [] },
+      bars: hist && hist.rows ? hist.rows.map(([label, d, w]) => ({ label, val: d + " days · " + w, fill: "display: block; height: 100%; width: " + (d / maxDays * 100).toFixed(0) + "%; background: oklch(52% 0.14 195); border-radius: 999px;" })) : [],
+      clear: () => this.select("")
+    };
   }
 }
-function closeProjection() {
-  document.querySelectorAll('.chooser-card').forEach(b => b.classList.remove('active'));
-  document.getElementById('proj-detail').innerHTML = '';
-  try { history.replaceState(null, '', 'projections.html'); } catch (e) {}
-  const top = document.getElementById('chooser-section').getBoundingClientRect().top + window.pageYOffset - 78;
-  window.scrollTo({ top: top, behavior: 'smooth' });
-}
-
-// ─── NAV DROPDOWN ──────────────────────────────────────────────
-function renderDropdown() {
-  const dd = document.getElementById('nav-dropdown');
-  if (!dd || !window.SERVICE_ORDER) return;
-  dd.innerHTML = window.SERVICE_ORDER.map(k => {
-    const s = window.SERVICES[k];
-    return '<a href="services.html?s=' + k + '"><span>' + s.icon + ' ' + s.title + '</span><small>' + s.short + '</small></a>';
-  }).join('');
-}
-
-// ─── DARK MODE ─────────────────────────────────────────────────
-function toggleDark() {
-  const isDark = document.body.classList.toggle('dark');
-  document.getElementById('dark-toggle').textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('wjh_dark', isDark ? '1' : '0');
-}
-if (localStorage.getItem('wjh_dark') === '1') { document.body.classList.add('dark'); }
-
-// ─── MOBILE SUBMENU CARET ──────────────────────────────────────
-document.querySelectorAll('.dropdown-caret').forEach(function (btn) {
-  btn.addEventListener('click', function (e) {
-    e.preventDefault(); e.stopPropagation();
-    var li = btn.closest('.has-dropdown');
-    if (!li) return;
-    var open = li.classList.toggle('submenu-open');
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-});
-
-// ─── INIT ──────────────────────────────────────────────────────
-(function () {
-  var t = document.getElementById('dark-toggle');
-  if (t && document.body.classList.contains('dark')) t.textContent = '☀️';
-  renderDropdown();
-  renderChooser();
-  var pre = new URLSearchParams(location.search).get('t');
-  if (pre && CARD_BY_KEY[pre]) selectProjection(pre, false);
-})();
 </script>
-
-<script src="content/published.js"></script>
-<script src="content/live.js?v=3"></script>
-<script src="content/page-seo.js"></script>
 </body>
 </html>

@@ -16,6 +16,8 @@ Disallow: /scraps/
 Disallow: /screenshots/
 Disallow: /*.jsx$
 Disallow: /*.json$
+Disallow: /*.dc.html$
+Disallow: /SEO-metadata.md
 
 # Block low-value internal query parameters (filter views)
 Allow: /services.html?s=
@@ -25,7 +27,7 @@ Disallow: /*?gclid=
 
 # --- Google ------------------------------------------------------
 User-agent: Googlebot
-Allow: /Syed_Wajeeh_Ul_Hassan_CV.pdf
+Allow: /syed_wajeeh_ul_hassan_cv.pdf
 Allow: /
 Disallow: /uploads/
 Disallow: /scraps/

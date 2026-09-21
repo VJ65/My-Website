@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<nav style="position: sticky; top: 12px; z-index: 50; margin: 12px max(14px, 2.2%) 0; background: oklch(98.5% 0.008 60 / 0.78); backdrop-filter: blur(20px) saturate(1.6); border: 1px solid oklch(100% 0 0 / 0.65); box-shadow: 0 10px 40px oklch(18% 0.02 240 / 0.08), inset 0 1px 0 oklch(100% 0 0 / 0.7); border-radius: 999px; min-height: 60px; padding: 0 12px 0 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-family: 'Plus Jakarta Sans', sans-serif;">
+  <a href="index.html" aria-label="Wajeeh home" style="display: inline-flex; flex-shrink: 0;">
+    <svg width="130" height="40" viewBox="0 0 150 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+      <text x="2" y="32" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-style="italic" font-weight="700" fill="oklch(52% 0.14 195)" letter-spacing="-1.5">Wajeeh</text>
+      <path d="M 4 38 Q 50 44 100 38 T 138 36" stroke="oklch(56% 0.14 65)" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+      <circle cx="142" cy="35" r="3.5" fill="oklch(56% 0.14 65)"></circle>
+    </svg>
+  </a>
+
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; align-items: center; gap: 2px; min-width: 0; white-space: nowrap;">
+      <a href="index.html" style="{{ s.home }}" style-hover="color: oklch(52% 0.14 195); background: oklch(94% 0.04 195);">Home</a>
+      <a href="about.html" style="{{ s.about }}" style-hover="color: oklch(52% 0.14 195); background: oklch(94% 0.04 195);">About Me</a>
+      <div style="position: relative;" onMouseEnter="{{ openServices }}" onMouseLeave="{{ closeMenus }}">
+        <a href="services.html" style="{{ s.services }}">Services <span style="font-size: 10px; opacity: 0.7;">▾</span></a>
+        <sc-if value="{{ servicesOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position: absolute; top: 100%; left: 0; padding-top: 10px; z-index: 60;">
+            <div style="width: 300px; background: oklch(98.5% 0.008 60); border: 1px solid oklch(88% 0.01 60); border-radius: 14px; box-shadow: 0 8px 40px oklch(18% 0.02 240 / 0.12); padding: 8px; display: flex; flex-direction: column; max-height: 70vh; overflow-y: auto;">
+              <sc-for list="{{ navServices }}" as="it" hint-placeholder-count="14">
+                <a href="{{ it.href }}" style="display: flex; flex-direction: column; gap: 2px; padding: 9px 12px; border-radius: 8px; color: oklch(18% 0.02 240); white-space: normal;" style-hover="background: oklch(94% 0.04 195);">
+                  <span style="font-size: 13px; font-weight: 600;">{{ it.label }}</span>
+                  <small style="font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: oklch(62% 0.015 240);">{{ it.sub }}</small>
+                </a>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <div style="position: relative;" onMouseEnter="{{ openIndustries }}" onMouseLeave="{{ closeMenus }}">
+        <a href="industries.html" style="{{ s.industries }}">Industries <span style="font-size: 10px; opacity: 0.7;">▾</span></a>
+        <sc-if value="{{ industriesOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position: absolute; top: 100%; left: 0; padding-top: 10px; z-index: 60;">
+            <div style="width: 280px; background: oklch(98.5% 0.008 60); border: 1px solid oklch(88% 0.01 60); border-radius: 14px; box-shadow: 0 8px 40px oklch(18% 0.02 240 / 0.12); padding: 8px; display: flex; flex-direction: column;">
+              <sc-for list="{{ navIndustries }}" as="it" hint-placeholder-count="8">
+                <a href="{{ it.href }}" style="display: flex; flex-direction: column; gap: 2px; padding: 9px 12px; border-radius: 8px; color: oklch(18% 0.02 240); white-space: normal;" style-hover="background: oklch(94% 0.04 195);">
+                  <span style="font-size: 13px; font-weight: 600;">{{ it.label }}</span>
+                  <small style="font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: oklch(62% 0.015 240);">{{ it.sub }}</small>
+                </a>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <a href="projections.html" style="{{ s.projections }}" style-hover="color: oklch(52% 0.14 195); background: oklch(94% 0.04 195);">Estimators</a>
+      <a href="index.html#experience" style="{{ s.experience }}" style-hover="color: oklch(52% 0.14 195); background: oklch(94% 0.04 195);">Experience</a>
+      <a href="projects.html" style="{{ s.projects }}" style-hover="color: oklch(52% 0.14 195); background: oklch(94% 0.04 195);">Case Studies</a>
+      <a href="blog.html" style="{{ s.blog }}" style-hover="color: oklch(52% 0.14 195); background: oklch(94% 0.04 195);">Blog</a>
+      <a href="contact.html" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; background: oklch(52% 0.14 195); color: #fff; padding: 9px 20px; border-radius: 999px; margin-left: 6px;" style-hover="background: oklch(46% 0.14 195);">Contact</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <a href="contact.html" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; background: oklch(52% 0.14 195); color: #fff; padding: 8px 16px; border-radius: 999px;" style-hover="background: oklch(46% 0.14 195);">Contact</a>
+      <button onClick="{{ toggleDrawer }}" aria-label="Open menu" aria-expanded="{{ drawerOpen }}" style="width: 42px; height: 42px; border-radius: 50%; border: none; background: transparent; cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;" style-hover="background: oklch(94% 0.04 195);">
+        <span style="{{ bar1 }}"></span><span style="{{ bar2 }}"></span><span style="{{ bar3 }}"></span>
+      </button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ drawerVisible }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; top: 82px; left: max(14px, 2.2%); right: max(14px, 2.2%); z-index: 99; background: oklch(98.5% 0.008 60);  border: 1px solid oklch(100% 0 0 / 0.65); border-radius: 22px; padding: 14px 14px 18px; box-shadow: 0 24px 60px oklch(18% 0.02 240 / 0.18); max-height: calc(100dvh - 96px); overflow-y: auto; display: flex; flex-direction: column; gap: 4px; animation: navDrawerIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+      <a href="index.html" style="{{ d.home }}">Home</a>
+      <a href="about.html" style="{{ d.about }}">About Me</a>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;">
+        <a href="services.html" style="{{ d.services }}">Services</a>
+        <button onClick="{{ toggleSubServices }}" aria-label="Toggle services submenu" style="{{ caretServices }}">▾</button>
+        <sc-if value="{{ subServices }}" hint-placeholder-val="{{ false }}">
+          <div style="grid-column: 1 / -1; display: flex; flex-direction: column; padding: 4px 0 8px 12px;">
+            <sc-for list="{{ navServices }}" as="it" hint-placeholder-count="14">
+              <a href="{{ it.href }}" style="display: flex; flex-direction: column; gap: 1px; padding: 9px 12px; border-radius: 8px; color: oklch(18% 0.02 240);" style-hover="background: oklch(94% 0.04 195);"><span style="font-size: 14px; font-weight: 600;">{{ it.label }}</span><small style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: oklch(62% 0.015 240);">{{ it.sub }}</small></a>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;">
+        <a href="industries.html" style="{{ d.industries }}">Industries</a>
+        <button onClick="{{ toggleSubIndustries }}" aria-label="Toggle industries submenu" style="{{ caretIndustries }}">▾</button>
+        <sc-if value="{{ subIndustries }}" hint-placeholder-val="{{ false }}">
+          <div style="grid-column: 1 / -1; display: flex; flex-direction: column; padding: 4px 0 8px 12px;">
+            <sc-for list="{{ navIndustries }}" as="it" hint-placeholder-count="8">
+              <a href="{{ it.href }}" style="display: flex; flex-direction: column; gap: 1px; padding: 9px 12px; border-radius: 8px; color: oklch(18% 0.02 240);" style-hover="background: oklch(94% 0.04 195);"><span style="font-size: 14px; font-weight: 600;">{{ it.label }}</span><small style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: oklch(62% 0.015 240);">{{ it.sub }}</small></a>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <a href="projections.html" style="{{ d.projections }}">Estimators</a>
+      <a href="index.html#experience" style="{{ d.experience }}">Experience</a>
+      <a href="projects.html" style="{{ d.projects }}">Case Studies</a>
+      <a href="blog.html" style="{{ d.blog }}">Blog</a>
+      <a href="contact.html" style="display: block; text-align: center; margin-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: oklch(52% 0.14 195); color: #fff; padding: 12px 20px; border-radius: 12px;">Contact</a>
+    </div>
+  </sc-if>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:120},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;about&quot;,&quot;services&quot;,&quot;industries&quot;,&quot;projections&quot;,&quot;projects&quot;,&quot;blog&quot;,&quot;&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { menu: null, w: typeof window !== "undefined" ? window.innerWidth : 1400, drawer: false, sub: null };
+  componentDidMount() {
+    this._rs = () => this.setState({ w: window.innerWidth });
+    window.addEventListener("resize", this._rs);
+    this._rs();
+  }
+  componentWillUnmount() { window.removeEventListener("resize", this._rs); }
+  renderVals() {
+    const active = this.props.active ?? "";
+    const wide = this.state.w >= 1140;
+    const link = (k) => "display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 999px; position: relative; color: " +
+      (active === k || this.state.menu === k ? "oklch(52% 0.14 195)" : "oklch(42% 0.02 240)") + "; background: " + (this.state.menu === k ? "oklch(94% 0.04 195)" : "transparent") +
+      (active === k ? "; box-shadow: inset 0 -2px 0 oklch(52% 0.14 195);" : ";");
+    const dlink = (k) => "display: block; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 500; padding: 12px 14px; border-radius: 10px; color: " + (active === k ? "oklch(52% 0.14 195)" : "oklch(18% 0.02 240)") + "; background: " + (active === k ? "oklch(94% 0.04 195)" : "transparent") + ";";
+    const caret = (on) => "width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; border-radius: 10px; font-size: 14px; color: " + (on ? "oklch(52% 0.14 195)" : "oklch(42% 0.02 240)") + "; transform: rotate(" + (on ? "180deg" : "0") + "); transition: transform 0.25s;";
+    const bar = (t) => "display: block; width: 20px; height: 2px; background: oklch(18% 0.02 240); border-radius: 2px; transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.2s; " + t;
+    const open = this.state.drawer;
+    const s = {}, d = {};
+    for (const k of ["home", "about", "services", "industries", "projections", "experience", "projects", "blog"]) { s[k] = link(k); d[k] = dlink(k); }
+    return {
+      s, d, wide, narrow: !wide,
+      drawerOpen: open, drawerVisible: !wide && open,
+      toggleDrawer: () => this.setState({ drawer: !open }),
+      bar1: bar(open ? "transform: translateY(7px) rotate(45deg);" : ""),
+      bar2: bar(open ? "opacity: 0; transform: scaleX(0.4);" : ""),
+      bar3: bar(open ? "transform: translateY(-7px) rotate(-45deg);" : ""),
+      subServices: this.state.sub === "services", subIndustries: this.state.sub === "industries",
+      toggleSubServices: () => this.setState({ sub: this.state.sub === "services" ? null : "services" }),
+      toggleSubIndustries: () => this.setState({ sub: this.state.sub === "industries" ? null : "industries" }),
+      caretServices: caret(this.state.sub === "services"), caretIndustries: caret(this.state.sub === "industries"),
+      servicesOpen: this.state.menu === "services",
+      industriesOpen: this.state.menu === "industries",
+      openServices: () => this.setState({ menu: "services" }),
+      openIndustries: () => this.setState({ menu: "industries" }),
+      closeMenus: () => this.setState({ menu: null }),
+      navServices: [
+        ["scratch", "🚀 Scratch to Sales", "Full funnel — plan to scale"], ["growth", "🌱 Growth Marketing", "New businesses — zero to traction"],
+        ["seo", "🔍 SEO", "Search Engine Optimization"], ["llmseo", "✨ LLM SEO", "AI Search · ChatGPT & AI Overviews"],
+        ["aeo", "🗣️ Ask Engine Optimization", "Answer boxes, PAA & voice"], ["sem", "🎯 SEM / PPC", "Google Ads & Paid Search"],
+        ["paid", "📣 Paid Social", "Meta, TikTok & DTC Ads"], ["performance", "📊 Performance Marketing", "Cross-channel paid growth"],
+        ["social", "💬 Social Media", "Organic Social & Community"], ["content", "✍️ Content", "SEO Content & Copywriting"],
+        ["email", "📧 Email", "Klaviyo & Lifecycle Email"], ["webdev", "🌐 Web Dev", "Next.js, Shopify & Headless"],
+        ["wordpress", "🔷 WordPress", "Custom Themes & Speed"], ["automation", "🤖 Automation & AI", "AI Agents, GHL & Zapier"]
+      ].map(([k, label, sub]) => ({ href: "services.html?s=" + k, label, sub })),
+      navIndustries: [
+        ["realestate", "🏡 Real Estate", "Buyer & seller lead-gen"], ["ecommerce", "🛒 E-commerce", "DTC & marketplace growth"],
+        ["healthcare", "♿ NDIS & Healthcare", "Compliant patient acquisition"], ["restaurants", "🍽️ Restaurants", "Local visibility & bookings"],
+        ["legal", "⚖️ Legal Services", "High-intent case leads"], ["outdoor", "📺 Outdoor Media", "OOH × digital attribution"],
+        ["localservices", "🔧 Local Services", "Booked jobs & map pack"], ["saas", "💻 SaaS & Startups", "Full-funnel product growth"]
+      ].map(([k, label, sub]) => ({ href: "industries.html?i=" + k, label, sub }))
+    };
+  }
+}
+</script>
+</body>
+</html>

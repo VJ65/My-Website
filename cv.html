@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: oklch(98.5% 0.008 60); -webkit-font-smoothing: antialiased; }
+  a { color: oklch(52% 0.14 195); text-decoration: none; }
+  a:hover { color: oklch(56% 0.14 65); text-decoration: underline; }
+</style>
+</helmet>
+<div style="max-width: 1180px; margin: 0 auto; padding: 48px 28px 96px; font-family: 'Plus Jakarta Sans', sans-serif; color: oklch(18% 0.02 240);">
+
+  <header style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-end; justify-content: space-between; border-bottom: 2px solid oklch(52% 0.14 195); padding-bottom: 28px;">
+    <div style="min-width: 0;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: oklch(52% 0.14 195); text-transform: uppercase; margin-bottom: 14px;">Curriculum Vitae</div>
+      <h1 style="font-family: 'JetBrains Mono', monospace; font-size: 40px; line-height: 1.1; font-weight: 700; margin: 0 0 10px; letter-spacing: -0.01em; text-wrap: pretty;">Syed Wajeeh Ul Hassan</h1>
+      <p style="font-size: 19px; margin: 0; color: oklch(42% 0.02 240);">Growth-Focused Developer &amp; Performance Marketer</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      <div style="border: 1px solid oklch(88% 0.01 60); background: oklch(96% 0.012 60); border-radius: 12px; padding: 12px 16px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: oklch(52% 0.14 195);">$10M+</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: oklch(62% 0.015 240); margin-top: 4px;">Ad Spend Managed</div>
+      </div>
+      <div style="border: 1px solid oklch(88% 0.01 60); background: oklch(96% 0.012 60); border-radius: 12px; padding: 12px 16px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: oklch(52% 0.14 195);">3X</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: oklch(62% 0.015 240); margin-top: 4px;">Lead Growth via SEO</div>
+      </div>
+      <div style="border: 1px solid oklch(88% 0.01 60); background: oklch(96% 0.012 60); border-radius: 12px; padding: 12px 16px;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: oklch(52% 0.14 195);">300+</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: oklch(62% 0.015 240); margin-top: 4px;">Clients Served</div>
+      </div>
+    </div>
+  </header>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 56px; margin-top: 44px; align-items: start;">
+
+    <main style="min-width: 0; display: flex; flex-direction: column; gap: 44px;">
+
+      <section>
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 16px; font-weight: 700;">Profile</h2>
+        <p style="font-size: 16px; line-height: 1.7; margin: 0; color: oklch(42% 0.02 240); text-wrap: pretty;">Digital marketing and full-stack development professional with 4+ years of experience helping global clients accelerate growth through performance-based marketing and engineering solutions. Co-Founder &amp; CTO at DMH Network, where I lead SEO architecture and technical delivery for early-stage startups. Partnered with 300+ clients across the US, Australia, and the UK; managed $10M+ in ad spend; consistently delivered measurable lead, conversion, and organic-traffic growth across the API Economy, Open Banking, RPA, ERP, Cloud, CX, and AI.</p>
+      </section>
+
+      <section>
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 22px; font-weight: 700;">Professional Experience</h2>
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+          <sc-for list="{{ roles }}" as="role" hint-placeholder-count="7">
+            <article style="border-left: 2px solid oklch(88% 0.01 60); padding-left: 22px;">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; justify-content: space-between;">
+                <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -0.01em;">{{ role.title }}</h3>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(62% 0.015 240); white-space: nowrap;">{{ role.dates }}</span>
+              </div>
+              <div style="font-size: 15px; color: oklch(56% 0.14 65); margin-top: 5px;">{{ role.org }}</div>
+              <ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px;">
+                <sc-for list="{{ role.points }}" as="point" hint-placeholder-count="3">
+                  <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; font-size: 15px; line-height: 1.6; color: oklch(42% 0.02 240);">
+                    <span style="color: oklch(52% 0.14 195);">▸</span>
+                    <span style="text-wrap: pretty;">{{ point }}</span>
+                  </li>
+                </sc-for>
+              </ul>
+            </article>
+          </sc-for>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 16px; font-weight: 700;">Education</h2>
+        <div style="border-left: 2px solid oklch(88% 0.01 60); padding-left: 22px;">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; justify-content: space-between;">
+            <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; margin: 0;">Bachelor of Science in Computer Science</h3>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(62% 0.015 240); white-space: nowrap;">2017 — 2021</span>
+          </div>
+          <div style="font-size: 15px; color: oklch(56% 0.14 65); margin-top: 5px;">Superior University, Lahore · CGPA 3.12</div>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 16px; font-weight: 700;">Volunteer Work</h2>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px;">
+          <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; font-size: 15px; line-height: 1.6; color: oklch(42% 0.02 240);">
+            <span style="color: oklch(56% 0.14 65);">♦</span>
+            <span>CV writing and LinkedIn profile optimization for early-career professionals.</span>
+          </li>
+          <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; font-size: 15px; line-height: 1.6; color: oklch(42% 0.02 240);">
+            <span style="color: oklch(56% 0.14 65);">♦</span>
+            <span>Pro-bono SEO strategy for the World Movie Awards Organization.</span>
+          </li>
+        </ul>
+      </section>
+
+    </main>
+
+    <aside style="min-width: 0; display: flex; flex-direction: column; gap: 30px; background: oklch(96% 0.012 60); border: 1px solid oklch(88% 0.01 60); border-radius: 12px; padding: 28px 24px;">
+
+      <section>
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 14px; font-weight: 700;">Contact</h2>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(62% 0.015 240);">Phone</div>
+            <a href="tel:+923057040749" style="font-size: 15px;">+92 305 7040749</a>
+          </div>
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(62% 0.015 240);">Email</div>
+            <a href="mailto:Wajeehulhasssan82@gmail.com" style="font-size: 15px; word-break: break-all;">Wajeehulhasssan82@gmail.com</a>
+          </div>
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(62% 0.015 240);">Location</div>
+            <div style="font-size: 15px; color: oklch(42% 0.02 240);">Lahore, Punjab, Pakistan</div>
+          </div>
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: oklch(62% 0.015 240);">LinkedIn</div>
+            <a href="https://www.linkedin.com/in/syed-wajeeh-ul-hassan" style="font-size: 15px;">/in/syed-wajeeh-ul-hassan</a>
+          </div>
+        </div>
+      </section>
+
+      <section style="border-top: 1px solid oklch(88% 0.01 60); padding-top: 24px;">
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 14px; font-weight: 700;">Core Expertise</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+          <sc-for list="{{ expertise }}" as="skill" hint-placeholder-count="14">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: oklch(94% 0.04 195); color: oklch(42% 0.14 195); border-radius: 999px; padding: 5px 11px;">{{ skill }}</span>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="border-top: 1px solid oklch(88% 0.01 60); padding-top: 24px;">
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 14px; font-weight: 700;">Tools</h2>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{ tools }}" as="tool" hint-placeholder-count="7">
+            <li style="font-size: 14px; line-height: 1.5; color: oklch(42% 0.02 240);">{{ tool }}</li>
+          </sc-for>
+        </ul>
+      </section>
+
+      <section style="border-top: 1px solid oklch(88% 0.01 60); padding-top: 24px;">
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 14px; font-weight: 700;">Certifications</h2>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{ certs }}" as="cert" hint-placeholder-count="5">
+            <li style="font-size: 14px; line-height: 1.5; color: oklch(42% 0.02 240);">{{ cert }}</li>
+          </sc-for>
+        </ul>
+      </section>
+
+      <section style="border-top: 1px solid oklch(88% 0.01 60); padding-top: 24px;">
+        <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(52% 0.14 195); margin: 0 0 14px; font-weight: 700;">Languages</h2>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 14px; color: oklch(42% 0.02 240);">
+            <span>English</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(62% 0.015 240);">Professional</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; color: oklch(42% 0.02 240);">
+            <span>Urdu</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: oklch(62% 0.015 240);">Native</span>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;experienceOrder&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;As listed on CV&quot;,&quot;Most recent first&quot;],&quot;default&quot;:&quot;As listed on CV&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const roles = [
+      { title: "Co-Founder & CTO", start: "2022-12", dates: "Dec 2022 — Present", org: "DMH Network · Lahore, Pakistan (Hybrid)", points: [
+        "Lead technology and SEO strategy across the entire client portfolio, owning the roadmap end-to-end.",
+        "Drive technical delivery from scoping and architecture through handoff and post-launch optimization.",
+        "Manage full-funnel SEO architecture for early-stage startups, integrating technical SEO, content, and CRO.",
+        "Multiple clients have achieved 3X lead generation within 6–9 months of engagement."
+      ]},
+      { title: "Head of Digital Marketing", start: "2019-10", dates: "Oct 2019 — Present", org: "FutureSOL · Adelaide, Australia (Remote)", points: [
+        "Develop and execute SEO strategies that significantly improve organic visibility and qualified traffic.",
+        "Run paid social campaigns delivering positive ROI while aligning SEO and SMM with broader goals.",
+        "Translate Google Analytics and Search Console data into actionable optimization roadmaps.",
+        "Achieved measurable lifts in rankings, engagement, and conversion across multiple verticals."
+      ]},
+      { title: "Digital Marketing Consultant", start: "2025-10", dates: "Oct 2025 — Mar 2026", org: "Real VA · Lahore, Pakistan (Remote)", points: [
+        "Built and managed content calendars for a diverse portfolio of client accounts.",
+        "Created social content end-to-end — copy, graphics, short-form video — and managed online communities.",
+        "Delivered KPI-driven performance reports and drove Real VA's own brand growth."
+      ]},
+      { title: "SEO Consultant", start: "2023-01", dates: "Jan 2023 — Oct 2023", org: "SOZA Weightloss · United States (Remote)", points: [
+        "Executed full-stack content, On-Page, and Technical SEO for a US healthcare brand.",
+        "Launched lead-generation campaigns delivering a 30% increase in qualified leads."
+      ]},
+      { title: "Strategic Planner", start: "2022-01", dates: "Jan 2022 — Nov 2023", org: "Ace 360 Solutions · Lahore, Pakistan (Hybrid)", points: [
+        "Partnered with cross-functional teams to identify growth opportunities and shape market positioning.",
+        "Conducted market research and data analysis to inform key strategic decisions.",
+        "Led project management and stakeholder engagement across major business initiatives."
+      ]},
+      { title: "Social Media Marketing Manager", start: "2021-01", dates: "Jan 2021 — Present", org: "Saffron Club · South Adelaide, Australia (Remote)", points: [
+        "Own social-media presence end-to-end, reporting directly to ownership.",
+        "Set up paid campaigns, automated communications, and produce post designs and uploads.",
+        "Grew brand visibility and engagement across Facebook and Instagram."
+      ]},
+      { title: "Founder · CEO / CTO", start: "2019-07", dates: "Jul 2019 — Feb 2021", org: "ResourcesPoint · Innovation District 92, Lahore", points: [
+        "Launched ResourcesPoint through ID92's incubation program, completing all milestones.",
+        "Overachieved incubation targets by 25% per cycle; increased application intake by 66% while reducing acquisition cost ~50%.",
+        "Owned all marketing, PR, partnerships, and reporting to the steering committee."
+      ]}
+    ];
+    const order = this.props.experienceOrder ?? "As listed on CV";
+    return {
+      roles: order === "Most recent first" ? roles.slice().sort((a, b) => b.start.localeCompare(a.start)) : roles,
+      expertise: ["Technical SEO", "Performance Marketing", "On-Page SEO", "Content Strategy", "Google Ads", "Meta Ads", "CRO", "Conv. Tracking", "WordPress", "Android Dev", "Firebase", "OOP & DSA", "Cyber Risk"],
+      tools: ["Google Analytics — Expert", "Google Ads — Expert", "AdSense / AdMob — Expert", "Search Console & Tag Manager", "Ahrefs & Screaming Frog", "MailChimp / Email Automation", "Canva & Creative Suite"],
+      certs: ["Aviatrix Multi-Cloud Network Associate", "Intl. Network Security Specialist (ICSI)", "Digital Marketing — Extreme Commerce", "SEO — Khan Academy", "Email Writing Skills"]
+    };
+  }
+}
+</script>
+</body>
+</html>
